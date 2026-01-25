@@ -1,5 +1,7 @@
 import yaml
 
+from anoyError import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
+
 class DictTraversal():
     """
     @Summ: 辞書型の中身を探索するclass
@@ -56,7 +58,7 @@ class DictTraversal():
             print(pathList)
             self.typeCheck(key,value,pathList)
 
-    def typeCheck(self,dictKey:str|None,dictValue,path:list):
+    def typeCheck(self,parentKey:str|None,childValue,path:list):
         """
         "@Summ": annoDict内を探索する関数。
 
@@ -69,103 +71,108 @@ class DictTraversal():
         - valueがanoyDict型の時のみ、!ParentKeyの型確認が行われる。
 
         "@Args":
-            annoKey:
-                "@Summ": annotation key
+            parentKey:
+                "@Summ": 探索するdict型のkey。
                 "@Desc":
                 - nullは親要素が存在しないことを表す(つまりvalueがroot要素である)。
                 "@Type":
-                Union:
-                - Str
-                - null
-            annoValue:
-                "@Summ": annotation keyに対応するvalue。
+                    Union:
+                    - Str
+                    - null
+            childValue:
+                "@Summ": 探索するdict型のvalue。
                 "@Type": Any
             path:
                 @Summ: 今まで経由したkeyのlist。
                 @Type: List
+        "@Error":
+        - AnnotationYamlError
+        - AnnotationYamlTypeError
+        - ConfigurationYamlError
         """
-        if(dictKey is None):
-            confChild=None    #confChild=Noneの時は型確認をしない。
-        elif(dictKey[0]=="@"):
-            confChild=self._configDict[dictKey].get("!ChildValue")
-        else:
-            confChild=None
-        if(type(dictValue)==bool):
-            if((confChild is None) or confChild=="Bool"):
-                return True
-            else:
-                return False
-        elif(type(dictValue)==str):
-            if((confChild is None or confChild=="Str")):
-                return True
-            else:
-                return False
-        elif(type(dictValue)==int):
-            if((confChild is None) or confChild=="Int"):
-                return True
-            else:
-                return False
-        elif(type(dictValue)==float):
-            if((confChild is None) or confChild=="Float"):
-                return True
-            else:
-                return False
-        elif(type(dictValue)==list):
-            if((confChild is None) or confChild=="List"):
-                for i in range(len(dictValue)):
-                    newPath=path+[i]
-                    self._visitQueue.append((i,dictValue[i]))
-                    self._pathQueue.append(newPath)
-                return True
-            else:
-                return False
-        elif(type(dictValue)==dict):
+        if(parentKey is None):
+            confChildVal=None    #confChild=Noneの時は型確認をしない。
+        elif(parentKey[0]=="@"):
+            confChild=self._configDict.get(parentKey)
             if(confChild is None):
-                for childKey,childVal in dictValue.items():
-                    newPath=path+[childKey]
-                    self._visitQueue.append((childKey,childVal))
+                raise ConfigurationYamlError(f"`{parentKey}` is not defined.")
+            confChildVal=confChild.get("!ChildValue")
+        else:
+            confChildVal=None
+        if(type(childValue)==bool):
+            if((confChildVal is None) or confChildVal=="Bool"):
+                return
+            else:
+                raise AnnotationYamlTypeError("Bool",path)
+        elif(type(childValue)==str):
+            if((confChildVal is None or confChildVal=="Str")):
+                return
+            else:
+                raise AnnotationYamlTypeError("Str",path)
+        elif(type(childValue)==int):
+            if((confChildVal is None) or confChildVal=="Int"):
+                return
+            else:
+                raise AnnotationYamlTypeError("Int",path)
+        elif(type(childValue)==float):
+            if((confChildVal is None) or confChildVal=="Float"):
+                return
+            else:
+                raise AnnotationYamlTypeError("Float",path)
+        elif(type(childValue)==list):
+            if((confChildVal is None) or confChildVal=="List"):
+                for i in range(len(childValue)):
+                    newPath=path+[i]
+                    self._visitQueue.append((i,childValue[i]))
                     self._pathQueue.append(newPath)
-                return True
-            elif(confChild=="FreeDict"):
-                for childKey,childVal in dictValue.items():
-                    newPath=path+[childKey]
-                    self._visitQueue.append((childKey,childVal))
+                return
+            else:
+                raise AnnotationYamlTypeError("List",path)
+        elif(type(childValue)==dict):
+            if(confChildVal is None):
+                for key,childValue in childValue.items():
+                    newPath=path+[key]
+                    self._visitQueue.append((key,childValue))
                     self._pathQueue.append(newPath)
-                    if(childKey[0]=="@"):
-                        return False
-                return True
-            elif(confChild=="AnnoDict"):
-                for childKey,childVal in dictValue.items():
-                    newPath=path+[childKey]
-                    self._visitQueue.append((childKey,childVal))
+                return
+            elif(confChildVal=="FreeDict"):
+                for key,childValue in childValue.items():
+                    newPath=path+[key]
+                    self._visitQueue.append((key,childValue))
                     self._pathQueue.append(newPath)
-                    confParent=self._configDict[childKey].get("!ParentKey")
-                    if(childKey[0]!="@"):
-                        return False
+                    if(key[0]=="@"):
+                        raise AnnotationYamlTypeError("FreeDict",path)
+                return
+            elif(confChildVal=="AnnoDict"):
+                for key,childValue in childValue.items():
+                    newPath=path+[key]
+                    self._visitQueue.append((key,childValue))
+                    self._pathQueue.append(newPath)
+                    confParent=self._configDict[key].get("!ParentKey")
+                    if(key[0]!="@"):
+                        raise AnnotationYamlTypeError("AnnoDict",path)
                     if(confParent is None):
-                        return True
-                    elif(dictKey not in confParent):
-                        return False
-                return True
+                        pass
+                    elif(parentKey not in confParent):
+                        raise AnnotationYamlTypeError("AnnoDict",path)
+                return
             else:  #Enum型の型確認。
                 # config yaml側の型確認。
-                if(type(confChild)!=dict):
-                    return False
-                confKeyList=list(confChild.keys())
+                if(type(confChildVal)!=dict):
+                    raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
+                confKeyList=list(confChildVal.keys())
                 if(len(confKeyList)!=1 or confKeyList[0]!="Enum"):
-                    return False
-                confValueList=confChild["Enum"]
+                    raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
+                confValueList=confChildVal["Enum"]
                 if(type(confValueList)!=list):
-                    return False
+                    raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
                 # annotaion yaml側の型確認。
                 for i in range(len(confValueList)):
-                    if(dictValue==confValueList[i]):
-                        return True
-                    return False
-                return True
+                    if(childValue==confValueList[i]):
+                        return
+                raise AnnotationYamlTypeError("Enum",path)
         else:
-            pathStr="/"+"/".join(path)
-            raise TypeError(f"invalid value is found at `{path}`.")
+            raise AnnotationYamlError(f" invalid value is found at:\n    `{path}`.")
 
 if(__name__=="__main__"):
     configPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\sandbox\ood_v0_2_0.yaml"
