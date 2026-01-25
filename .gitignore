@@ -1,0 +1,9 @@
+# cache.
+__pycache__/
+.pytest_cache/
+**/*.pyc
+
+# build and upload.
+dist/
+.pypirc
+*.egg-info
