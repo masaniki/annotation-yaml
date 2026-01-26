@@ -7,10 +7,10 @@ build-backend = "setuptools.build_meta"
 name = "anoy"
 version = "0.1.0"
 authors = [
-  { name="masaniki", email="masaniki.software@gmail.com },
+  { name="masaniki", email="masaniki.software@gmail.com" }
 ]
 description = "This is a library that provides simple type checking for YAML."
-dependencies = "PyYaml"
+dependencies = ["PyYAML"]
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
@@ -18,12 +18,11 @@ classifiers = [
   "Environment :: Console",
   "Natural Language :: Japanese",
   "Natural Language :: English",
-  "License :: OSI Approved :: MIT License",
   "Topic :: Text Processing"
 ]
 license = "MIT"
-license-files = "LICENSE.txt"
-keywords = ["text", "YAML", "CLI", "type", "check]
+license-files = ["LICENSE.txt"]
+keywords = ["text", "YAML", "CLI", "type", "check"]
 
 [project.scripts]
 anoy = "cli:main"
