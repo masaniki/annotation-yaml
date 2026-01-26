@@ -1,0 +1,24 @@
+"@AnyData":
+  "@IntExample": 12
+  "@FloatExample": 3.14
+  "@BoolExample": false
+  "@EnumExample": YYY
+  "@StrExample": abc
+  "@ListExample":
+  - 13
+  - 3.15
+  - abcd
+  "@FreeDictExample":
+    child01: grandchild01
+    child02: grandchild02
+"@NumberData":
+  "@IntExample": 12
+  "@FloatExample": 3.14
+"@NestableData":
+  "@ListExample":
+  - 13
+  - 3.15
+  - abcd
+  "@FreeDictExample":
+    child01: grandchild01
+    child02: grandchild02

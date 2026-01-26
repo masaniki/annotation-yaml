@@ -92,6 +92,8 @@ class DictTraversal():
         """
         if(parentKey is None):
             confChildVal=None    #confChild=Noneの時は型確認をしない。
+        elif(type(parentKey)!=str):
+            confChildVal=None
         elif(parentKey[0]=="@"):
             confChild=self._configDict.get(parentKey)
             if(confChild is None):
@@ -99,7 +101,21 @@ class DictTraversal():
             confChildVal=confChild.get("!ChildValue")
         else:
             confChildVal=None
-        if(type(childValue)==bool):
+        if(type(confChildVal)==dict):
+            #Enum型の型確認。
+            # config yaml側の型確認。
+            confKeyList=list(confChildVal.keys())
+            if(len(confKeyList)!=1 or confKeyList[0]!="Enum"):
+                raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
+            confValueList=confChildVal["Enum"]
+            if(type(confValueList)!=list):
+                raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
+            # annotaion yaml側の型確認。
+            for i in range(len(confValueList)):
+                if(childValue==confValueList[i]):
+                    return
+            raise AnnotationYamlTypeError("Enum",path)
+        elif(type(childValue)==bool):
             if((confChildVal is None) or confChildVal=="Bool"):
                 return
             else:
@@ -156,27 +172,12 @@ class DictTraversal():
                     elif(parentKey not in confParent):
                         raise AnnotationYamlTypeError("AnnoDict",path)
                 return
-            else:  #Enum型の型確認。
-                # config yaml側の型確認。
-                if(type(confChildVal)!=dict):
-                    raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
-                confKeyList=list(confChildVal.keys())
-                if(len(confKeyList)!=1 or confKeyList[0]!="Enum"):
-                    raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
-                confValueList=confChildVal["Enum"]
-                if(type(confValueList)!=list):
-                    raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
-                # annotaion yaml側の型確認。
-                for i in range(len(confValueList)):
-                    if(childValue==confValueList[i]):
-                        return
-                raise AnnotationYamlTypeError("Enum",path)
         else:
             raise AnnotationYamlError(f" invalid value is found at:\n    `{path}`.")
 
 if(__name__=="__main__"):
-    configPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\sandbox\ood_v0_2_0.yaml"
-    anoyPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\sandbox\builtins_false.yaml"
+    configPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\case01\config01.yaml"
+    anoyPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\case01\int_false.yaml"
     with open(configPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
     with open(anoyPath,mode="r",encoding="utf-8") as f:
