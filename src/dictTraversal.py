@@ -1,6 +1,6 @@
 import yaml
 
-from anoyError import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
+from .anoyError import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
 
 class DictTraversal():
     """

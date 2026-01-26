@@ -1,5 +1,4 @@
 
-
 class AnnotationYamlError(Exception):
   """
   @Summ: annotation yaml上のError。
