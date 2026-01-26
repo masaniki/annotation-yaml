@@ -5,7 +5,7 @@ import yaml
 
 from dictTraversal import DictTraversal
 
-VERSION="v0.1.1"
+VERSION="v0.1.2"
 
 def main():
     """
