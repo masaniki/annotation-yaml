@@ -3,9 +3,9 @@ from pathlib import Path
 import argparse
 import yaml
 
-from .dictTraversal import DictTraversal
+from dictTraversal import DictTraversal
 
-VERSION="v0.1.0"
+VERSION="v0.1.1"
 
 def main():
     """
