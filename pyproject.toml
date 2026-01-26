@@ -4,63 +4,31 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = <
-    @Summ: pypi上でのproject名,
-    @Type: String
-  >
+name = "anoy"
 version = "0.1.0"
 authors = [
   { name="masaniki", email="masaniki.software@gmail.com },
 ]
-description = <
-    @Summ: projectの詳細を記述する。,
-    @Type: String
-  >
-dependencies = <
-    @Summ: packageの依存性を記述する,
-    @Type: pypi上のproject名(str型)のList
-  >
+description = "This is a library that provides simple type checking for YAML."
+dependencies = "PyYaml"
 readme = "README.md"
 requires-python = ">=3.9"
-classifiers = <
-    @Summ:PyPIが定める分類名,
-    @Type:Enum型List,
-    @Disc:"https://pypi.org/classifiers/"
-  >
-license = <
-    @Summ: license名,
-    @Type: Enum
-  >
-license-files = <
-    @Summ: project rootからlicense fileへの相対path,
-    @Type: Stirng型List
-  >
-keywords = <
-    @Summ: PyPI上の検索に引っかかるためのkeyword.
-    @Type: String型Lsit
-  >
+classifiers = [
+  "Development Status :: 1 - Planning",
+  "Environment :: Console",
+  "Natural Language :: Japanese",
+  "Natural Language :: English",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Text Processing"
+]
+license = "MIT"
+license-files = "LICENSE.txt"
+keywords = ["text", "YAML", "CLI", "type", "check]
 
 [project.scripts]
-<@Summ: cli applicationのcommand名, @Type:String> = "<srcからの相対path>:<cliによって実行する関数名>"
+anoy = "cli:main"
 
 [project.urls]
-Homepage = <
-    @Summ: projectのhomepage,
-    @Type: URL,
-    @Feat: 主に個人のhomepage
-  >
-Repository = <
-    @Summ: source codeの公開場所,
-    @Type: URL
-    @Feat: 主にgithub
-  >
-Documentation = <
-    @Summ: documetの場所,
-    @Type: URL
-    @Feat: 主にgithub
-  >
-Issues = <
-    @Summ: 問題点を指摘する場所,
-    @Type: URL,
-    @Feat: 主にgithub
-  >
+Repository = "https://github.com/masaniki/annotation-yaml"
+Documentation = "https://github.com/masaniki/annotation-yaml/tree/master/docs"
+Issues = "https://github.com/masaniki/annotation-yaml/issues"
