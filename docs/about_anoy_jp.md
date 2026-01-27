@@ -47,7 +47,7 @@ YAMLのMap型にdata型の概念を導入したものが **Annotation YAML(ANOY)
 ## Example
 
 ```
-"@Book":
+"@Books":
   "Alice's Adventures in Wonderland":
     "@Author": Lewis Carroll
     "@PublishYear": 1865

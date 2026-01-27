@@ -71,7 +71,7 @@
 
 ## Example
 ```
-"@Book":
+"@Books":
   "@Summary": 本の名前を羅列する。
   "!ChildValue": FreeDict
 "@Author":
