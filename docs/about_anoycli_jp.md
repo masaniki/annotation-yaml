@@ -14,7 +14,7 @@
 
 - **ANOY CLI**
   
-  Annotation YAMLがTypedef YAMLのdata型を守っているかを確認するCLI application。
+  Annotation YAMLがConfiguration YAMLのdata型を守っているかを確認するCLI application。
 
   More about ANOY <- Here
 

@@ -10,7 +10,7 @@
 
 - **Annotation YAML(ANOY)**
 
-  YAMLのMap型にdata型の概念を導入したYAML file。
+  Map型について型確認ができるYAML file。
 
   More about [ANOY](about_anoy_jp.md)
 
@@ -22,7 +22,7 @@
 
 - **ANOY CLI**
   
-  Annotation YAMLがTypedef YAMLのdata型を守っているかを確認するCLI application。
+  Annotation YAMLがConfiguration YAMLのdata型を守っているかを確認するCLI application。
 
   More about [ANOY CLI](about_anoycli_jp.md)
 
