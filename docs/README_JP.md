@@ -1,90 +1,60 @@
-# Annotaion YAML(ANOY)
+# 目次
 
-ベースはYAMLで記述する。
+- **Annotation YAML(ANOY)**
 
-特殊なkeyには接頭辞`@`を付ける。これを"annotation key"と呼ぶ。
+  YAMLのMap型にdata型の概念を導入したYAML file。
 
-また、annotation keyに対応するvalueを"annotation value"と呼ぶ。
+  More about [ANOY](about_anoy.md)
 
-現在はannotation keyをUpperCammelCaseで記述しているが、これは必須ではない。
+- **Typedef YAML**
 
-逆に接頭辞が付いていないkeyを"free key"と呼ぶ。
+  Annotation YAMLで使えるdata型を定義するYAML file。
 
-free keyが許容されているDict型はFreeDict型として区別する。
+  More about [Typedef YAML](about_typedef.md)
 
-annotation keyの一覧を格納したyamlをconfigration yamlと呼ぶ。
+- **ANOY CLI**
+  
+  Annotation YAMLがTypedef YAMLのdata型を守っているかを確認するCLI application。
 
-configuration yaml専用のkeyには`!`を付ける。これを"configuration key"と呼ぶ。
+  More about ANOY <- Here
 
-また、configuration keyに対応するvalueを"configuration value"と呼ぶ。
+# 紹介
 
-## config yamlの詳細
+YAMLのMap型はしばしば入れ子構造になり、複雑化する。
 
-configuration key一覧
+そこで以下の様な問題が発生しました。
 
-- !ParentKey:
-  - @Summ: 親要素に指定できるkeyを記述する。ここに記述していないannotation keyはこの要素の親要素にはなれない。
-  - @Desc: nullは親要素が存在しないことを表す(つまりこの要素がroot要素である)。
-  - @Type: AnnotationKeyのList型。
-- !ChildValue:
-  - @Summ: annotation valueのdata型を指定する。
-  - @Desc:
-    - null型で記述されるdata型。
-      - null:
-        - @Summ: data型を指定しないことを表す。
-    - str型で記述されるdata型(=type string)
-      - Bool
-      - Str
-      - Int
-      - Float
-      - List:
-        - @Nestable: true
-      - AnnoDict:
-        - @Summ: annotation keyによるdict型。
-        - @Desc: Dict型はAnnoDict型とFreeDict型にMECEに分解される。
-        - @Nestable: true
-      - FreeDict
-        - @Summ: free keyによるdict型。
-        - @Nestable: true
-    - dict型で記述されるdata型(=type dict)
-      - Enum:
-        - @Summ: 列挙型
-        - @Desc:
-          - {Enum:構成要素(list型)}
-          - 列挙型の構成要素はliteralのみ。
-          - 構成要素はliteralやliteralをkeyとするdict型である。
-        - @Nestable: false
-        - @Example:
-          - {Enum:["a","b","c"]}
-  - @Type: Str
+- Map型のkeyのtypoを検出したい。
+- Map型のvalueのdata型を確認したい。
+- Map型の入れ子構造が適切かを確認したい。
+
+これらの問題を解決するためにANOY libraryは生まれた。
+
+
+# インストール方法
+
 
 # ANOY CLI
 
-ANOY(=annotation yaml)用のCLI(=Command Line Interface)。`anoy`で起動する。
+ANOYの型確認を行うためのCLI(Command Line Interface) applicationを **ANOY CLI** と呼ぶ。
 
-ANOY CLIが提供する機能
-- annotation keyのtypoの検出。
-- annotation valueの型確認。
-- configuration keyによる型確認。
+ANOY CLIは、command名`anoy`で起動する。
 
-## data型の記述。
+`anoy [-v|--version]`
 
-JSONに対応するdata型は、defaultで使える用にする。
+- anoyのversion情報を提供する。
 
-JSONで使える型
-- Null
-- Bool
-- Str
-- Int
-- Float
-- List
-- Dict
+`anoy [-h|--help]`
 
-それに加えて、EnumやUnion、Array、Ndarrayなどのdata型を加えるか否か。
+- anoyのhelp情報を提供する。
 
-これらはliteral的な表現ができる。
+`anoy <typedef_yaml> <annotation_yaml>`
+
+- `<typedef_yaml>`で`<annotation_yaml>`を型確認する。
 
 # 下位規格の紹介
+
+ANOYは *typedef yaml* の定義次第で下位規格を定義できる。
 
 ## Object-Oriented Document YAML(OODY)
 
@@ -101,24 +71,3 @@ ANOYの下位規格。
 YAMLの階層構造を説明するためのANOYの規格。
 
 ANOYの下位規格。
-
-# その他
-
-## メモ
-
-list型とlist型literalは違う、Enum型についても同様だ。
-
-しかしながら、ANOY用のYAML parserの設計costが高すぎて断念。
-
-## Ideas
-
-開いているkey-valueはblock-styleで記述して、閉じているkey-valueはinline-styleで記述する？
-
-ANOYを静的型付け言語にするか否か。
-
-静的型付け言語にするのは本来の目的に逸れる気がする。
-
-厳密な静的型付け言語にするなら、parserと同等の機能を有する必要がある。
-
-それともYAML parserを簡単に設計できるtoolとして公開するか？
-

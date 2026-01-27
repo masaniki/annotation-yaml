@@ -1,0 +1,63 @@
+# 目次
+
+- **Annotation YAML(ANOY)**
+
+  YAMLのMap型にdata型の概念を導入したYAML file。
+
+  More about ANOY <- Here
+
+- **Typedef YAML**
+
+  Annotation YAMLで使えるdata型を定義するYAML file。
+
+  More about [Typedef YAML](about_typedef.md)
+
+- **ANOY CLI**
+  
+  Annotation YAMLがTypedef YAMLのdata型を守っているかを確認するCLI application。
+
+  More about [ANOY CLI](README_JP.md)
+
+# ANOY(Annotation YAML)について
+
+YAMLのMap型にdata型の概念を導入したものが **ANOY(Annotation YAML)** である。
+
+基本的な文法はYAMLと同じである。
+
+しかし、ANOYではMap型を2種類に分解して扱う。
+
+一つは型確認を行うAnnoMap型であり、もう一つは型確認を行わないFreeMap型である。
+
+## AnnoMap型
+
+特殊なkeyには接頭辞`@`を付ける。これを *annotation key* と呼ぶ。
+
+また、annotation keyに対応する値を *annotation value* と呼ぶ。
+
+*annotaiton key* をkeyとする辞書型を *annotation map (AnnoMap)* 型と呼ぶ。
+
+## FreeMap型
+
+逆に接頭辞`@`が付いていないkeyを *free key* と呼ぶ。
+
+*free key* をkeyとする辞書型を *free map(FreeMap)* 型と呼ぶ。
+
+こちらはdata型を指定することはできないため、YAMLのMap型と同様に扱える。
+
+## Example
+
+```
+"@Book":
+  "Alice's Adventures in Wonderland":
+    "@Author": Lewis Carroll
+    "@PublishYear": 1865
+    "@Country": UK
+  "The Little Prince":
+    "@Author": Antonie de Saint-Exupéry
+    "@PublishYear": 1945
+    "@Country": France
+  "Harry Potter":
+    "@Author": J.K.Rowling
+    "@PublishYear": 1997
+    "@Country": UK
+```

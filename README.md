@@ -1,21 +1,7 @@
-# fileの説明
-# 原文
+# Introduction
 [Original README](docs/README_JP.md)
 
-## /docs
-documentを格納するdirecotry.
+## Draft
 
-## /src
-ここでmoduleを開発する。
-
-## testUnit
-単体testを行うdirectory。
-
-## testSystem
-結合testを行うdirectory。
-
-## sanbox.py
-pythonの挙動を確認する。
-
-
+But if you use this library, you can detect invalid combination of 
 
