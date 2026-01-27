@@ -4,35 +4,35 @@
 
   YAMLのMap型にdata型の概念を導入したYAML file。
 
-  More about [ANOY](about_anoy.md)
+  More about [ANOY](about_anoy_jp.md)
 
-- **Typedef YAML**
+- **Configuration YAML(Config YAML)**
 
   Annotation YAMLで使えるdata型を定義するYAML file。
 
-  More about Typedef YAML <- Here
+  More about Config YAML <- Here
 
 - **ANOY CLI**
   
   Annotation YAMLがTypedef YAMLのdata型を守っているかを確認するCLI application。
 
-  More about [ANOY CLI](README_JP.md)
+  More about [ANOY CLI](about_anoycli_jp.md)
 
-# Typedef YAMLについて
+# Configuration YAML(Config YAML)について
 
 *ANOY* を使うには、事前にdata型を定義する必要である。
 
-そのdata型の記述を行うのが *typedef yaml* である。
+そのdata型の記述を行うのが *config yaml* である。
 
-*annotation key* と *annotation value* のdata型の組み合わせを決めるためのYAMLを *typedef yaml* と呼ぶ。
+*annotation key* と *annotation value* のdata型の組み合わせを決めるためのYAMLを *config yaml* と呼ぶ。
 
-接頭辞`!`から始まるkeyを *typedef key* と呼ぶ。
+接頭辞`!`から始まるkeyを *config key* と呼ぶ。
 
-また、*typedef key* に対応するvalueを *typedef value* 、*typedef key* を持つMap型を *typedef map(TypeMap)* と呼ぶ。
+また、*config key* に対応するvalueを *config value* 、*config key* を持つMap型を *config map(TypeMap)* と呼ぶ。
 
-*typedef key* は *typedef yaml* 内でしか効力を発揮しない。
+*config key* は *config yaml* 内でしか効力を発揮しない。
 
-## *typedef key* 一覧
+## *config key* 一覧
 
 - !ParentKey:
   - @Summ: 親要素に指定できるkeyを記述する。ここに記述していないannotation keyはこの要素の親要素にはなれない。

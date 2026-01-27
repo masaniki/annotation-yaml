@@ -4,13 +4,13 @@
 
   YAMLのMap型にdata型の概念を導入したYAML file。
 
-  More about [ANOY](about_anoy.md)
+  More about [ANOY](about_anoy_jp.md)
 
-- **Typedef YAML**
+- **Configuration YAML(Config YAML)**
 
   Annotation YAMLで使えるdata型を定義するYAML file。
 
-  More about [Typedef YAML](about_typedef.md)
+  More about [Config YAML](about_config_jp.md)
 
 - **ANOY CLI**
   
@@ -48,9 +48,9 @@ ANOY CLIは、command名`anoy`で起動する。
 
 - anoyのhelp情報を提供する。
 
-`anoy <typedef_yaml> <annotation_yaml>`
+`anoy <config_yaml> <anoy>`
 
-- `<typedef_yaml>`で`<annotation_yaml>`を型確認する。
+- `<config_yaml>`で`<anoy>`を型確認する。
 
 # 下位規格の紹介
 

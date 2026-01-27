@@ -6,21 +6,21 @@
 
   More about ANOY <- Here
 
-- **Typedef YAML**
+- **Configuration YAML(Config YAML)**
 
   Annotation YAMLで使えるdata型を定義するYAML file。
 
-  More about [Typedef YAML](about_typedef.md)
+  More about [Config YAML](about_config_jp.md)
 
 - **ANOY CLI**
   
   Annotation YAMLがTypedef YAMLのdata型を守っているかを確認するCLI application。
 
-  More about [ANOY CLI](README_JP.md)
+  More about [ANOY CLI](about_anoycli_jp.md)
 
-# ANOY(Annotation YAML)について
+# Annotation YAML(ANOY)について
 
-YAMLのMap型にdata型の概念を導入したものが **ANOY(Annotation YAML)** である。
+YAMLのMap型にdata型の概念を導入したものが **Annotation YAML(ANOY)** である。
 
 基本的な文法はYAMLと同じである。
 
