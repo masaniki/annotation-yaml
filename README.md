@@ -122,7 +122,7 @@ When there is an issue with the annotation YAML, `anoy` outputs as follows.
     ... (omission) ...
     src.anoyModule.anoyErrors.ConfigurationYamlError: `@Auther` is not defined.
 ```
-# For Developpers
+# For Developers
 
 ## Testing
 
@@ -131,3 +131,10 @@ This project uses `pytest`.
 If you want to test, put in following command.
 
 `pytest tests\unit\test_dictTraversal.py`
+
+## Ideas
+
+- `!`の意味を変更。ANOY CLI用の予約語という解釈に変更する。
+- data型をの接頭辞にも`!`を採用。
+- data型は、str型だけでなく、data型stringをkeyとするMap型にも拡大する。
+- Union型は導入せずに、Enum型の中にdata型を挿入できるというsystemにする。
