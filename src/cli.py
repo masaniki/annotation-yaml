@@ -21,11 +21,9 @@ def main():
     anoyPath=Path(args.anoy)
     with open(configPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
-    with open(anoyPath,mode="r",encoding="utf-8") as f:
-        anoyDict=yaml.safe_load(f)
-    print("loadEnd")
     tree01=DictTraversal(configDict)
-    tree01.startBFS(anoyDict)
+    # configのload終了。
+    tree01.dirDFS(anoyPath)
 
 if(__name__=="__main__"):
     main()

@@ -44,7 +44,8 @@ Builtins:
     id:
       "@Summ": Python objectの識別子を表す値を出力する。
       "@Args":
-        "@Type": Object
+        obj:
+          "@Type": Object
       "@Returns":
         "@Type": Int
     input:
@@ -109,7 +110,7 @@ Builtins:
         iterable:
           "@Type": Iterable
     zip:
-      "@Summ": 
+      "@Summ": "aa"
       "@Args":
         iterable:
           "@Type": Iterable型の可変長引数。

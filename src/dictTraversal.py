@@ -1,6 +1,7 @@
 import yaml
+from pathlib import Path
 
-from anoyError import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
+from anoyError import AnnotationYamlError,ConfigurationYamlError,AnoyTypeError,AnnotationYamlTypeError
 
 class DictTraversal():
     """
@@ -24,6 +25,10 @@ class DictTraversal():
             - visitQueueと要素番号を共有する。
             - []でroot要素を表す。
             @Type: List
+        _curAnoy:
+            @Summ: 現在探索中のANOY file.
+            @ComeFrom: current ANOY.
+            @Type: Str
     """
     def __init__(self,configDict:dict):
         """
@@ -33,10 +38,38 @@ class DictTraversal():
         self._visitQueue=[]
         self._pathQueue=[]
         self._configVisit={key:False for key in configDict.keys()}
+        self._curAnoy=""
 
-    def startBFS(self,anoyDict:dict):
+
+    def dirDFS(self,anoyPath:Path):
         """
-        @Summ: 幅優先探索を開始する関数。
+        @Summ: directory内を深さ優先探索する関数。
+
+        @Desc:
+        - fileならばYAMLかどうかを確認して、内部のdict型を探索する。
+        - directoryならば、子要素を再帰的に探索する。
+
+        @Args:
+          anoyPath:
+            @Summ: 探索するfileやdirectoryのpath名。
+            @Type: Path
+        """
+        if(anoyPath.is_file()):
+            suffix=anoyPath.suffix
+            if(suffix==".yaml" or suffix==".yml" or suffix==".anoy"):
+                with open(anoyPath, mode="r", encoding="utf-8") as f:
+                    anoyDict=yaml.safe_load(f)
+                self._curAnoy=anoyPath
+                self.dictBFS(anoyDict)
+        else:
+            print(anoyPath)
+            for childPath in anoyPath.iterdir():
+                self.dirDFS(childPath)
+
+
+    def dictBFS(self,anoyDict:dict):
+        """
+        @Summ: anoyDictの中を幅優先探索を開始する関数。
 
         @Desc:
         - list型は単純に探索する。
@@ -114,27 +147,27 @@ class DictTraversal():
             for i in range(len(confValueList)):
                 if(childValue==confValueList[i]):
                     return
-            raise AnnotationYamlTypeError("Enum",path)
+            raise AnnotationYamlTypeError(str(self._curAnoy),"Enum",path)
         elif(type(childValue)==bool):
             if((confChildVal is None) or confChildVal=="Bool"):
                 return
             else:
-                raise AnnotationYamlTypeError("Bool",path)
+                raise AnnotationYamlTypeError(str(self._curAnoy),"Bool",path)
         elif(type(childValue)==str):
             if((confChildVal is None or confChildVal=="Str")):
                 return
             else:
-                raise AnnotationYamlTypeError("Str",path)
+                raise AnnotationYamlTypeError(fileName="aaa",type="Str",path=path)
         elif(type(childValue)==int):
             if((confChildVal is None) or confChildVal=="Int"):
                 return
             else:
-                raise AnnotationYamlTypeError("Int",path)
+                raise AnnotationYamlTypeError(str(self._curAnoy),"Int",path)
         elif(type(childValue)==float):
             if((confChildVal is None) or confChildVal=="Float"):
                 return
             else:
-                raise AnnotationYamlTypeError("Float",path)
+                raise AnnotationYamlTypeError(str(self._curAnoy),"Float",path)
         elif(type(childValue)==list):
             if((confChildVal is None) or confChildVal=="List"):
                 for i in range(len(childValue)):
@@ -143,7 +176,7 @@ class DictTraversal():
                     self._pathQueue.append(newPath)
                 return
             else:
-                raise AnnotationYamlTypeError("List",path)
+                raise AnnotationYamlTypeError(str(self._curAnoy),"List",path)
         elif(type(childValue)==dict):
             if(confChildVal is None):
                 for key,childValue in childValue.items():
@@ -157,7 +190,7 @@ class DictTraversal():
                     self._visitQueue.append((key,childValue))
                     self._pathQueue.append(newPath)
                     if(key[0]=="@"):
-                        raise AnnotationYamlTypeError("FreeDict",path)
+                        raise AnnotationYamlTypeError(str(self._curAnoy),"FreeDict",path)
                 return
             elif(confChildVal=="AnnoDict"):
                 for key,childValue in childValue.items():
@@ -166,14 +199,14 @@ class DictTraversal():
                     self._pathQueue.append(newPath)
                     confParent=self._configDict[key].get("!ParentKey")
                     if(key[0]!="@"):
-                        raise AnnotationYamlTypeError("AnnoDict",path)
+                        raise AnnotationYamlTypeError(str(self._curAnoy),"AnnoDict",path)
                     if(confParent is None):
                         pass
                     elif(parentKey not in confParent):
-                        raise AnnotationYamlTypeError("AnnoDict",path)
+                        raise AnnotationYamlTypeError(str(self._curAnoy),"AnnoDict",path)
                 return
         else:
-            raise AnnotationYamlError(f" invalid value is found at:\n    `{path}`.")
+            raise AnnotationYamlError(f" invalid value is found at:\n    {str(self._curAnoy)}: `{path}`.")
 
 if(__name__=="__main__"):
     configPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\case01\config01.yaml"
@@ -183,5 +216,5 @@ if(__name__=="__main__"):
     with open(anoyPath,mode="r",encoding="utf-8") as f:
         anoyDict=yaml.safe_load(f)
     tree01=DictTraversal(configDict)
-    tree01.startBFS(anoyDict)
+    tree01.dictBFS(anoyDict)
 

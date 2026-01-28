@@ -44,7 +44,7 @@ Builtins:
     id:
       "@Summ": Python objectの識別子を表す値を出力する。
       "@Args":
-        "@Type": Object
+          "@Type": Object
       "@Returns":
         "@Type": Int
     input:
