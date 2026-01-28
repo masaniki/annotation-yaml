@@ -1,7 +1,7 @@
 import yaml
 from pathlib import Path
 
-from anoyError import AnnotationYamlError,ConfigurationYamlError,AnoyTypeError,AnnotationYamlTypeError
+from anoyError import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
 
 class DictTraversal():
     """
@@ -157,7 +157,7 @@ class DictTraversal():
             if((confChildVal is None or confChildVal=="Str")):
                 return
             else:
-                raise AnnotationYamlTypeError(fileName="aaa",type="Str",path=path)
+                raise AnnotationYamlTypeError(str(self._curAnoy),type="Str",path=path)
         elif(type(childValue)==int):
             if((confChildVal is None) or confChildVal=="Int"):
                 return
