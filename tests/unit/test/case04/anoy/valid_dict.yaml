@@ -1,0 +1,147 @@
+"@Class":
+  Dict:
+    "@Summ": key-valueの対応関係を記述するためのdata型。
+    "@Desc": keyはhashable型である必要がある。
+    "@ClsFuncs":
+      __init__:
+        "@Summ": keyword引数によるconstructor.
+        "@Args":
+          kwargs:
+            "@Type":
+              List:
+                type: iterable
+                length: -1
+    "@InsFuncs":
+      __getitem__:
+        "@Summ": valueを出力する関数。
+        "@Args":
+          key:
+            "@Summ": key名。
+            "@Type": hashable
+        "@Returns":
+          "@Summ": 選択された要素。
+          "@Type": Any
+        "@Tags":
+        - 検索
+      __setitem__:
+        "@Summ": valueを上書きする関数。
+        "@Args":
+          key:
+            "@Summ": key名。
+            "@Type": hashable
+          value:
+            "@Summ": 新しい値。
+            "@Type": Any
+        "@Tags":
+        - 編集
+      __delitem__:
+        "@Summ": 要素を削除する関数。
+        "@Args":
+          key:
+            "@Summ": key名。
+            "@Type": hashable
+        "@Tags":
+        - 編集
+      __len__:
+        "@Summ": keyの長さを出力。
+        "@Returns":
+          "@Type": Int
+        "@Tags":
+        - 特徴量
+      __contains__:
+        "@Summ": instanceがkeyを含まれるか否かを出力。
+        "@Args":
+          key:
+            "@Summ": 帰属関係を調べるkey。
+            "@Type": hashable
+        "@Returns":
+          "@Type": Bool
+        "@Tags":
+        - 検索
+      clear:
+        "@Summ": 全要素を削除する関数。
+        "@Tags":
+        - 編集
+      get:
+        "@Summ": keyを検索する関数。
+        "@Desc": この関数はKeyErrorを出力しない。
+        "@Args":
+          key:
+            "@Summ": 検索するkey名。
+            "@Type": hashable
+          default:
+            "@Summ": keyが存在しない時に出力する値。
+            "@Default": "None"
+        "@Returns":
+          "@Summ": 取り出した値。
+          "@Type": Any
+        "@Tags":
+        - 検索
+      pop:
+        "@Summ": keyを検索して削除する関数。
+        "@Args":
+          key:
+            "@Summ": 削除するkey名。
+            "@Default": -1
+          default:
+            "@Summ": keyが存在しない時に出力する値。
+            "@Default": "None"
+        "@Returns":
+          "@Summ": 取り出した値。
+          "@Type": Any
+        "@Tags":
+        - 検索
+      copy:
+        "@Summ": 浅いcopyを出力する関数。
+        "@Returns":
+          "@Type": List
+        "@Tags":
+        - constructor
+      keys:
+        "@Summ": keyをiterator型で出力する関数。
+        "@Returns":
+          "@Type": iterator
+        "@Tags":
+        - 特徴量
+      values:
+        "@Summ": valueをiterator型で出力する関数。
+        "@Returns":
+          "@Type": iterator
+        "@Tags":
+        - 特徴量
+      items:
+        "@Summ": 組(key,value)をiterator型で出力する関数。
+        "@Returns":
+          "@Type": iterator
+        "@Tags":
+        - 特徴量
+      __eq__:
+        "@Summ": 浅い辞書型として等しいか否かを出力する関数。
+        "@Args":
+          other:
+            "@Type": Dict
+        "@Returns":
+          "@Summ": selfとotherが等しい時にTrue.
+          "@Type": Bool
+        "@Tags":
+        - 二項演算
+      __ne__:
+        "@Summ": 浅い辞書型として等しくないことを確認する関数。
+        "@Args":
+          other:
+            "@Type": Dict
+        "@Returns":
+          "@Summ": selfとotherが異なる時にTrue.
+          "@Type": Bool
+        "@Tags":
+        - 二項演算
+      __or__:
+        "@Summ": 2つの辞書型を合体する関数。
+        "@Desc": 重複するkeyは<other>で上書きされる。
+        "@Args":
+          other:
+            "@Type": Dict
+        "@Returns":
+          "@Type": Dict
+        "@Tags":
+        - constructor

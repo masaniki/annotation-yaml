@@ -1,7 +1,7 @@
 import yaml
 from pathlib import Path
 
-from anoyError import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
+from .anoyError import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
 
 class DictTraversal():
     """
@@ -62,7 +62,6 @@ class DictTraversal():
                 self._curAnoy=anoyPath
                 self.dictBFS(anoyDict)
         else:
-            print(anoyPath)
             for childPath in anoyPath.iterdir():
                 self.dirDFS(childPath)
 
@@ -87,8 +86,8 @@ class DictTraversal():
                 break
             key,value=self._visitQueue.pop(0)
             pathList=self._pathQueue.pop(0)
-            print(key,value)
-            print(pathList)
+            # print(key,value)
+            # print(pathList)
             self.typeCheck(key,value,pathList)
 
     def typeCheck(self,parentKey:str|None,childValue,path:list):
