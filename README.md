@@ -53,7 +53,7 @@ The following packages may not work properly if they are not installed:
 library_config.yaml
 
 ```
-"@Book":
+"@Books":
   "@Summary": List the book titles.
   "!ChildValue": FreeDict
 "@Author":
@@ -118,5 +118,16 @@ When there is an issue with the annotation YAML, `anoy` outputs as follows.
 
 ```
 >>> anoy library_config.yaml library.yaml
->>> <contruction>
+>>> Traceback (most recent call last):
+    ... (omission) ...
+    src.anoyModule.anoyErrors.ConfigurationYamlError: `@Auther` is not defined.
 ```
+# For Developpers
+
+## Testing
+
+This project uses `pytest`.
+
+If you want to test, put in following command.
+
+`pytest tests\unit\test_dictTraversal.py`

@@ -8,7 +8,7 @@ projectDir=Path(__file__).parent.parent.parent
 sys.path.append(str(projectDir))
 
 from src.anoyModule import DictTraversal
-from src.anoyModule import AnnotationYamlTypeError
+from src.anoyModule import AnnotationYamlTypeError, ConfigurationYamlError, AnnotationYamlError
 
 testDir=Path(__file__).parent/"test"
 sandboxDir=Path(__file__).parent/"sandbox"
@@ -17,6 +17,7 @@ sandboxDir=Path(__file__).parent/"sandbox"
 @pytest.mark.parametrize(
         "x,y",[
         ("case01/config01.yaml", "case01/valid_anoy.yaml"),
+        ("sampleCase/library_config.yaml", "sampleCase/valid_library.yaml"),
         ]
 )
 def test_valid_anoyFile(x,y):
@@ -46,6 +47,7 @@ def test_valid_anoyFile(x,y):
 @pytest.mark.parametrize(
         "x,y,z",[
         ("case02/config01.yaml", "case02/invalid_int.yaml", AnnotationYamlTypeError),
+        ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", ConfigurationYamlError)
         ]
 )
 def test_invalid_anoyFile(x,y,z):
@@ -135,7 +137,7 @@ def test_invalid_anoyDir(x,y,z):
     assert e.type==z
 
 if(__name__=="__main__"):
-    args=("case02/config01.yaml", "case02/invalid_int.yaml")
+    args=("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml")
     test_valid_anoyFile(*args)
 
 

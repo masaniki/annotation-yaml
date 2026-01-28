@@ -1,0 +1,13 @@
+"@Books":
+  "Alice's Adventures in Wonderland":
+    "@Auther": Lewis Carroll
+    "@PublishYear": 1865
+    "@Country": UK
+  "The Little Prince":
+    "@Auther": Antonie de Saint-Exupéry
+    "@PublishYear": 1945
+    "@Country": France
+  "Harry Potter":
+    "@Auther": J.K.Rowling
+    "@PublishYear": 1997
+    "@Country": UK

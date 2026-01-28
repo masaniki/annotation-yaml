@@ -1,7 +1,7 @@
 import yaml
 from pathlib import Path
 
-from .anoyError import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
+from .anoyErrors import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
 
 class DictTraversal():
     """
