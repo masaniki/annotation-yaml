@@ -36,6 +36,8 @@ YAMLのMap型にdata型の概念を導入したものが **Annotation YAML(ANOY)
 
 *annotaiton key* をkeyとする辞書型を *annotation map (AnnoMap)* 型と呼ぶ。
 
+何回も反復的に使うkeywordは *annotation key* として登録すべきである。
+
 ## FreeMap型
 
 逆に接頭辞`@`が付いていないkeyを *free key* と呼ぶ。
@@ -43,6 +45,8 @@ YAMLのMap型にdata型の概念を導入したものが **Annotation YAML(ANOY)
 *free key* をkeyとする辞書型を *free map(FreeMap)* 型と呼ぶ。
 
 こちらはdata型を指定することはできないため、YAMLのMap型と同様に扱える。
+
+こちらは *annotation key* とは対照的に、ANOYを書く人が自由にkeywordを設定できる。
 
 ## Example
 
