@@ -1,11 +1,11 @@
 import yaml
 from pathlib import Path
 
-from .anoyErrors import AnnotationYamlError,ConfigurationYamlError,AnnotationYamlTypeError
+from .anoyErrors import AnoyError,ConfigYamlError,AnoyTypeError
 
 class DictTraversal():
     """
-    @Summ: 辞書型の中身を探索するclass
+    @Summ: 辞書型の中身を探索するclass.
 
     @InsVars:
         _configDict:
@@ -62,18 +62,18 @@ class DictTraversal():
         newConfigDict={}  # 整形されたconfigDict
         for annoKey in configDict.items():
             if(annoKey[0]!="@" or annoKey[0]!="!"):
-                raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+                raise ConfigYamlError(f"{annoKey} is invalid definition.")
             valueDict=configDict[annoKey]
             if(type(valueDict)!=dict):
-                raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+                raise ConfigYamlError(f"{annoKey} is invalid definition.")
             # `!parentKey`の型確認
             confParent=valueDict.get("!ParentKey")
             if(confParent is not None):
                 if(type(confParent)!=type):
-                    raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+                    raise ConfigYamlError(f"{annoKey} is invalid definition.")
                 for item in confParent:
                     if(item[0]!="@"):
-                        raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+                        raise ConfigYamlError(f"{annoKey} is invalid definition.")
                 newConfigDict["!ParentKey"]=confParent.copy()
             # `!ChildValue`の型確認
             confChild=valueDict.get("!ChildValue")
@@ -95,17 +95,17 @@ class DictTraversal():
                         case "!AnnoMap":
                             newConfChild={"!AnnoMap":[]}
                         case _:
-                            raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+                            raise ConfigYamlError(f"{annoKey} is invalid definition.")
                 elif(type(confChild)==dict):
                     confChildKey=list(confChild.keys())
                     if(len(confChildKey)!=1):
-                        raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                     typeStr=confChildKey[0]
                     typeOption=confChild[typeStr]
                     match typeStr:
                         case "!Str":
                             if(type(typeOption)!=dict):
-                                raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             strLength=None
                             strMin=None
                             strMax=None
@@ -115,23 +115,23 @@ class DictTraversal():
                                         if(strMin is None and strMax is None):
                                             strLength=strVal
                                         else:
-                                            raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                                     case "min":
                                         if(strLength is None):
                                             strMin=strVal
                                         else:
-                                            raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                                     case "max":
                                         if(strLength is None):
                                             strMax=strVal
                                         else:
-                                            raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                                     case _:
-                                        raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             newConfChild={"!Str":{"length":strLength,"min":strMin,"max":strMax}}
                         case "!Int":
                             if(type(typeOption)!=dict):
-                                raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             intMin=None
                             intMax=None
                             for intKey,intVal in typeOption.items():
@@ -141,11 +141,11 @@ class DictTraversal():
                                     case "max":
                                         intMax=intVal
                                     case _:
-                                        raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             newConfChild={"!Int":{"min":intMin,"max":intMax}}
                         case "!Float":
                             if(type(typeOption)!=dict):
-                                raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             floatMin=None
                             floatMax=None
                             for floatKey,floatVal in typeOption.items():
@@ -155,15 +155,15 @@ class DictTraversal():
                                     case "max":
                                         floatMax=floatVal
                                     case _:
-                                        raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             newConfChild={"!Float":{"min":floatMin,"max":floatMax}}
                         case "!Enum":
                             if(type(typeOption)!=list):
-                                raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             newConfChild={"!Enum":typeOption}
                         case "!List":
                             if(type(typeOption)!=dict):
-                                raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             listType=None
                             listLength=None
                             for listKey,listVal in typeOption.items():
@@ -173,20 +173,20 @@ class DictTraversal():
                                     case "length":
                                         listLength=listVal
                                     case _:
-                                        raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             newConfChild={"!List":{"type":listType,"length":listLength}}
                         case "!AnnoDict":
                             if(type(typeOption)!=list):
-                                raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             for i in len(typeOption):
                                 item=typeOption[i]
                                 if(item[0]!="@"):
-                                    raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                    raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                             newConfChild={"!AnnoDict":typeOption}
                         case _:
-                            raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                 else:
-                    raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+                    raise ConfigYamlError(f"{annoKey} is invalid definition.")
                 newConfigDict["!ChildValue"]=newConfChild
             # isVisit keyの追加。
             valueDict["isVisit"]=False
@@ -237,12 +237,12 @@ class DictTraversal():
             if(self._visitQueue==[]):
                 break
             key,value=self._visitQueue.pop(0)
-            pathList=self._pathQueue.pop(0)
+            self._curPath=self._pathQueue.pop(0)
             # print(key,value)
             # print(pathList)
-            self.typeCheck(key,value,pathList)
+            self.typeCheck(key,value)
 
-    def typeCheck(self,parentKey:str|None,childValue,path:list):
+    def typeCheck(self,parentKey:str|None,childValue):
         """
         "@Summ": annoDict内を探索する関数。
 
@@ -266,9 +266,6 @@ class DictTraversal():
             childValue:
                 "@Summ": 探索するdict型のvalue。
                 "@Type": Any
-            path:
-                @Summ: 今まで経由したkeyのlist。
-                @Type: List
         "@Error":
         - AnnotationYamlError
         - AnnotationYamlTypeError
@@ -281,7 +278,7 @@ class DictTraversal():
         elif(parentKey[0]=="@"):
             confDictVal=self._configDict.get(parentKey)
             if(confDictVal is None):
-                raise AnnotationYamlError(f"{parentKey} is not found.")
+                raise AnoyError(f"{parentKey} is not found.")
             confChild=confDictVal.get("!ChildValue")
         else:
             confChild=None
@@ -292,25 +289,25 @@ class DictTraversal():
         confChildVal=confChild[typeStr]
         match typeStr:
             case "!Str":
-                self.checkStr(childValue,path,**confChildVal)
+                self.checkStr(childValue,**confChildVal)
             case "!Bool":
-                self.checkBool(childValue,path)
+                self.checkBool(childValue)
             case "!Int":
-                self.checkInt(childValue,path,**confChildVal)
+                self.checkInt(childValue,**confChildVal)
             case "!Float":
-                self.checkFloat(childValue,path,**confChildVal)
+                self.checkFloat(childValue,**confChildVal)
             case "!FreeMap":
-                self.checkFreeMap(childValue,path)
+                self.checkFreeMap(childValue)
             case "!AnnoMap":
-                self.checkAnnoMap(childValue,path,confChildVal)
+                self.checkAnnoMap(childValue,confChildVal)
             case "!List":
-                self.checkList(childValue,path,elementType=confChildVal["type"],length=confChildVal["length"])
+                self.checkList(childValue,elementType=confChildVal["type"],length=confChildVal["length"])
             case "!Enum":
-                self.checkEnum(childValue,path,confChildVal)
+                self.checkEnum(childValue,confChildVal)
             case _:
-                raise ConfigurationYamlError(f"{parentKey} is invalid definition.")
+                raise ConfigYamlError(f"{parentKey} is invalid definition.")
 
-    def checkStr(self,anoyValue,path:list,length=None,min=None,max=None):
+    def checkStr(self,anoyValue,length=None,min=None,max=None):
         """
         @Summ: !Str型を型確認する関数。
 
@@ -321,9 +318,6 @@ class DictTraversal():
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          path:
-            @Summ: 現在探索している場所。
-            @Type: List
           length:
             @Summ: 文字列の長さ。
             @Desc: min,maxとの両立は不可能。
@@ -341,38 +335,32 @@ class DictTraversal():
             else:
                 if(min is not None):
                     if(len(anoyValue)<min):
-                        raise AnnotationYamlTypeError(self._curFile,"!Str",path)
+                        raise AnoyTypeError("!Str",self._curFile,self._curPath)
                 if(max is not None):
                     if(max<len(anoyValue)):
-                        raise AnnotationYamlTypeError(self._curFile,"!Str",path)
+                        raise AnoyTypeError("!Str",self._curFile,self._curPath)
                 return
         else:
-            raise AnnotationYamlTypeError(self._curFile,"!Str",path)
+            raise AnoyTypeError("!Str",self._curFile,self._curPath)
 
-    def checkBool(self,anoyValue,path:list):
+    def checkBool(self,anoyValue):
         """
         @Summ: !Bool型を型確認する関数。
 
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          path:
-            @Summ: 現在探索している場所。
-            @Type: List
         """
         if(type(anoyValue)!=bool):
-            raise AnnotationYamlTypeError(self._curFile,"!Bool",path)
+            raise AnoyTypeError("!Bool",self._curFile,self._curPath)
 
-    def checkInt(self,anoyValue,path:list,min=None,max=None):
+    def checkInt(self,anoyValue,min=None,max=None):
         """
         @Summ: !Int型を型確認する関数。
 
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          path:
-            @Summ: 現在探索している場所。
-            @Type: List
           min:
             @Summ: 最小値。
           max:
@@ -381,24 +369,21 @@ class DictTraversal():
         if(type(anoyValue)==int):
             if(min is not None):
                 if(anoyValue<min):
-                    raise AnnotationYamlTypeError(self._curFile,"!Int",path)
+                    raise AnoyTypeError("!Int",self._curFile,self._curPath)
             if(max is not None):
                 if(max<anoyValue):
-                    raise AnnotationYamlTypeError(self._curFile,"!Int",path)
+                    raise AnoyTypeError("!Int",self._curFile,self._curPath)
             return
         else:
-            raise AnnotationYamlTypeError(self._curFile,"!Int",path)
+            raise AnoyTypeError("!Int",self._curFile,self._curPath)
 
-    def checkFloat(self,anoyValue,path:list,min=None,max=None):
+    def checkFloat(self,anoyValue,min=None,max=None):
         """
         @Summ: !Float型を型確認する関数。
 
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          path:
-            @Summ: 現在探索している場所。
-            @Type: List
           min:
             @Summ: 最小値。
           max:
@@ -407,36 +392,33 @@ class DictTraversal():
         if(type(anoyValue)==float):
             if(min is not None):
                 if(anoyValue<min):
-                    raise AnnotationYamlTypeError(self._curFile,"!Float",path)
+                    raise AnoyTypeError("!Float",self._curFile,self._curPath)
             if(max is not None):
                 if(max<anoyValue):
-                    raise AnnotationYamlTypeError(self._curFile,"!Float",path)
+                    raise AnoyTypeError("!Float",self._curFile,self._curPath)
             return
         else:
-            raise AnnotationYamlTypeError(self._curFile,"!Float",path)
+            raise AnoyTypeError("!Float",self._curFile,self._curPath)
 
-    def checkFreeMap(self,anoyValue,path:list):
+    def checkFreeMap(self,anoyValue):
         """
         @Summ: !FreeMap型を型確認する関数。
 
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          path:
-            @Summ: 現在探索している場所。
-            @Type: List
         """
         if(type(anoyValue)==dict):
             for key,value in anoyValue.items():
-                newPath=path+[key]
+                newPath=self._curPath+[key]
                 self._visitQueue.append((key,value))
                 self._pathQueue.append(newPath)
                 if(key[0]=="@"):
-                    raise AnnotationYamlTypeError(self._curFile,"!FreeMap",path)
+                    raise AnoyTypeError("!FreeMap",self._curFile,newPath)
         else:
-            raise AnnotationYamlTypeError(self._curFile,"!FreeMap",path)
+            raise AnoyTypeError("!FreeMap",self._curFile,self._curPath)
 
-    def checkAnnoMap(self,anoyValue,path:list,annoKeyList:list=[]):
+    def checkAnnoMap(self,anoyValue,annoKeyList:list=[]):
         """
         @Summ: !FreeMap型を型確認する関数。
 
@@ -447,9 +429,6 @@ class DictTraversal():
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          path:
-            @Summ: 現在探索している場所。
-            @Type: List
           annoKeyList:
             @Summ: annotation keyのlist。
             @Type: List
@@ -457,18 +436,18 @@ class DictTraversal():
         """
         if(type(anoyValue)==dict):
             for key,value in anoyValue.items():
-                newPath=path+[key]
+                newPath=self._curPath+[key]
                 self._visitQueue.append((key,value))
                 self._pathQueue.append(newPath)
                 if(key[0]!="@"):
-                    raise AnnotationYamlTypeError(self._curFile,"!AnnoMap",path)
+                    raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
                 if(annoKeyList!=[]):
                     if(key not in annoKeyList):
-                        raise AnnotationYamlTypeError(self._curFile,"!AnnoMap",path)
+                        raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
         else:
-            raise AnnotationYamlTypeError(self._curFile,"!AnnoMap",path)
+            raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
 
-    def checkList(self,anoyValue,path:list,elementType:str=None,length:int=None):
+    def checkList(self,anoyValue,elementType:str=None,length:int=None):
         """
         @Summ: !List型を型確認する関数。
 
@@ -479,9 +458,6 @@ class DictTraversal():
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          path:
-            @Summ: 現在探索している場所。
-            @Type: List
           elementType:
             @Summ: list型の子要素のdata型。
             @Desc:
@@ -495,32 +471,32 @@ class DictTraversal():
         if(type(anoyValue)==list):
             if(length is not None):
                 if(length!=len(list)):
-                    raise AnnotationYamlTypeError(self._curFile,"!List",path) 
+                    raise AnoyTypeError("!List",self._curFile,self._curPath) 
             for i in len(anoyValue):
                 element=anoyValue[i]
-                newPath=path+[i]
+                newPath=self._curPath+[i]
                 if(elementType is not None):
                     match elementType:
                         case "!Str":
                             if(type(element)!=str):
-                                raise AnnotationYamlTypeError(self._curFile,"!List",newPath)
+                                raise AnoyTypeError("!List",self._curFile,newPath)
                         case "!Bool":
                             if(type(element)!=bool):
-                                raise AnnotationYamlTypeError(self._curFile,"!List",newPath)
+                                raise AnoyTypeError("!List",self._curFile,newPath)
                         case "!Int":
                             if(type(element)!=int):
-                                raise AnnotationYamlTypeError(self._curFile,"!List",newPath)
+                                raise AnoyTypeError("!List",self._curFile,newPath)
                         case "!Float":
                             if(type(element)!=float):
-                                raise AnnotationYamlTypeError(self._curFile,"!List",newPath)
+                                raise AnoyTypeError("!List",self._curFile,newPath)
                         case _:
-                            raise ConfigurationYamlError(f"{elementType} is invalid definition.")
+                            raise ConfigYamlError(f"{elementType} is invalid definition.")
                 self._visitQueue.append((i,element))
                 self._pathQueue.append(newPath)
         else:
-            raise AnnotationYamlTypeError(self._curFile,"!List",path)
+            raise AnoyTypeError("!List",self._curFile,self._curPath)
     
-    def checkEnum(self,anoyValue,path:list,optionList:list):
+    def checkEnum(self,anoyValue,optionList:list):
         """
         @Summ: !Enum型を型確認する関数。
 
@@ -531,9 +507,6 @@ class DictTraversal():
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          path:
-            @Summ: 現在探索している場所。
-            @Type: List
           optionList:
             @Summ: Enum型の選択肢を格納するlist型。
             @Type: List
@@ -544,32 +517,32 @@ class DictTraversal():
                 if(anoyValue is None):
                     return
                 else:
-                    raise AnnotationYamlTypeError(self._curFile,"!Enum",path)
+                    raise AnoyTypeError("!Enum",self._curFile,self._curPath)
             match option:
                 case "!Str":
                     if(type(anoyValue)==str):
                         return
                     else:
-                        raise AnnotationYamlTypeError(self._curFile,"!Enum",path)
+                        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
                 case "!Bool":
                     if(type(anoyValue)==bool):
                         return
                     else:
-                        raise AnnotationYamlTypeError(self._curFile,"!Enum",path)
+                        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
                 case "!Int":
                     if(type(anoyValue)==int):
                         return
                     else:
-                        raise AnnotationYamlTypeError(self._curFile,"!Enum",path)
+                        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
                 case "!Float":
                     if(type(anoyValue)==float):
                         return
                     else:
-                        raise AnnotationYamlTypeError(self._curFile,"!Enum",path)
+                        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
                 case _:
                     if(anoyValue==option):
                         return
-        raise AnnotationYamlTypeError(self._curFile,"!Enum",path)
+        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
 
 
 if(__name__=="__main__"):

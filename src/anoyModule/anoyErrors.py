@@ -1,5 +1,5 @@
 
-class AnnotationYamlError(Exception):
+class AnoyError(Exception):
   """
   @Summ: annotation yaml上のError。
   """
@@ -7,20 +7,20 @@ class AnnotationYamlError(Exception):
     super().__init__(*args)
 
 
-class AnnotationYamlTypeError(Exception):
+class AnoyTypeError(Exception):
   """
   @Summ: annotation yaml上のdata型のError。
   """
-  def __init__(self,fileName:str,type:str,path:list):
+  def __init__(self,type:str,fileName:str,path:list):
     super().__init__()
-    self.fileName=fileName
     self.type=type
+    self.fileName=fileName
     self.path=path
   
   def __str__(self):
     return f"required {self.type} type at:\n    {self.fileName}: {self.path}"
 
-class ConfigurationYamlError(Exception):
+class ConfigYamlError(Exception):
   """
   @Summ: annotation yaml上のError。
   """

@@ -1,3 +1,3 @@
 
 from .dictTraversal import DictTraversal
-from .anoyErrors import AnnotationYamlError, AnnotationYamlTypeError, ConfigurationYamlError
+from .anoyErrors import AnoyError, AnoyTypeError, ConfigYamlError
