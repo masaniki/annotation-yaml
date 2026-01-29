@@ -10,6 +10,12 @@ class DictTraversal():
     @InsVars:
         _configDict:
             @Summ: configuration yamlの中身。
+            @Desc:
+            - parseConfig()で加工後の値を代入する。
+            - !ChildValueの値は{"!ChildValue": {data型名(str):詳細な設定(dict)}}という形式に直す。
+            - つまり、str-format data typeもmap-format data typeに直すということ。
+            - map-format data typeが無いBool型は{"!Bool":{}}とする。
+            - annotation keyを使った否かを"isVisit" keyに記録する。
             @Type: Dict
         _configVisit:
             @Summ: configuration yaml内のannotationKeyを使った否かを記録する変数。
@@ -62,11 +68,100 @@ class DictTraversal():
         """
         @Summ: constructor.
         """
-        self._configDict=configDict
+        self.parseConfig(configDict)
         self._visitQueue=[]
         self._pathQueue=[]
-        self._configVisit={key:False for key in configDict.keys()}
         self._curAnoy=""
+    
+    def parseConfig(self,configDict:dict):
+        """
+        @Summ: configDictを構文解析する関数。
+
+        @Desc
+        - configDictに"isVisit" keyを追加し、annotation keyを使用したかを記録する。
+        """
+        newConfigDict={}  # 整形されたconfigDict
+        for annoKey in configDict.items():
+            if(annoKey[0]!="@" or annoKey[0]!="!"):
+                raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+            valueDict=configDict[annoKey]
+            if(type(valueDict)!=dict):
+                raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+            # `!parentKey`の型確認
+            confParent=valueDict.get("!ParentKey")
+            if(confParent is not None):
+                if(type(confParent)!=type):
+                    raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+                for item in confParent:
+                    if(item[0]!="@"):
+                        raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+                newConfigDict["!ParentKey"]=confParent.copy()
+            # `!ChildValue`の型確認
+            confChild=valueDict.get("!ChildValue")
+            if(confChild is not None):
+                if(type(confChild)==str):
+                    match confChild:
+                        case "!Str":
+                            newConfChild={"!Str":{"length":None,"min":None,"max":None}}
+                        case "!Bool":
+                            newConfChild={"!Bool":{}}
+                        case "!Int":
+                            newConfChild={"!Int":{"min":None,"max":None}}
+                        case "!Float":
+                            newConfChild={"!Float":{"min":None,"max":None}}
+                        case "!List":
+                            newConfChild={"!List":{"type":None,"length":None}}
+                        case _:
+                            raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+                    newConfChild["!ChildValue"]=newConfChild
+                elif(type(confChild)==dict):
+                    confChildKey=list(confChild.keys())
+                    if(len(confChildKey)!=1):
+                        raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                    typeStr=confChildKey[0]
+                    typeOption=confChild[typeStr]
+                    match typeStr:
+                        case "!Str":
+                            if(type(typeOption)!=dict):
+                                raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                            strLength=None
+                            strMin=None
+                            strMax=None
+                            for strMapKey,strMapVal in confChildVal.items():
+                                match strMapKey:
+                                    case "length":
+                                        if(strMin is None and strMax is None):
+                                            strLength=strMapVal
+                                        else:
+                                            raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                    case "min":
+                                        if(strLength is None):
+                                            strMin=strMapVal
+                                        else:
+                                            raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                    case "max":
+                                        if(strLength is None):
+                                            strMax=strMapVal
+                                        else:
+                                            raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                                    case _:
+                                        raise ConfigurationYamlError(f"`{annoKey}` has invalid definition.")
+                            newConfChild={"!Str":{"length":None,"min":None,"max":None}}
+                        case "!Bool":
+                            newConfChild={"!Bool":{}}
+                        case "!Int":
+                            newConfChild={"!Int":{"min":None,"max":None}}
+                        case "!Float":
+                            newConfChild={"!Float":{"min":None,"max":None}}
+                        case "!List":
+                            newConfChild={"!List":{"type":None,"length":None}}
+                        case _:
+                            raise ConfigurationYamlErro
+                else:
+                    raise ConfigurationYamlError(f"{annoKey} is invalid definition.")
+            # isVisit keyの追加。
+            valueDict["isVisit"]=False
+        self._configDict=newConfigDict
 
 
     def dirDFS(self,anoyPath:Path):
