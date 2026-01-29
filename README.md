@@ -132,6 +132,12 @@ If you want to test, put in following command.
 
 `pytest tests\unit\test_dictTraversal.py`
 
+## Next To Do
+
+- [ ] test caseを全てのdata型に拡大。
+- [ ] `!Parent`のtest.
+- [ ] keywordを`!Parent`と`!Child`に変更。
+
 ## Ideas
 
 - `!`の意味を変更。ANOY CLI用の予約語という解釈に変更する。
