@@ -174,10 +174,14 @@ data型の指定には二種類の方法が使える。それは *string-format*
 - @Summ: annotation keyによるmap型。
 - @Desc: Dict型はAnnoDict型とFreeDict型にMECEに分解される。
 - @Nestable: true
-- 
+- @MapFormat:
+  - !List:
+    - @Summ: 
+    - @Desc: annotationKey型list。
 
 `!FreeMap`:
 - @Summ: free keyによるmap型。
+- @MapFormat: false
 - @Nestable: true
 
 ## Example
