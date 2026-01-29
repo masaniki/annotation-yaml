@@ -1,0 +1,18 @@
+# !Strを集中してtestする。
+"@Summ":
+  "@Summ": 要約を自然言語で記述する。
+  "!ChildValue": "!Str"
+"@SimpleStr":
+  "@Summ": 最も単純な文字列型。
+  "!ChildValue": "!Str"
+"@lengthStr":
+  "@Summ": 最も単純な文字列型。
+  "!ChildValue":
+    "!Str":
+      length: 5
+"@rangeStr":
+  "@Summ": 文字数の上限と下限が定義されている文字列型。
+  "!ChildValue":
+    "!Str":
+      min: 4
+      max: 8

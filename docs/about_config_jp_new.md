@@ -161,6 +161,7 @@ data型の指定には二種類の方法が使える。それは *string-format*
   - {Enum:["a","b","c"]}
 
 `!List`:
+- @Summ: list型。
 - @Nestable: true
 - @MapFormat:
   - !Map:
@@ -176,7 +177,7 @@ data型の指定には二種類の方法が使える。それは *string-format*
 - @Nestable: true
 - @MapFormat:
   - !List:
-    - @Summ: 
+    - @Summ: 最低限必要なannotation keyを羅列する。
     - @Desc: annotationKey型list。
 
 `!FreeMap`:

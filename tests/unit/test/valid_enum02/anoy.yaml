@@ -1,0 +1,6 @@
+# !Enumの2番目の値を代入。
+"@LiteralEnum": 12
+"@NullStrEnum": "ab"
+"@StrListEnum":
+- "ab"
+- 12

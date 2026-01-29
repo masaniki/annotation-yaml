@@ -1,0 +1,4 @@
+# lengthと異なる場合。
+"@SimpleStr": "abcd"
+"@lengthStr": "abcd"
+"@rangeStr": "abcdefgh"

@@ -17,6 +17,12 @@ sandboxDir=Path(__file__).parent/"sandbox"
 @pytest.mark.parametrize(
         "x,y",[
         ("case01/config01.yaml", "case01/valid_anoy.yaml"),
+        ("valid_str01/config.yaml", "valid_str01/anoy.yaml"),
+        ("valid_int01/config.yaml", "valid_int01/anoy.yaml"),
+        ("valid_list01/config.yaml", "valid_list01/anoy.yaml"),
+        ("valid_enum01/config.yaml", "valid_enum01/anoy.yaml"),
+        ("valid_enum02/config.yaml", "valid_enum02/anoy.yaml"),
+        ("valid_enum03/config.yaml", "valid_enum03/anoy.yaml"),
         ("sampleCase/library_config.yaml", "sampleCase/valid_library.yaml"),
         ]
 )
@@ -47,7 +53,15 @@ def test_valid_anoyFile(x,y):
 @pytest.mark.parametrize(
         "x,y,z",[
         ("case02/config01.yaml", "case02/invalid_int.yaml", AnoyTypeError),
-        ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", ConfigYamlError)
+        ("invalid_str01/config.yaml", "invalid_str01/anoy.yaml", AnoyTypeError),
+        ("invalid_str02/config.yaml", "invalid_str02/anoy.yaml", AnoyTypeError),
+        ("invalid_str03/config.yaml", "invalid_str03/anoy.yaml", AnoyTypeError),
+        ("invalid_int01/config.yaml", "invalid_int01/anoy.yaml", AnoyTypeError),
+        ("invalid_list01/config.yaml", "invalid_list01/anoy.yaml", AnoyTypeError),
+        ("invalid_list02/config.yaml", "invalid_list02/anoy.yaml", AnoyTypeError),
+        ("invalid_enum01/config.yaml", "invalid_enum01/anoy.yaml", AnoyTypeError),
+        ("invalid_enum02/config.yaml", "invalid_enum02/anoy.yaml", AnoyTypeError),
+        ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", AnoyError)
         ]
 )
 def test_invalid_anoyFile(x,y,z):
@@ -137,7 +151,7 @@ def test_invalid_anoyDir(x,y,z):
     assert e.type==z
 
 if(__name__=="__main__"):
-    args=("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml")
+    args=("invalid_str01/config01.yaml", "invalid_str01/invalid_anoy.yaml")
     test_valid_anoyFile(*args)
 
 

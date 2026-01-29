@@ -1,0 +1,8 @@
+"Str": "\"!Str\""
+"Bool": "\"!Bool\""
+"Int": "\"!Int\""
+"Float": "\"!Float\""
+"Enum": "\"!Enum\""
+"List": "\"!List\""
+"AnnoDict": "\"!AnnoMap\""
+"FreeDict": "\"!FreeMap\""

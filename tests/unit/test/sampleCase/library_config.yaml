@@ -1,12 +1,12 @@
 "@Books":
   "@Summary": List the book titles.
-  "!ChildValue": FreeDict
+  "!ChildValue": "!FreeMap"
 "@Author":
   "@Summary": Author of the book.
-  "!ChildValue": Str
+  "!ChildValue": "!Str"
 "@PublishYear":
   "@Summary": The year of the publishment.
-  "!ChildValue": Int
+  "!ChildValue": "!Int"
 "@Country":
   "@Summary": The author's native language.
-  "!ChildValue": Str
+  "!ChildValue": "!Str"

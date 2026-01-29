@@ -43,6 +43,7 @@ class DictTraversal():
         @Summ: constructor.
         """
         self._configDict=self.parseConfig(configDict)
+        print(self._configDict)
         self._visitQueue=[]
         self._pathQueue=[]
         self._curFile=""
@@ -60,8 +61,9 @@ class DictTraversal():
           @Type: dict
         """
         newConfigDict={}  # 整形されたconfigDict
-        for annoKey in configDict.items():
-            if(annoKey[0]!="@" or annoKey[0]!="!"):
+        for annoKey in configDict.keys():
+            newAnnoValue={}  #annotation keyに対応する値。
+            if(annoKey[0]!="@" and annoKey[0]!="!"):
                 raise ConfigYamlError(f"{annoKey} is invalid definition.")
             valueDict=configDict[annoKey]
             if(type(valueDict)!=dict):
@@ -69,12 +71,12 @@ class DictTraversal():
             # `!parentKey`の型確認
             confParent=valueDict.get("!ParentKey")
             if(confParent is not None):
-                if(type(confParent)!=type):
+                if(type(confParent)!=list):
                     raise ConfigYamlError(f"{annoKey} is invalid definition.")
                 for item in confParent:
                     if(item[0]!="@"):
                         raise ConfigYamlError(f"{annoKey} is invalid definition.")
-                newConfigDict["!ParentKey"]=confParent.copy()
+                newAnnoValue["!ParentKey"]=confParent.copy()
             # `!ChildValue`の型確認
             confChild=valueDict.get("!ChildValue")
             if(confChild is not None):
@@ -187,9 +189,11 @@ class DictTraversal():
                             raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                 else:
                     raise ConfigYamlError(f"{annoKey} is invalid definition.")
-                newConfigDict["!ChildValue"]=newConfChild
-            # isVisit keyの追加。
-            valueDict["isVisit"]=False
+                newAnnoValue["!ChildValue"]=newConfChild
+                # isVisit keyの追加。
+                newAnnoValue["isVisit"]=False
+            # 最後にannotation keyを登録。
+            newConfigDict[annoKey]=newAnnoValue
         return newConfigDict
 
 
@@ -238,8 +242,8 @@ class DictTraversal():
                 break
             key,value=self._visitQueue.pop(0)
             self._curPath=self._pathQueue.pop(0)
-            # print(key,value)
-            # print(pathList)
+            print(key,value)
+            print(self._curPath)
             self.typeCheck(key,value)
 
     def typeCheck(self,parentKey:str|None,childValue):
@@ -284,8 +288,20 @@ class DictTraversal():
             confChild=None
         # anoyの型確認
         if(confChild is None): #Noneの処理方法は不明。
-            pass
-        typeStr=[confChild.keys()][0]
+            # nestになるlistとdictだけ対処する。
+            if(type(childValue)==list):
+                for i in len(childValue):
+                    element=childValue[i]
+                    newPath=self._curPath+[i]
+                    self._visitQueue.append((i,element))
+                    self._pathQueue.append(newPath)
+            elif(type(childValue)==dict):
+                for key,value in childValue.items():
+                    newPath=self._curPath+[key]
+                    self._visitQueue.append((key,value))
+                    self._pathQueue.append(newPath)
+            return
+        typeStr=list(confChild.keys())[0]
         confChildVal=confChild[typeStr]
         match typeStr:
             case "!Str":
@@ -323,15 +339,21 @@ class DictTraversal():
             @Desc: min,maxとの両立は不可能。
           min:
             @Summ: 文字列の長さの最小値。
-            @Desc: lengthとの両立は不可能。
+            @Desc:
+            - lengthとの両立は不可能。
+            - min-1からerror.
           max:
             @Summ: 文字列の長さの最大値。
-            @Desc: lengthとの両立は不可能。
+            @Desc:
+            - lengthとの両立は不可能。
+            - max+1からerror.
         """
         if(type(anoyValue)==str):
-            if(anoyValue is not None):
+            if(length is not None):
                 if(len(anoyValue)==length):
                     return
+                else:
+                    raise AnoyTypeError("!Str",self._curFile,self._curPath)
             else:
                 if(min is not None):
                     if(len(anoyValue)<min):
@@ -470,9 +492,9 @@ class DictTraversal():
         """
         if(type(anoyValue)==list):
             if(length is not None):
-                if(length!=len(list)):
+                if(length!=len(anoyValue)):
                     raise AnoyTypeError("!List",self._curFile,self._curPath) 
-            for i in len(anoyValue):
+            for i in range(len(anoyValue)):
                 element=anoyValue[i]
                 newPath=self._curPath+[i]
                 if(elementType is not None):
@@ -502,7 +524,8 @@ class DictTraversal():
 
         @Desc:
         - 他の言語のUnion型の役割も兼ねている。
-        - nestしないdata型[!Bool,!Str,!Int,!Float,null]は選択肢にできる。
+        - 選択できるdata型は、[null,!Bool,!Str,!Int,!Float,!List,!FreeMap]である。
+        - 入れ子の下層までは確認しない(浅いdata型確認)。
 
         @Args:
           anoyValue:
@@ -513,33 +536,29 @@ class DictTraversal():
         """
         for i in range(len(optionList)):
             option=optionList[i]
-            if(option is None):
-                if(anoyValue is None):
+            if(option is None and anoyValue is None):
                     return
-                else:
-                    raise AnoyTypeError("!Enum",self._curFile,self._curPath)
             match option:
                 case "!Str":
                     if(type(anoyValue)==str):
                         return
-                    else:
-                        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
                 case "!Bool":
                     if(type(anoyValue)==bool):
                         return
-                    else:
-                        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
                 case "!Int":
                     if(type(anoyValue)==int):
                         return
-                    else:
-                        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
                 case "!Float":
                     if(type(anoyValue)==float):
                         return
-                    else:
-                        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
+                case "!List":
+                    if(type(anoyValue)==list):
+                        return
+                case "!FreeMap":
+                    if(type(anoyValue)==dict):
+                        return
                 case _:
+                    print("else")
                     if(anoyValue==option):
                         return
         raise AnoyTypeError("!Enum",self._curFile,self._curPath)

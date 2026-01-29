@@ -1,0 +1,14 @@
+# !Strを集中してtestする。
+"@Summ":
+  "@Summ": 要約を自然言語で記述する。
+  "!ChildValue": "!Str"
+"@SimpleList":
+  "@Summ": 最も単純なList型。
+  "!ChildValue": "!List"
+"@IntList":
+  "@Summ": optionを利用したlist型。
+  "!ChildValue":
+    "!List":
+      type: "!Int"
+      length: 3
+

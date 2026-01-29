@@ -1,37 +1,37 @@
 # 全てのdata型をtestする。
 "@Summ":
   "@Summ": 要約を自然言語で記述する。
-  "!ChildValue": Str
+  "!ChildValue": "!Str"
 "@AnyData":
   "@Summ": 全てのdata型を格納するobject.
-  "!ChildValue": AnnoDict
+  "!ChildValue": "!AnnoMap"
 "@NumberData":
   "@Summ": 数値のdata型を格納するobject.
-  "!ChildValue": AnnoDict
+  "!ChildValue": "!AnnoMap"
 "@NestableData":
   "@Summ": 入れ子にできるdata型を格納するobject.
-  "!ChildValue": AnnoDict
+  "!ChildValue": "!AnnoMap"
 "@IntExample":
   "@Summ": 整数型をtestする関数。
-  "!ChildValue": Int
+  "!ChildValue": "!Int"
   "!ParentKey":
   - "@AnyData"
   - "@NumberData"
 "@FloatExample":
   "@Summ": 不動小数点型をtestする関数。
-  "!ChildValue": Float
+  "!ChildValue": "!Float"
   "!ParentKey":
   - "@AnyData"
   - "@NumberData"
 "@BoolExample":
   "@Summ": 真理値型をtestする関数。
-  "!ChildValue": Bool
+  "!ChildValue": "!Bool"
   "!ParentKey":
   - "@AnyData"
 "@EnumExample":
-  "@Summ": Enum型をtestする関数。
+  "@Summ": "!Enum型をtestする関数。"
   "!ChildValue":
-    Enum:
+    "!Enum":
     - "XXX"
     - "YYY"
     - "ZZZ"
@@ -39,18 +39,18 @@
   - "@AnyData"
 "@StrExample":
   "@Summ": 文字列型をtestする関数。
-  "!ChildValue": Str
+  "!ChildValue": "!Str"
   "!ParentKey":
   - "@AnyData"
 "@ListExample":
   "@Summ": list型をtestする関数。
-  "!ChildValue": List
+  "!ChildValue": "!List"
   "!ParentKey":
   - "@AnyData"
   - "@NestableData"
-"@FreeDictExample":
-  "@Summ": FreeDict型をtestする関数。
-  "!ChildValue": FreeDict
+"@FreeMapExample":
+  "@Summ": "!FreeMap型をtestする関数。"
+  "!ChildValue": "!FreeMap"
   "!ParentKey":
   - "@AnyData"
   - "@NestableData"

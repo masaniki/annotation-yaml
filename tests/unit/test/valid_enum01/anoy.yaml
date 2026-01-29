@@ -1,0 +1,4 @@
+# !Enumの1番目の値を代入。
+"@LiteralEnum": true
+"@NullStrEnum": null
+"@StrListEnum": "ab"
