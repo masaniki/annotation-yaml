@@ -30,6 +30,34 @@ class DictTraversal():
             @ComeFrom: current ANOY.
             @Type: Str
     """
+
+    @classmethod
+    def checkStrType(cls,val,length=None,min=None,max=None):
+        """
+        @Summ: 文字列型の型確認をする関数。
+
+        @Desc:
+        - <length>と<min>、<length>と<max>の両立は不可能であるが、この関数ではその確認を行わない。
+        - 呼び出し時にその確認を行うべきである。
+
+        @Args:
+          val:
+            @Summ: 型確認する値。
+          length:
+            @Summ: 文字列の長さ。
+            @Desc: min,maxとの両立は不可能。
+          min:
+            @Summ: 文字列の長さの最小値。
+            @Desc: lengthとの両立は不可能。
+          max:
+            @Summ: 文字列の長さの最大値。
+            @Desc: lengthとの両立は不可能。
+        """
+        if(type(val)==str):
+            if(length is not None):
+
+                if(min is not None):
+
     def __init__(self,configDict:dict):
         """
         @Summ: constructor.
@@ -123,62 +151,85 @@ class DictTraversal():
         - ConfigurationYamlError
         """
         if(parentKey is None):
-            confChildVal=None    #confChild=Noneの時は型確認をしない。
+            confChild=None    #confChild=Noneの時は型確認をしない。
         elif(type(parentKey)!=str):
-            confChildVal=None
+            confChild=None
         elif(parentKey[0]=="@"):
-            confChild=self._configDict.get(parentKey)
-            if(confChild is None):
+            confDictVal=self._configDict.get(parentKey)
+            if(confDictVal is None):
                 raise ConfigurationYamlError(f"`{parentKey}` is not defined.")
-            confChildVal=confChild.get("!ChildValue")
+            confChild=confDictVal.get("!ChildValue")
         else:
-            confChildVal=None
-        # configChildValueがdict型の時。
-        if(type(confChildVal)==dict):
-            #Enum型の型確認。
-            confKeyList=list(confChildVal.keys())
-            if(len(confKeyList)!=1):
+            confChild=None
+        # map-fromat data type.
+        if(type(confChild)==dict):
+            confChildKey=list(confChild.keys())
+            if(len(confChildKey)!=1):
                 raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
-            confValueList=confChildVal[confKeyList[0]]
-            match confKeyList[0]:
-                case "!Enum":
-                    if(type(confValueList)!=list):
+            typeStr=confChildKey[0]
+            confChildVal=confChild[typeStr]
+            match typeStr:
+                case "!Str":
+                    if(type(confChildVal)!=dict):
                         raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
+                    strLength=None
+                    strMin=None
+                    strMax=None
+                    for strMapKey,strMapVal in confChildVal.items():
+                        match strMapKey:
+                            case "length":
+                                if(strMin is None and strMax is None):
+                                    strLength=strMapVal
+                                else:
+                                    raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
+                            case "min":
+                                if(strLength is None):
+                                    strMin=strMapVal
+                                else:
+                                    raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
+                            case "max":
+                                if(strLength is None):
+                                    strMax=strMapVal
+                                else:
+                                    raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
+                            case _:
+                                raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
+                        self.checkStrType(childValue,strLength,strMin,strMax)
                     # annotaion yaml側の型確認。
-                    for i in range(len(confValueList)):
-                        if(childValue==confValueList[i]):
+                    for i in range(len(confChildVal)):
+                        if(childValue==confChildVal[i]):
                             return
                     raise AnnotationYamlTypeError(str(self._curAnoy),"!Enum",path)
-                case "!Str":
-                    if(type(confValueList)!=list):
+                case "!Enum":
+                    if(type(confChildVal)!=list):
                         raise ConfigurationYamlError(f"`{parentKey}` has invalid definition.")
                     # annotaion yaml側の型確認。
-                    for i in range(len(confValueList)):
-                        if(childValue==confValueList[i]):
+                    for i in range(len(confChildVal)):
+                        if(childValue==confChildVal[i]):
                             return
                     raise AnnotationYamlTypeError(str(self._curAnoy),"!Enum",path)
         elif(type(childValue)==bool):
-            if((confChildVal is None) or confChildVal=="!Bool"):
+            if((confChild is None) or confChild=="!Bool"):
                 return
             else:
                 raise AnnotationYamlTypeError(str(self._curAnoy),"!Bool",path)
         elif(type(childValue)==str):
-            if((confChildVal is None or confChildVal=="!Str")):
+            if((confChild is None or confChild=="!Str")):
                 return
             else:
                 raise AnnotationYamlTypeError(str(self._curAnoy),type="!Str",path=path)
         elif(type(childValue)==int):
-            if((confChildVal is None) or confChildVal=="!Int"):
+            if((confChild is None) or confChild=="!Int"):
                 return
             else:
                 raise AnnotationYamlTypeError(str(self._curAnoy),"!Int",path)
         elif(type(childValue)==float):
-            if((confChildVal is None) or confChildVal=="!Float"):
+            if((confChild is None) or confChild=="!Float"):
                 return
             else:
                 raise AnnotationYamlTypeError(str(self._curAnoy),"!Float",path)
         elif(type(childValue)==list):
-            if((confChildVal is None) or confChildVal=="!List"):
+            if((confChild is None) or confChild=="!List"):
                 for i in range(len(childValue)):
                     newPath=path+[i]
                     self._visitQueue.append((i,childValue[i]))
@@ -187,13 +238,13 @@ class DictTraversal():
             else:
                 raise AnnotationYamlTypeError(str(self._curAnoy),"!List",path)
         elif(type(childValue)==dict):
-            if(confChildVal is None):
+            if(confChild is None):
                 for key,childValue in childValue.items():
                     newPath=path+[key]
                     self._visitQueue.append((key,childValue))
                     self._pathQueue.append(newPath)
                 return
-            elif(confChildVal=="!FreeDict"):
+            elif(confChild=="!FreeDict"):
                 for key,childValue in childValue.items():
                     newPath=path+[key]
                     self._visitQueue.append((key,childValue))
@@ -201,7 +252,7 @@ class DictTraversal():
                     if(key[0]=="@"):
                         raise AnnotationYamlTypeError(str(self._curAnoy),"!FreeDict",path)
                 return
-            elif(confChildVal=="!AnnoDict"):
+            elif(confChild=="!AnnoDict"):
                 for key,childValue in childValue.items():
                     newPath=path+[key]
                     self._visitQueue.append((key,childValue))

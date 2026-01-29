@@ -123,6 +123,7 @@ data型の指定には二種類の方法が使える。それは *string-format*
 
 `!Bool`:
 - @Summ: 真理値型を表す。
+- @MapFormat: false
 
 `!Int`:
 - @Summ: 整数型を表す。
@@ -149,15 +150,25 @@ data型の指定には二種類の方法が使える。それは *string-format*
 `!Enum`:
 - @Summ: 列挙型を表す。
 - @Desc:
-  - {Enum:構成要素(list型)}
   - 列挙型の構成要素はliteralのみ。
   - 構成要素はliteralやliteralをkeyとするdict型である。
+- @MapFormat:
+  - !List:
+    - 
+    - {Enum:構成要素(list型)}
 - @Nestable: false
 - @Example:
   - {Enum:["a","b","c"]}
 
 `!List`:
 - @Nestable: true
+- @MapFormat:
+  - !Map:
+    - type:
+      - @Summ: data型を指定する。
+      - @Type: !Str
+    - length:
+      - @Summ: listの長さを指定する。
 
 `!AnnoMap`:
 - @Summ: annotation keyによるmap型。
