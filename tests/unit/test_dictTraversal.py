@@ -53,6 +53,7 @@ def test_valid_anoyFile(x,y):
 @pytest.mark.parametrize(
         "x,y,z",[
         ("case02/config01.yaml", "case02/invalid_int.yaml", AnoyTypeError),
+        ("typo01/config.yaml", "typo01/anoy.yaml", AnoyError),
         ("invalid_str01/config.yaml", "invalid_str01/anoy.yaml", AnoyTypeError),
         ("invalid_str02/config.yaml", "invalid_str02/anoy.yaml", AnoyTypeError),
         ("invalid_str03/config.yaml", "invalid_str03/anoy.yaml", AnoyTypeError),
