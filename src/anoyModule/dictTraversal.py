@@ -9,17 +9,12 @@ class DictTraversal():
 
     @InsVars:
         _configDict:
-            @Summ: configuration yamlの中身。
+            @Summ: config yamlを構文解析した後の値を格納する。
             @Desc:
-            - parseConfig()で加工後の値を代入する。
             - !ChildValueの値は{"!ChildValue": {data型名(str):詳細な設定(dict)}}という形式に直す。
             - つまり、str-format data typeもmap-format data typeに直すということ。
             - map-format data typeが無いBool型は{"!Bool":{}}とする。
             - annotation keyを使った否かを"isVisit" keyに記録する。
-            @Type: Dict
-        _configVisit:
-            @Summ: configuration yaml内のannotationKeyを使った否かを記録する変数。
-            @Desc: {annotationKey(str):訪れた⇒True(bool)}
             @Type: Dict
         _visitQueue:
             @Summ: 探索queue
@@ -36,33 +31,6 @@ class DictTraversal():
             @ComeFrom: current ANOY.
             @Type: Str
     """
-
-    @classmethod
-    def checkStrType(cls,val,length=None,min=None,max=None):
-        """
-        @Summ: 文字列型の型確認をする関数。
-
-        @Desc:
-        - <length>と<min>、<length>と<max>の両立は不可能であるが、この関数ではその確認を行わない。
-        - 呼び出し時にその確認を行うべきである。
-
-        @Args:
-          val:
-            @Summ: 型確認する値。
-          length:
-            @Summ: 文字列の長さ。
-            @Desc: min,maxとの両立は不可能。
-          min:
-            @Summ: 文字列の長さの最小値。
-            @Desc: lengthとの両立は不可能。
-          max:
-            @Summ: 文字列の長さの最大値。
-            @Desc: lengthとの両立は不可能。
-        """
-        if(type(val)==str):
-            if(length is not None):
-
-                if(min is not None):
 
     def __init__(self,configDict:dict):
         """
@@ -412,6 +380,45 @@ class DictTraversal():
                 return
         else:
             raise AnnotationYamlError(f" invalid value is found at:\n    {str(self._curAnoy)}: `{path}`.")
+
+    def checkStr(self,val,path:list,length=None,min=None,max=None):
+        """
+        @Summ: !Str型を型確認する関数。
+
+        @Desc:
+        - <length>と<min>、<length>と<max>の両立は不可能であるが、この関数ではその確認を行わない。
+        - 呼び出し時にその確認を行うべきである。
+
+        @Args:
+          val:
+            @Summ: 型確認する値。
+          path:
+            @Summ: 現在探索している場所。
+            @Type: List
+          length:
+            @Summ: 文字列の長さ。
+            @Desc: min,maxとの両立は不可能。
+          min:
+            @Summ: 文字列の長さの最小値。
+            @Desc: lengthとの両立は不可能。
+          max:
+            @Summ: 文字列の長さの最大値。
+            @Desc: lengthとの両立は不可能。
+        """
+        if(type(val)==str):
+            if(val is not None):
+                if(len(val)==length):
+                    return
+            else:
+                if(min is not None):
+                    if(len(val)<min):
+                        raise AnnotationYamlTypeError(self._curAnoy,"!Str",path)
+                if(max is not None):
+                    if(max<len(val)):
+                        raise AnnotationYamlTypeError(self._curAnoy,"!Str",path)
+                return
+        else:
+            raise AnnotationYamlTypeError(self._curAnoy,"!Str",path)
 
 if(__name__=="__main__"):
     configPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\case01\config01.yaml"
