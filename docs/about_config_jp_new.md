@@ -47,34 +47,34 @@ Map型の入れ子は以下のような構造になっている。
 
 ```
 @CurrentKey:
-  !ParentKey:
+  !Parent:
   - @XXX
   - @YYY
   - @ZZZ
-  !ChildValue: !Str
+  !Child: !Str
 ```
 
 
-`!ParentKey`は、`<current_annotation_key>`と`<parent_annotaiton_key>`の関係を指定するためのkeywordである。
+`!Parent`は、`<current_annotation_key>`と`<parent_annotaiton_key>`の関係を指定するためのkeywordである。
 
-`!ChildValue`は、`<current_annotation_key>`と`<current_annotation_value>`の関係を指定するkeywordである。
+`!Child`は、`<current_annotation_key>`と`<current_annotation_value>`の関係を指定するkeywordである。
 
 ### 詳細
 
-`!ParentKey`:
+`!Parent`:
 - @Summary: 上図の`<parent_annotation_key>`の所を指定数するためのkeyword.
 - @Description:
   - ここに記述していないannotation keyは`<current_annotaion_key>`の親要素にはなれない。
   - nullは親要素が存在しないことを表す(つまりこの要素がroot要素である)。
 - @Type: AnnotationKeyのList型。
 
-`!ChildValue`:
+`!Child`:
 - @Summary: 上図の`<annotation_value>`のdata型を指定する。
 - @Description: data型の指定方法については次の項で解説している。
 
 ## data型を定義する。
 
-`<current_annotation_key>`に対応するdata型は`!ChildValue` keywordで指定することができる。
+`<current_annotation_key>`に対応するdata型は`!Child` keywordで指定することができる。
 
 data型の種類は基本的にoriginalのYAMLと同じであるが、いくつかの点で異なる。
 
@@ -189,14 +189,14 @@ data型の指定には二種類の方法が使える。それは *string-format*
 ```
 "@Books":
   "@Summary": 本の名前を羅列する。
-  "!ChildValue": FreeDict
+  "!Child": FreeDict
 "@Author":
   "@Summary": 本の筆者を記述する。
-  "!ChildValue": Str
+  "!Child": Str
 "@PublishYear":
   "@Summary": 本が発売された年。
-  "!ChildValue": Int
+  "!Child": Int
 "@Country":
   "@Summary": 筆者の母国語。
-  "!ChildValue": Str
+  "!Child": Str
 ```

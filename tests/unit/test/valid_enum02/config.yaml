@@ -1,24 +1,24 @@
 # !Enumのtest.
 "@Summ":
   "@Summ": 要約を自然言語で記述する。
-  "!ChildValue": "!Str"
+  "!Child": "!Str"
 "@LiteralEnum":
   "@Summ": literalの列挙型。
-  "!ChildValue":
+  "!Child":
     "!Enum":
     - true
     - 12
     - "abc"
 "@NullStrEnum":
   "@Summ": null型とStr型とliteralの列挙型。
-  "!ChildValue":
+  "!Child":
     "!Enum":
     - null
     - "!Str"
     - 12
 "@StrListEnum":
   "@Summ": Str型とList型とliteralの列挙型。
-  "!ChildValue":
+  "!Child":
     "!Enum":
     - "!Str"
     - "!List"

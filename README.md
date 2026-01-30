@@ -136,11 +136,8 @@ If you want to test, put in following command.
 
 - [ ] test caseを全てのdata型に拡大。
 - [ ] `!Parent`のtest.
-- [ ] keywordを`!Parent`と`!Child`に変更。
+- [x] keywordを`!Parent`と`!Child`に変更。
 
 ## Ideas
 
-- `!`の意味を変更。ANOY CLI用の予約語という解釈に変更する。
-- data型をの接頭辞にも`!`を採用。
-- data型は、str型だけでなく、data型stringをkeyとするMap型にも拡大する。
-- Union型は導入せずに、Enum型の中にdata型を挿入できるというsystemにする。
+

@@ -11,7 +11,7 @@ class DictTraversal():
         _configDict:
             @Summ: config yamlを構文解析した後の値を格納する。
             @Desc:
-            - !ChildValueの値は{"!ChildValue": {typeString(str):typOption(dict)}}という形式に直す。
+            - !Childの値は{"!Child": {typeString(str):typOption(dict)}}という形式に直す。
             - typeStringはdata型を表す文字列。
             - typeOptionはdata型の詳細な設定を表すdict型である。
             - つまり、str-format data typeもmap-format data typeに直すということ。
@@ -68,17 +68,17 @@ class DictTraversal():
             valueDict=configDict[annoKey]
             if(type(valueDict)!=dict):
                 raise ConfigYamlError(f"{annoKey} is invalid definition.")
-            # `!parentKey`の型確認
-            confParent=valueDict.get("!ParentKey")
+            # `!Parent`の型確認
+            confParent=valueDict.get("!Parent")
             if(confParent is not None):
                 if(type(confParent)!=list):
                     raise ConfigYamlError(f"{annoKey} is invalid definition.")
                 for item in confParent:
                     if(item[0]!="@"):
                         raise ConfigYamlError(f"{annoKey} is invalid definition.")
-                newAnnoValue["!ParentKey"]=confParent.copy()
-            # `!ChildValue`の型確認
-            confChild=valueDict.get("!ChildValue")
+                newAnnoValue["!Parent"]=confParent.copy()
+            # `!Child`の型確認
+            confChild=valueDict.get("!Child")
             if(confChild is not None):
                 if(type(confChild)==str):
                     match confChild:
@@ -189,7 +189,7 @@ class DictTraversal():
                             raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
                 else:
                     raise ConfigYamlError(f"{annoKey} is invalid definition.")
-                newAnnoValue["!ChildValue"]=newConfChild
+                newAnnoValue["!Child"]=newConfChild
                 # isVisit keyの追加。
                 newAnnoValue["isVisit"]=False
             # 最後にannotation keyを登録。
@@ -251,12 +251,12 @@ class DictTraversal():
         "@Summ": annoDict内を探索する関数。
 
         "@Desc":
-        - 型確認は"!ParentKey"と"!ChildValue"の2つだ。
-        - annotationKeyが親でない時は、"!ParentKey"も"!ChildValue"も効力を発揮しないので無視。
-        - ただし、annoKeyがNoneの時は、"!ParentKey"が効力を発揮する場合がある。
-        - !ChildValueが無い時は何もしない。
-        - !ChildValueが無い時は、childValue=nullとして考える。
-        - valueがanoyDict型の時のみ、!ParentKeyの型確認が行われる。
+        - 型確認は"!Parent"と"!Child"の2つだ。
+        - annotationKeyが親でない時は、"!Parent"も"!Child"も効力を発揮しないので無視。
+        - ただし、annoKeyがNoneの時は、"!Parent"が効力を発揮する場合がある。
+        - !Childが無い時は何もしない。
+        - !Childが無い時は、childValue=nullとして考える。
+        - valueがanoyDict型の時のみ、!Parentの型確認が行われる。
 
         "@Args":
             parentKey:
@@ -283,7 +283,7 @@ class DictTraversal():
             confDictVal=self._configDict.get(parentKey)
             if(confDictVal is None):
                 raise AnoyError(f"{parentKey} is not found.")
-            confChild=confDictVal.get("!ChildValue")
+            confChild=confDictVal.get("!Child")
         else:
             confChild=None
         # anoyの型確認
