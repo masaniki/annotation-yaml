@@ -7,10 +7,7 @@
         "@Summ": keyword引数によるconstructor.
         "@Args":
           kwargs:
-            "@Type":
-              List:
-                type: iterable
-                length: -1
+            "@Type": List
     "@InsFuncs":
       __getitem__:
         "@Summ": valueを出力する関数。

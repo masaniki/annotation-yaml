@@ -99,7 +99,7 @@ def test_invalid_anoyFile(x,y,z):
 
 @pytest.mark.parametrize(
         "x,y",[
-        # ("case04/config01.yaml", "case04/anoy"),
+        ("case04/config.yaml", "case04/anoy"),
         ]
 )
 def test_valid_anoyDir(x,y):
@@ -128,7 +128,7 @@ def test_valid_anoyDir(x,y):
 
 @pytest.mark.parametrize(
         "x,y,z",[
-        # ("case05/config01.yaml", "case05/anoy", AnoyTypeError),
+        ("case05/config.yaml", "case05/anoy", AnoyTypeError),
         ]
 )
 def test_invalid_anoyDir(x,y,z):

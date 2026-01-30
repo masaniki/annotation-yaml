@@ -1,17 +1,13 @@
 "@Class":
   Dict:
     "@Summ": key-valueの対応関係を記述するためのdata型。
-    "@Desc":
-    - keyはhashable型である必要がある。
+    "@Desc": keyはhashable型である必要がある。
     "@ClsFuncs":
       __init__:
         "@Summ": keyword引数によるconstructor.
         "@Args":
           kwargs:
-            "@Type":
-              List:
-                type: iterable
-                length: -1
+            "@Type": List
     "@InsFuncs":
       __getitem__:
         "@Summ": valueを出力する関数。
@@ -72,7 +68,7 @@
             "@Type": hashable
           default:
             "@Summ": keyが存在しない時に出力する値。
-            "@Default": null
+            "@Default": "None"
         "@Returns":
           "@Summ": 取り出した値。
           "@Type": Any
@@ -86,7 +82,7 @@
             "@Default": -1
           default:
             "@Summ": keyが存在しない時に出力する値。
-            "@Default": null
+            "@Default": "None"
         "@Returns":
           "@Summ": 取り出した値。
           "@Type": Any

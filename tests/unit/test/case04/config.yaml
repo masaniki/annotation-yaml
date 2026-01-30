@@ -68,67 +68,67 @@
   "@Summ": class変数を格納する。
   "@ComeFrom": class variables.
   "!Child": "!FreeMap"
-  "!Parnet":
+  "!Parent":
   - "@Class" 
 "@ClsFuncs":
   "@Summ": class関数を格納する。
   "@ComeFrom": class function.
   "!Child": "!FreeMap"
-  "!Parnet":
+  "!Parent":
   - "@Class"
 "@InsVars":
   "@Summ": instant変数を格納する。
   "@ComeFrom": instance variables.
   "!Child": "!FreeMap"
-  "!Parnet":
+  "!Parent":
   - "@Class"
 "@InsFuncs":
   "@Summ": instance関数を格納する。
   "@ComeFrom": instance functions.
   "!Child": "!FreeMap"
-  "!Parnet":
+  "!Parent":
   - "@Class"
 "@Getter":
   "@Summ": classの外部から変数を参照可能か否かを記録。
   "!Child":
     "!Enum":
     - "+":
-      "@Summ": classの外部から参照可能。
+        "@Summ": classの外部から参照可能。
     - "#":
-      "@Summ": 子classからは参照可能。
+        "@Summ": 子classからは参照可能。
     - "-":
-      "@Summ": 外部のclassから参照不可能。
+        "@Summ": 外部のclassから参照不可能。
   "@Default": "+"
 "@Setter":
   "@Summ": classの外部から変数を代入可能か否かを記録。
   "!Child":
     "!Enum":
     - "+":
-      "@Summ": classの外部から代入可能。
+        "@Summ": classの外部から代入可能。
     - "#":
-      "@Summ": 子classからは代入可能。
+        "@Summ": 子classからは代入可能。
     - "-":
-      "@Summ": 外部のclassから代入不可能。
+        "@Summ": 外部のclassから代入不可能。
   "@Default": "+"
 "@Args":
   "@Summ": 引数を記述する。
   "@ComeFrom": arguments.
   "!Child": "!FreeMap"
-  "!Parnet":
+  "!Parent":
     - "@Funcs"
     - "@InsFuncs"
     - "@ClsFuncs"
 "@Returns":
   "@Summ": 引数を記述する。
   "!Child": "!AnnoMap"
-  "!Parnet":
+  "!Parent":
     - "@Funcs"
     - "@InsFuncs"
     - "@ClsFuncs"
 "@Error":
   "@Summ": 例外処理の内容を記述する。
   "!Child": "!FreeMap"
-  "!Parnet":
+  "!Parent":
     - "@Funcs"
     - "@InsFuncs"
     - "@ClsFuncs"
