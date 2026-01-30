@@ -1,2 +1,4 @@
-"!Parnet": "!Parnet"
-"!Child": "!Child"
+"Str": "\"!Str\""
+"FreeDict": "\"!FreeMap\""
+"!ParentKey": "!Parnet"
+"!ChildValue": "!Child"

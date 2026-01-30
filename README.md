@@ -141,4 +141,15 @@ If you want to test, put in following command.
 
 ## Ideas
 
-
+```
+- key01
+- key02
+- key03
+```
+と
+```
+- {key01:value01}
+- {key02:value02}
+- {key03:value03}
+```
+を等価に扱うsystemが欲しい。

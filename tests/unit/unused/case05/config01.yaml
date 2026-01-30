@@ -2,39 +2,38 @@
 "@Summ":
   "@Summ": 簡易的な説明を自然言語で記述する。1行に収まる程度である必要がある。
   "@ComeFrom": summary.
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Type":
   "@Summ": value(key-value')のdata型を記述する。
   "@Desc":
   - 現在は厳密な型付けではないので自然言語的な説明も許容している。
   - data型はUpperCammelCaseで記述する。
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Default":
   "@Summ": dataの初期値を記述する。
-  "!ChildValue": Str
 "@Desc":
   "@Summ": 詳細情報を自然言語で記述する。 複数行でも良い。
   "@ComeFrom": description.
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Feat":
   "@Summ": 特徴を記述する。
   "@ComeFrom": feature.
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Note":
   "@Summ": メモ書き。
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Attention":
   "@Summ": 注意message。
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Caution":
   "@Summ": 警告message。
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Warning":
   "@Summ": 重大な警告message。
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Tags":
   "@Summ": 検索用のkeyword。
-  "!ChildValue": List
+  "!Child": "!List"
   "@Example":
   - constructor:
     "@Summ": 同じdata型のinstanceを生成する時に用いる。
@@ -50,49 +49,49 @@
     "@Summ": 同じdata型を引数に持つ∧戻り値も同じdata型の時に用いる。
 "@Example":
   "@Summ": 例を自然言語で記述する。
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Class":
   "@Summ": classを格納する。
-  "!ChildValue": FreeDict
+  "!Child": "!FreeMap"
 "@Parent":
   "@Summ": 親classを記述する。
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@Vars":
   "@Summ": 変数を格納する。
   "@ComeFrom": variables.
-  "!ChildValue": FreeDict
+  "!Child": "!FreeMap"
 "@Funcs":
   "@Summ": 関数を格納する。
   "@ComeFrom": functions.
-  "!ChildValue": FreeDict
+  "!Child": "!FreeMap"
 "@ClsVars":
   "@Summ": class変数を格納する。
   "@ComeFrom": class variables.
-  "!ChildValue": FreeDict
-  "!ParentKey":
+  "!Child": "!FreeMap"
+  "!Parnet":
   - "@Class" 
 "@ClsFuncs":
   "@Summ": class関数を格納する。
   "@ComeFrom": class function.
-  "!ChildValue": FreeDict
-  "!ParentKey":
+  "!Child": "!FreeMap"
+  "!Parnet":
   - "@Class"
 "@InsVars":
   "@Summ": instant変数を格納する。
   "@ComeFrom": instance variables.
-  "!ChildValue": FreeDict
-  "!ParentKey":
+  "!Child": "!FreeMap"
+  "!Parnet":
   - "@Class"
 "@InsFuncs":
   "@Summ": instance関数を格納する。
   "@ComeFrom": instance functions.
-  "!ChildValue": FreeDict
-  "!ParentKey":
+  "!Child": "!FreeMap"
+  "!Parnet":
   - "@Class"
 "@Getter":
   "@Summ": classの外部から変数を参照可能か否かを記録。
-  "!ChildValue":
-    Enum:
+  "!Child":
+    "!Enum":
     - "+":
       "@Summ": classの外部から参照可能。
     - "#":
@@ -102,8 +101,8 @@
   "@Default": "+"
 "@Setter":
   "@Summ": classの外部から変数を代入可能か否かを記録。
-  "!ChildValue":
-    Enum:
+  "!Child":
+    "!Enum":
     - "+":
       "@Summ": classの外部から代入可能。
     - "#":
@@ -114,25 +113,25 @@
 "@Args":
   "@Summ": 引数を記述する。
   "@ComeFrom": arguments.
-  "!ChildValue": FreeDict
-  "!ParentKey":
+  "!Child": "!FreeMap"
+  "!Parnet":
     - "@Funcs"
     - "@InsFuncs"
     - "@ClsFuncs"
 "@Returns":
   "@Summ": 引数を記述する。
-  "!ChildValue": AnnoDict
-  "!ParentKey":
+  "!Child": "!AnnoMap"
+  "!Parnet":
     - "@Funcs"
     - "@InsFuncs"
     - "@ClsFuncs"
 "@Error":
   "@Summ": 例外処理の内容を記述する。
-  "!ChildValue": Dict
-  "!ParentKey":
+  "!Child": "!FreeMap"
+  "!Parnet":
     - "@Funcs"
     - "@InsFuncs"
     - "@ClsFuncs"
 "@ComeFrom":
   "@Summ": 由来を記述する。
-  "!ChildValue": Str
+  "!Child": "!Str"

@@ -25,12 +25,12 @@ Builtins:
     globals:
       "@Summ": global変数を辞書型で出力する関数。
       "@Returns":
-        "@Type": String型をkeyとするDict型
+        "@Type": "!Str"ing型をkeyとするDict型
         "@Summ": global変数名をkey、その値をvalueとするdict型。
     locals:
       "@Summ": 関数scopeの名前空間を出力する関数。
       "@Returns":
-        "@Type": "{key(Str):値(Object)}"
+        "@Type": "{key("!Str"):値(Object)}"
         "@Summ": local変数名をkey、その値をvalueとするdict型。
     dir:
       "@Summ": local scopeにある名前のlistを出力する関数。
@@ -40,7 +40,7 @@ Builtins:
           "@Type": Object
           "@Default": None
       "@Returns":
-        "@Type": Str型list.
+        "@Type": "!Str"型list.
     id:
       "@Summ": Python objectの識別子を表す値を出力する。
       "@Args":
@@ -52,7 +52,7 @@ Builtins:
       "@Summ": userに標準入力を要求する関数。
       "@Args":
         prompt:
-          "@Type": String.
+          "@Type": "!Str"ing.
           "@Summ": user入力を要求する際に表示する文字列。
     hash:
       "@Summ": Python Objectのhash値を出力する関数。
@@ -85,7 +85,7 @@ Builtins:
         object:
           "@Type": Object
         name:
-          "@Type": String
+          "@Type": "!Str"ing
       "@Returns":
         "@Type": Bool
         "@Summ": objectがnameの変数もしくは関数を持っている時にTrue.
@@ -95,7 +95,7 @@ Builtins:
         object:
           "@Type": Object
         name:
-          "@Type": String
+          "@Type": "!Str"ing
       "@Returns":
         "@Type": Object
         "@Summ": objectがnameに格納されている値。
@@ -103,7 +103,7 @@ Builtins:
       "@Summ": 標準出力する関数。
       "@Args":
         output:
-          "@Type": String
+          "@Type": "!Str"ing
     sum:
       "@Summ": iterable objectの総和を求める関数。
       "@Args":
