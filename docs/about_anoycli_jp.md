@@ -26,12 +26,15 @@ ANOY CLIは、command名`anoy`で起動する。
 
 `anoy [-v|--version]`
 
-- anoyのversion情報を提供する。
+- anoyのversion情報を表示する。
 
 `anoy [-h|--help]`
 
-- anoyのhelp情報を提供する。
+- anoyのhelp情報を表示する。
 
 `anoy <config_yaml> <anoy>`
 
 - `<config_yaml>`で`<anoy>`を型確認する。
+- `<anoy>`にはfileやdirectory名が入る。
+- 拡張子[".yaml", ".yml, ".anoy"]のfileをANOY fileとして認識する。
+- directory名の時は、directory内を再帰的に探索してANOY fileを探す。

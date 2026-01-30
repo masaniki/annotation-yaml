@@ -42,20 +42,25 @@ class DictTraversal():
         """
         @Summ: constructor.
         """
-        self._configDict=self.parseConfig(configDict)
+        self._configDict=self.checkConfig(configDict)
         print(self._configDict)
         self._visitQueue=[]
         self._pathQueue=[]
         self._curFile=""
         self._curPath=[]
     
-    def parseConfig(self,configDict:dict)->dict:
+    def checkConfig(self,configDict:dict)->dict:
         """
-        @Summ: configDictを構文解析する関数。
+        @Summ: config yamlの中身を構文解析する関数。
 
         @Desc
+        - config yamlは、annotation keyかconfig keyの記述しか許さない。
         - configDictに"isVisit" keyを追加し、annotation keyを使用したかを記録する。
 
+        @Args:
+          configDict:
+            @Summ: config yamlの中身。
+            @Type: Dict
         @Returns:
           @Summ: 型確認して、余計なものを取り除いたconfigDict。
           @Type: dict
@@ -63,138 +68,175 @@ class DictTraversal():
         newConfigDict={}  # 整形されたconfigDict
         for annoKey in configDict.keys():
             newAnnoValue={}  #annotation keyに対応する値。
-            if(annoKey[0]!="@" and annoKey[0]!="!"):
+            if(annoKey[0]!="@"):
                 raise ConfigYamlError(f"{annoKey} is invalid definition.")
             valueDict=configDict[annoKey]
             if(type(valueDict)!=dict):
                 raise ConfigYamlError(f"{annoKey} is invalid definition.")
-            # `!Parent`の型確認
-            confParent=valueDict.get("!Parent")
-            if(confParent is not None):
-                if(type(confParent)!=list):
-                    raise ConfigYamlError(f"{annoKey} is invalid definition.")
-                for item in confParent:
-                    if(item[0]!="@"):
-                        raise ConfigYamlError(f"{annoKey} is invalid definition.")
-                newAnnoValue["!Parent"]=confParent.copy()
-            # `!Child`の型確認
-            confChild=valueDict.get("!Child")
-            if(confChild is not None):
-                if(type(confChild)==str):
-                    match confChild:
-                        case "!Str":
-                            newConfChild={"!Str":{"length":None,"min":None,"max":None}}
-                        case "!Bool":
-                            newConfChild={"!Bool":{}}
-                        case "!Int":
-                            newConfChild={"!Int":{"min":None,"max":None}}
-                        case "!Float":
-                            newConfChild={"!Float":{"min":None,"max":None}}
-                        case "!List":
-                            newConfChild={"!List":{"type":None,"length":None}}
-                        case "!FreeMap":
-                            newConfChild={"!FreeMap":{}}
-                        case "!AnnoMap":
-                            newConfChild={"!AnnoMap":[]}
-                        case _:
-                            raise ConfigYamlError(f"{annoKey} is invalid definition.")
-                elif(type(confChild)==dict):
-                    confChildKey=list(confChild.keys())
-                    if(len(confChildKey)!=1):
-                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                    typeStr=confChildKey[0]
-                    typeOption=confChild[typeStr]
-                    match typeStr:
-                        case "!Str":
-                            if(type(typeOption)!=dict):
-                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            strLength=None
-                            strMin=None
-                            strMax=None
-                            for strKey,strVal in typeOption.items():
-                                match strKey:
-                                    case "length":
-                                        if(strMin is None and strMax is None):
-                                            strLength=strVal
-                                        else:
-                                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                                    case "min":
-                                        if(strLength is None):
-                                            strMin=strVal
-                                        else:
-                                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                                    case "max":
-                                        if(strLength is None):
-                                            strMax=strVal
-                                        else:
-                                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                                    case _:
-                                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            newConfChild={"!Str":{"length":strLength,"min":strMin,"max":strMax}}
-                        case "!Int":
-                            if(type(typeOption)!=dict):
-                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            intMin=None
-                            intMax=None
-                            for intKey,intVal in typeOption.items():
-                                match intKey:
-                                    case "min":
-                                        intMin=intVal
-                                    case "max":
-                                        intMax=intVal
-                                    case _:
-                                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            newConfChild={"!Int":{"min":intMin,"max":intMax}}
-                        case "!Float":
-                            if(type(typeOption)!=dict):
-                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            floatMin=None
-                            floatMax=None
-                            for floatKey,floatVal in typeOption.items():
-                                match floatKey:
-                                    case "min":
-                                        floatMin=floatVal
-                                    case "max":
-                                        floatMax=floatVal
-                                    case _:
-                                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            newConfChild={"!Float":{"min":floatMin,"max":floatMax}}
-                        case "!Enum":
-                            if(type(typeOption)!=list):
-                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            newConfChild={"!Enum":typeOption}
-                        case "!List":
-                            if(type(typeOption)!=dict):
-                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            listType=None
-                            listLength=None
-                            for listKey,listVal in typeOption.items():
-                                match listKey:
-                                    case "type":
-                                        listType=listVal
-                                    case "length":
-                                        listLength=listVal
-                                    case _:
-                                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            newConfChild={"!List":{"type":listType,"length":listLength}}
-                        case "!AnnoDict":
-                            if(type(typeOption)!=list):
-                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            for i in len(typeOption):
-                                item=typeOption[i]
-                                if(item[0]!="@"):
-                                    raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                            newConfChild={"!AnnoDict":typeOption}
-                        case _:
-                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+            for key,value in valueDict.items():
+                if(key[0]=="@"):
+                    continue
+                elif(key=="!Parent"):
+                    validConfParent=self.checkParent(annoKey,value)
+                    newAnnoValue["!Parent"]=validConfParent
+                elif(key=="!Child"):
+                    validConfChild=self.checkChild(annoKey,value)
+                    newAnnoValue["!Child"]=validConfChild
                 else:
                     raise ConfigYamlError(f"{annoKey} is invalid definition.")
-                newAnnoValue["!Child"]=newConfChild
-                # isVisit keyの追加。
-                newAnnoValue["isVisit"]=False
-            # 最後にannotation keyを登録。
+            # isVisit keyの追加。
+            newAnnoValue["isVisit"]=False
             newConfigDict[annoKey]=newAnnoValue
         return newConfigDict
+    
+    @classmethod
+    def checkParent(cls,annoKey,confParent):
+        """
+        @Summ: `!Parent`に対応する値を型確認する関数。
+
+        @Args:
+          annoKey:
+            @Summ: `!Parent`の親となるannotation key.
+            @Type: Str
+          confParent:
+            @Summ: `!Parent`の子。
+            @Type: Any
+        @Returns:
+          @Summ: `!Parent`のvalueとして有効な値。
+          @Type: List
+        """
+        if(type(confParent)!=list):
+            raise ConfigYamlError(f"{annoKey} is invalid definition.")
+        for item in confParent:
+            if(item[0]!="@"):
+                raise ConfigYamlError(f"{annoKey} is invalid definition.")
+        return confParent.copy()
+    
+    @classmethod
+    def checkChild(cls,annoKey,confChild):
+        """
+        @Summ: `!Child`に対応する値を型確認する関数。
+
+        @Args:
+          annoKey:
+            @Summ: `!Child`の親となるannotation key.
+            @Type: Str
+          confChild:
+            @Summ: `!Child`の子。
+            @Type: Any
+        @Returns:
+          @Summ: `!Child`のvalueとして有効な値。
+          @Type: Dict
+        """
+        if(type(confChild)==str):
+            match confChild:
+                case "!Str":
+                    return {"!Str":{"length":None,"min":None,"max":None}}
+                case "!Bool":
+                    return {"!Bool":{}}
+                case "!Int":
+                    return {"!Int":{"min":None,"max":None}}
+                case "!Float":
+                    return {"!Float":{"min":None,"max":None}}
+                case "!List":
+                    return {"!List":{"type":None,"length":None}}
+                case "!FreeMap":
+                    return {"!FreeMap":{}}
+                case "!AnnoMap":
+                    return {"!AnnoMap":[]}
+                case _:
+                    raise ConfigYamlError(f"{annoKey} is invalid definition.")
+        elif(type(confChild)==dict):
+            confChildKey=list(confChild.keys())
+            if(len(confChildKey)!=1):
+                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+            typeStr=confChildKey[0]
+            typeOption=confChild[typeStr]
+            match typeStr:
+                case "!Str":
+                    if(type(typeOption)!=dict):
+                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    strLength=None
+                    strMin=None
+                    strMax=None
+                    for strKey,strVal in typeOption.items():
+                        match strKey:
+                            case "length":
+                                if(strMin is None and strMax is None):
+                                    strLength=strVal
+                                else:
+                                    raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                            case "min":
+                                if(strLength is None):
+                                    strMin=strVal
+                                else:
+                                    raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                            case "max":
+                                if(strLength is None):
+                                    strMax=strVal
+                                else:
+                                    raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                            case _:
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    return {"!Str":{"length":strLength,"min":strMin,"max":strMax}}
+                case "!Int":
+                    if(type(typeOption)!=dict):
+                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    intMin=None
+                    intMax=None
+                    for intKey,intVal in typeOption.items():
+                        match intKey:
+                            case "min":
+                                intMin=intVal
+                            case "max":
+                                intMax=intVal
+                            case _:
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    return {"!Int":{"min":intMin,"max":intMax}}
+                case "!Float":
+                    if(type(typeOption)!=dict):
+                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    floatMin=None
+                    floatMax=None
+                    for floatKey,floatVal in typeOption.items():
+                        match floatKey:
+                            case "min":
+                                floatMin=floatVal
+                            case "max":
+                                floatMax=floatVal
+                            case _:
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    return {"!Float":{"min":floatMin,"max":floatMax}}
+                case "!Enum":
+                    if(type(typeOption)!=list):
+                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    return {"!Enum":typeOption}
+                case "!List":
+                    if(type(typeOption)!=dict):
+                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    listType=None
+                    listLength=None
+                    for listKey,listVal in typeOption.items():
+                        match listKey:
+                            case "type":
+                                listType=listVal
+                            case "length":
+                                listLength=listVal
+                            case _:
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    return {"!List":{"type":listType,"length":listLength}}
+                case "!AnnoDict":
+                    if(type(typeOption)!=list):
+                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    for i in len(typeOption):
+                        item=typeOption[i]
+                        if(item[0]!="@"):
+                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                    return {"!AnnoDict":typeOption}
+                case _:
+                    raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+        else:
+            raise ConfigYamlError(f"{annoKey} is invalid definition.")
 
 
     def dirDFS(self,anoyPath:Path):
@@ -244,19 +286,19 @@ class DictTraversal():
             self._curPath=self._pathQueue.pop(0)
             print(key,value)
             print(self._curPath)
-            self.typeCheck(key,value)
+            self.checkAnoy(key,value)
 
-    def typeCheck(self,parentKey:str|None,childValue):
+    def checkAnoy(self,parentKey:str|None,childValue):
         """
-        "@Summ": annoDict内を探索する関数。
+        "@Summ": anoyの中身を探索する関数。
 
         "@Desc":
         - 型確認は"!Parent"と"!Child"の2つだ。
-        - annotationKeyが親でない時は、"!Parent"も"!Child"も効力を発揮しないので無視。
-        - ただし、annoKeyがNoneの時は、"!Parent"が効力を発揮する場合がある。
-        - !Childが無い時は何もしない。
-        - !Childが無い時は、childValue=nullとして考える。
-        - valueがanoyDict型の時のみ、!Parentの型確認が行われる。
+        - parentKeyの`!Child`がchildValueを制限する。
+        - childValueの`!parent`がparentKeyを制限する。
+        - parentKeyがannotationKeyでない時は、"!Parent"も"!Child"も効力を発揮しないので無視。
+        - !Childが無い時は、childValue=Noneとして考える。
+        - `!Parent`による型確認は、childValueが`!AnnoMap`型の時のみ行われる。
 
         "@Args":
             parentKey:
@@ -302,24 +344,24 @@ class DictTraversal():
                     self._pathQueue.append(newPath)
             return
         typeStr=list(confChild.keys())[0]
-        confChildVal=confChild[typeStr]
+        typeOption=confChild[typeStr]
         match typeStr:
             case "!Str":
-                self.checkStr(childValue,**confChildVal)
+                self.checkStr(childValue,**typeOption)
             case "!Bool":
                 self.checkBool(childValue)
             case "!Int":
-                self.checkInt(childValue,**confChildVal)
+                self.checkInt(childValue,**typeOption)
             case "!Float":
-                self.checkFloat(childValue,**confChildVal)
+                self.checkFloat(childValue,**typeOption)
             case "!FreeMap":
                 self.checkFreeMap(childValue)
             case "!AnnoMap":
-                self.checkAnnoMap(childValue,confChildVal)
+                self.checkAnnoMap(parentKey,childValue,typeOption)
             case "!List":
-                self.checkList(childValue,elementType=confChildVal["type"],length=confChildVal["length"])
+                self.checkList(parentKey,childValue,elementType=typeOption["type"],length=typeOption["length"])
             case "!Enum":
-                self.checkEnum(childValue,confChildVal)
+                self.checkEnum(childValue,typeOption)
             case _:
                 raise ConfigYamlError(f"{parentKey} is invalid definition.")
 
@@ -440,7 +482,7 @@ class DictTraversal():
         else:
             raise AnoyTypeError("!FreeMap",self._curFile,self._curPath)
 
-    def checkAnnoMap(self,anoyValue,annoKeyList:list=[]):
+    def checkAnnoMap(self,parentKey,anoyValue,annoKeyList:list=[]):
         """
         @Summ: !FreeMap型を型確認する関数。
 
@@ -449,6 +491,9 @@ class DictTraversal():
         - 最低限なので、<annoKeyList>以外のannotation keyも許容される。
 
         @Args:
+          parentKey:
+            @Summ: 親要素のannotation key。
+            @Type: Str
           anoyValue:
             @Summ: 型確認する値。
           annoKeyList:
@@ -461,15 +506,21 @@ class DictTraversal():
                 newPath=self._curPath+[key]
                 self._visitQueue.append((key,value))
                 self._pathQueue.append(newPath)
-                if(key[0]!="@"):
+                # !Parentの確認。
+                config=self._configDict.get(key)
+                if(config is None):
                     raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
+                confParent=config.get("!Parent")
+                if(confParent is not None):
+                    if(parentKey not in confParent):
+                        raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
                 if(annoKeyList!=[]):
                     if(key not in annoKeyList):
                         raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
         else:
             raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
 
-    def checkList(self,anoyValue,elementType:str=None,length:int=None):
+    def checkList(self,parentKey,anoyValue,elementType:str=None,length:int=None):
         """
         @Summ: !List型を型確認する関数。
 
@@ -478,6 +529,9 @@ class DictTraversal():
         - 最低限なので、<typeOption>以外のannotation keyも許容される。
 
         @Args:
+          parentKey:
+            @Summ: 親のkey。
+            @Type: Str
           anoyValue:
             @Summ: 型確認する値。
           elementType:
@@ -512,7 +566,7 @@ class DictTraversal():
                             if(type(element)!=float):
                                 raise AnoyTypeError("!List",self._curFile,newPath)
                         case _:
-                            raise ConfigYamlError(f"{elementType} is invalid definition.")
+                            raise ConfigYamlError(f"{parentKey} is invalid definition.")
                 self._visitQueue.append((i,element))
                 self._pathQueue.append(newPath)
         else:
@@ -558,7 +612,6 @@ class DictTraversal():
                     if(type(anoyValue)==dict):
                         return
                 case _:
-                    print("else")
                     if(anoyValue==option):
                         return
         raise AnoyTypeError("!Enum",self._curFile,self._curPath)
