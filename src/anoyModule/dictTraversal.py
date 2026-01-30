@@ -345,7 +345,7 @@ class DictTraversal():
         if(confChild is None): #Noneの処理方法は不明。
             # nestになるlistとdictだけ対処する。
             if(type(childValue)==list):
-                for i in len(childValue):
+                for i in range(len(childValue)):
                     element=childValue[i]
                     newPath=self._curPath+[i]
                     self._visitQueue.append((i,element))
