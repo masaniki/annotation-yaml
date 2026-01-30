@@ -17,6 +17,8 @@ sandboxDir=Path(__file__).parent/"sandbox"
 @pytest.mark.parametrize(
         "x,y",[
         ("case01/config01.yaml", "case01/valid_anoy.yaml"),
+        ("valid_parent01/config.yaml", "valid_parent01/anoy.yaml"),
+        ("valid_parent02/config.yaml", "valid_parent02/anoy.yaml"),
         ("valid_str01/config.yaml", "valid_str01/anoy.yaml"),
         ("valid_int01/config.yaml", "valid_int01/anoy.yaml"),
         ("valid_list01/config.yaml", "valid_list01/anoy.yaml"),
@@ -54,6 +56,8 @@ def test_valid_anoyFile(x,y):
         "x,y,z",[
         ("case02/config01.yaml", "case02/invalid_int.yaml", AnoyTypeError),
         ("typo01/config.yaml", "typo01/anoy.yaml", AnoyError),
+        ("invalid_parent01/config.yaml", "invalid_parent01/anoy.yaml", AnoyTypeError),
+        ("invalid_parent02/config.yaml", "invalid_parent02/anoy.yaml", AnoyTypeError),
         ("invalid_str01/config.yaml", "invalid_str01/anoy.yaml", AnoyTypeError),
         ("invalid_str02/config.yaml", "invalid_str02/anoy.yaml", AnoyTypeError),
         ("invalid_str03/config.yaml", "invalid_str03/anoy.yaml", AnoyTypeError),

@@ -18,7 +18,7 @@ class AnoyTypeError(Exception):
     self.path=path
   
   def __str__(self):
-    return f"required {self.type} type at:\n    {self.fileName}: {self.path}"
+    return f"{self.type} contradiction:\n    {self.fileName}: {self.path}"
 
 class ConfigYamlError(Exception):
   """

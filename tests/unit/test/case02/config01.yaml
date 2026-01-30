@@ -14,19 +14,19 @@
 "@IntExample":
   "@Summ": 整数型をtestする関数。
   "!Child": "!Int"
-  "!Parnet":
+  "!Parent":
   - "@AnyData"
   - "@NumberData"
 "@FloatExample":
   "@Summ": 不動小数点型をtestする関数。
   "!Child": "!Float"
-  "!Parnet":
+  "!Parent":
   - "@AnyData"
   - "@NumberData"
 "@BoolExample":
   "@Summ": 真理値型をtestする関数。
   "!Child": "!Bool"
-  "!Parnet":
+  "!Parent":
   - "@AnyData"
 "@EnumExample":
   "@Summ": "!Enum型をtestする関数。"
@@ -35,23 +35,23 @@
     - "XXX"
     - "YYY"
     - "ZZZ"
-  "!Parnet":
+  "!Parent":
   - "@AnyData"
 "@StrExample":
   "@Summ": 文字列型をtestする関数。
   "!Child": "!Str"
-  "!Parnet":
+  "!Parent":
   - "@AnyData"
 "@ListExample":
   "@Summ": list型をtestする関数。
   "!Child": "!List"
-  "!Parnet":
+  "!Parent":
   - "@AnyData"
   - "@NestableData"
 "@FreeMapExample":
   "@Summ": "!FreeMap型をtestする関数。"
   "!Child": "!FreeMap"
-  "!Parnet":
+  "!Parent":
   - "@AnyData"
   - "@NestableData"
 

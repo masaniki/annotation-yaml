@@ -108,6 +108,8 @@ class DictTraversal():
         if(type(confParent)!=list):
             raise ConfigYamlError(f"{annoKey} is invalid definition.")
         for item in confParent:
+            if(item is None):
+                continue
             if(item[0]!="@"):
                 raise ConfigYamlError(f"{annoKey} is invalid definition.")
         return confParent.copy()
@@ -507,13 +509,13 @@ class DictTraversal():
                 self._visitQueue.append((key,value))
                 self._pathQueue.append(newPath)
                 # !Parentの確認。
-                config=self._configDict.get(key)
-                if(config is None):
-                    raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
-                confParent=config.get("!Parent")
+                configValue=self._configDict.get(key)
+                if(configValue is None):
+                    raise AnoyError(f"{parentKey} is not found.")
+                confParent=configValue.get("!Parent")
                 if(confParent is not None):
                     if(parentKey not in confParent):
-                        raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
+                        raise AnoyTypeError("!Parent",self._curFile,newPath)
                 if(annoKeyList!=[]):
                     if(key not in annoKeyList):
                         raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)

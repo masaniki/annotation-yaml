@@ -4,38 +4,38 @@
   "!Child": "!Str"
 "@LayorRoot":
   "@Summ": root要素にしかならないannoKey.
-  "!Parnet":
+  "!Parent":
   - null
   "!Child": "!AnnoMap"
 "@Layor01_01":
   "@Summ": rootの子要素その1。
-  "!Parnet":
+  "!Parent":
   - "@LayorRoot"
   "!Child": "!AnnoMap"
 "@Layor01_02":
   "@Summ": rootの子要素その2。
-  "!Parnet":
+  "!Parent":
   - "@LayorRoot"
   "!Child": "!AnnoMap"
 "@Layor01_03":
   "@Summ": rootの子要素その3。
-  "!Parnet":
+  "!Parent":
   - "@LayorRoot"
   "!Child": "!AnnoMap"
 "@Layor02_01":
   "@Summ": Layor01の子要素その1。
-  "!Parnet":
+  "!Parent":
   - "@Layor01_01"
   "!Child": "!Int"
 "@Layor02_02":
   "@Summ": Layor01の子要素その2。
-  "!Parnet":
+  "!Parent":
   - "@Layor01_02"
   - "@Layor01_03"
   "!Child": "!Int"
 "@Layor02_all":
   "@Summ": Layor01の子要素。
-  "!Parnet":
+  "!Parent":
   - "@Layor01_01"
   - "@Layor01_02"
   - "@Layor01_03"
