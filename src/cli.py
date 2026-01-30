@@ -5,7 +5,7 @@ import yaml
 
 from anoyModule import DictTraversal
 
-VERSION="v0.2.1-planning.1"
+VERSION="v0.2.1a1"
 
 def main():
     """
