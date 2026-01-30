@@ -135,8 +135,9 @@ If you want to test, put in following command.
 ## Next To Do
 
 - [ ] test caseを全てのdata型に拡大。
-- [ ] `!Parent`のtest.
-- [x] keywordを`!Parent`と`!Child`に変更。
+- [ ] `!Float`のtest.
+- [ ] `!AnnoMap`のtest.
+- [ ] `!FreeMap`のtest.
 
 ## Ideas
 
