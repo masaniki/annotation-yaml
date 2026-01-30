@@ -212,7 +212,18 @@ class DictTraversal():
                 case "!Enum":
                     if(type(typeOption)!=list):
                         raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
-                    return {"!Enum":typeOption}
+                    enumOption=[]
+                    for item in typeOption:
+                        if(type(item)==list):
+                            raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                        elif(type(item)==dict):
+                            keyList=list(item.keys())
+                            if(len(keyList)!=1):
+                                raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                            enumOption.append(keyList[0])
+                        else:
+                            enumOption.append(item)
+                    return {"!Enum":enumOption}
                 case "!List":
                     if(type(typeOption)!=dict):
                         raise ConfigYamlError(f"`{annoKey}` has invalid definition.")

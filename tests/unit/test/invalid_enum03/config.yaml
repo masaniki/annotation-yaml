@@ -1,0 +1,18 @@
+# !Enum型のtest.
+"@Summ":
+  "@Summ": 要約を自然言語で記述する。
+  "!Child": "!Str"
+"@BloodType":
+  "@Summ": 血液型。
+  "!Child":
+    "!Enum":
+      "A":
+        "@Summ": A型。
+      "B":
+        "@Summ": B型。
+      "O":
+        "@Summ": O型。
+      "AB":
+        "@Summ": AB型。
+
+

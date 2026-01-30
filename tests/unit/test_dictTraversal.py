@@ -25,6 +25,7 @@ sandboxDir=Path(__file__).parent/"sandbox"
         ("valid_enum01/config.yaml", "valid_enum01/anoy.yaml"),
         ("valid_enum02/config.yaml", "valid_enum02/anoy.yaml"),
         ("valid_enum03/config.yaml", "valid_enum03/anoy.yaml"),
+        ("valid_enum04/config.yaml", "valid_enum04/anoy.yaml"),
         ("sampleCase/library_config.yaml", "sampleCase/valid_library.yaml"),
         ]
 )
@@ -66,6 +67,7 @@ def test_valid_anoyFile(x,y):
         ("invalid_list02/config.yaml", "invalid_list02/anoy.yaml", AnoyTypeError),
         ("invalid_enum01/config.yaml", "invalid_enum01/anoy.yaml", AnoyTypeError),
         ("invalid_enum02/config.yaml", "invalid_enum02/anoy.yaml", AnoyTypeError),
+        ("invalid_enum03/config.yaml", "invalid_enum03/anoy.yaml", ConfigYamlError),
         ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", AnoyError)
         ]
 )
