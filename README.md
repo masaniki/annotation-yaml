@@ -138,6 +138,10 @@ If you want to test, put in following command.
 - [ ] `!Float`のtest.
 - [ ] `!AnnoMap`のtest.
 - [ ] `!FreeMap`のtest.
+- [ ] `!Child:null`の時のtest.
+- [ ] ConfigYamlErrorをより詳細にする。
+- [ ] AnoyErrorの時に、file名、path名を必須にする。
+- [ ] READMEの詳細documentの更新。
 
 ## Ideas
 

@@ -1,0 +1,13 @@
+# !Floatを集中してtestする。
+"@Summ":
+  "@Summ": 要約を自然言語で記述する。
+  "!Child": "!Str"
+"@SimpleFloat":
+  "@Summ": 最も単純な不動小数点型。
+  "!Child": "!Float"
+"@RangeFloat":
+  "@Summ": 最小値と最大値が定義されている整数型。
+  "!Child":
+    "!Int":
+      min: 4
+      max: 8
