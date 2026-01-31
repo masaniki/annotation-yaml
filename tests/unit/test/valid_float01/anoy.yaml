@@ -1,14 +1,18 @@
 "@TestCase":
   case01:
+    "@Summ": "!Float型を通すのか。"
     "@SimpleFloat": 3.6
   case02:
-    "@FloatRange": 3.6
+    "@Summ": "!Int型を通すのか。"
+    "@SimpleFloat": 12
   case03:
-    "@IntRange": 3.6
+    "@FloatRange": 3.6
   case04:
+    "@IntRange": 3.6
+  case05:
     "@Summ": value=minの時。
     "@FloatRange": 3.5
-  case05:
+  case06:
     "@Summ": value=maxの時
     "@FloatRange": 4.4
 

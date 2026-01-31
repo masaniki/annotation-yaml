@@ -138,7 +138,7 @@ class DictTraversal():
                 case "!Int":
                     return {"!Int":{"min":None,"max":None}}
                 case "!Float":
-                    return {"!Float":{"min":None,"max":None}}
+                    return {"!Float":{"min":None,"max":None,"inf":None,"sup":None}}
                 case "!List":
                     return {"!List":{"type":None,"length":None}}
                 case "!FreeMap":
@@ -182,7 +182,7 @@ class DictTraversal():
                     return {"!Str":{"length":strLength,"min":strMin,"max":strMax}}
                 case "!Int":
                     if(type(typeOption)!=dict):
-                        raise ConfigYamlError(f"`{annoKey}` has invalid definition.")
+                        raise ConfigYamlError([annoKey,"!Child","!Str"], "Required `!Map` type.")
                     intMin=None
                     intMax=None
                     for intKey,intVal in typeOption.items():
@@ -196,14 +196,18 @@ class DictTraversal():
                     return {"!Int":{"min":intMin,"max":intMax}}
                 case "!Float":
                     if(type(typeOption)!=dict):
-                        raise ConfigYamlError([annoKey,"!Child","!Float"])
+                        raise ConfigYamlError([annoKey,"!Child","!Float"], "Required `!Map` type.")
                     floatMin=None
                     floatMax=None
                     for floatKey,floatVal in typeOption.items():
                         match floatKey:
                             case "min":
+                                if(type(floatVal)!=int and type(floatVal)!=float):
+                                    raise ConfigYamlError([annoKey,"!Child","!Float"])    
                                 floatMin=floatVal
                             case "max":
+                                if(type(floatVal)!=int and type(floatVal)!=float):
+                                    raise ConfigYamlError([annoKey,"!Child","!Float"])    
                                 floatMax=floatVal
                             case _:
                                 raise ConfigYamlError([annoKey,"!Child","!Float"])
@@ -462,13 +466,16 @@ class DictTraversal():
             @Summ: 型確認する値。
           min:
             @Summ: 最小値。
-            @Desc: anoyValue=minの時もtrue.
+            @Desc:
+            - `min<=annoyValue`の時にtrue.
+            @SemType: Int|Float
           max:
             @Summ: 最大値。
-            @Desc: anoyValue=maxの時もtrue.
+            @Desc:
+            - `annoyValue<=max`の時にtrue.
+            @SemType: Int|Float
         """
-        print(anoyValue,min,max)
-        if(type(anoyValue)==float):
+        if(type(anoyValue)==int or type(anoyValue)==float):
             if(min is not None):
                 if(anoyValue<min):
                     raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Float")

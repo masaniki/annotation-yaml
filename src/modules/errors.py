@@ -22,7 +22,7 @@ class AnoyError(Exception):
     self.msg=msg
 
   def __str__(self):
-    return f"\n    {self.fileName}: {self.yamlPath}:\n    {self.msg}"
+    return f"\n    {self.fileName}: {self.yamlPath}:\n        {self.msg}"
 
 class AnnotationKeyError(AnoyError):
   """
@@ -84,6 +84,6 @@ class ConfigYamlError(Exception):
     self.msg=msg
 
   def __str__(self):
-    return f"{self.msg}\n    {self.configPath}"
+    return f"\n    {self.configPath}\n        {self.msg}"
 
 
