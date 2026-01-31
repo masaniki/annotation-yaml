@@ -1,0 +1,5 @@
+"@TestCase":
+  case01:
+    "@Summ": "!他のdata型を通さない。"
+    "@SimpleFloat": "3.6"
+

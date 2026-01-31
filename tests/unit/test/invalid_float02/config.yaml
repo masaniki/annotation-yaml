@@ -1,0 +1,22 @@
+# !Floatを集中してtestする。
+"@Summ":
+  "@Summ": 要約を自然言語で記述する。
+  "!Child": "!Str"
+"@TestCase":
+  "@Summ": testCaseを羅列する。
+  "!Child": "!FreeMap"
+"@SimpleFloat":
+  "@Summ": 最も単純な不動小数点型。
+  "!Child": "!Float"
+"@FloatRange":
+  "@Summ": Float型で最小値と最大値が定義されている不動小数点型。
+  "!Child":
+    "!Float":
+      min: 3.5
+      max: 4.4
+"@IntRange":
+  "@Summ": Int型で最小値と最大値が定義されている不動小数点型。
+  "!Child":
+    "!Float":
+      min: 3
+      max: 4

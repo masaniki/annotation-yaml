@@ -1,0 +1,4 @@
+"@TestCase":
+  case05:
+    "@Summ": minを下回る時。
+    "@FloatRange": 3.4

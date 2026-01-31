@@ -138,7 +138,7 @@ class DictTraversal():
                 case "!Int":
                     return {"!Int":{"min":None,"max":None}}
                 case "!Float":
-                    return {"!Float":{"min":None,"max":None,"inf":None,"sup":None}}
+                    return {"!Float":{"min":None,"max":None}}
                 case "!List":
                     return {"!List":{"type":None,"length":None}}
                 case "!FreeMap":
