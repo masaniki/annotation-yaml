@@ -48,6 +48,8 @@ YAMLのMap型にdata型の概念を導入したものが **Annotation YAML(ANOY)
 
 こちらは *annotation key* とは対照的に、ANOYを書く人が自由にkeywordを設定できる。
 
+同じ階層で *annotation key* と *free key* を両方使うのは禁止である。
+
 ## Example
 
 ```
