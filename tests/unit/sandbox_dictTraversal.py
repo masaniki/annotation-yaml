@@ -13,8 +13,8 @@ testDir=Path(__file__).parent/"test"
 sandboxDir=Path(__file__).parent/"sandbox"
 
 if(__name__=="__main__"):
-    configPath=sandboxDir/"case04"/"config.yaml"
-    anoyPath=sandboxDir/"case04"/"anoy"
+    configPath=sandboxDir/"valid_float01"/"config.yaml"
+    anoyPath=sandboxDir/"valid_float01"/"anoy.yaml"
     with open(configPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
     tree01=DictTraversal(configDict)

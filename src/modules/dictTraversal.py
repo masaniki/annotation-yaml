@@ -1,7 +1,7 @@
 import yaml
 from pathlib import Path
 
-from .anoyErrors import AnoyError,ConfigYamlError,AnoyTypeError
+from .errors import AnnotationKeyError,AnnotationTypeError,ConfigYamlError
 
 class DictTraversal():
     """
@@ -337,7 +337,7 @@ class DictTraversal():
         elif(parentKey[0]=="@"):
             confDictVal=self._configDict.get(parentKey)
             if(confDictVal is None):
-                raise AnoyError(f"{parentKey} is not found.")
+                raise AnnotationKeyError(self._curFile, self._curPath,parentKey)
             confChild=confDictVal.get("!Child")
         else:
             confChild=None
@@ -408,17 +408,17 @@ class DictTraversal():
                 if(len(anoyValue)==length):
                     return
                 else:
-                    raise AnoyTypeError("!Str",self._curFile,self._curPath)
+                    raise AnnotationTypeError(self._curFile,self._curPath,"!Str",)
             else:
                 if(min is not None):
                     if(len(anoyValue)<min):
-                        raise AnoyTypeError("!Str",self._curFile,self._curPath)
+                        raise AnnotationTypeError(self._curFile,self._curPath,"!Str")
                 if(max is not None):
                     if(max<len(anoyValue)):
-                        raise AnoyTypeError("!Str",self._curFile,self._curPath)
+                        raise AnnotationTypeError(self._curFile,self._curPath,"!Str")
                 return
         else:
-            raise AnoyTypeError("!Str",self._curFile,self._curPath)
+            raise AnnotationTypeError(self._curFile,self._curPath,"!Str")
 
     def checkBool(self,anoyValue):
         """
@@ -429,7 +429,7 @@ class DictTraversal():
             @Summ: 型確認する値。
         """
         if(type(anoyValue)!=bool):
-            raise AnoyTypeError("!Bool",self._curFile,self._curPath)
+            raise AnnotationTypeError(self._curFile,self._curPath,"!Bool")
 
     def checkInt(self,anoyValue,min=None,max=None):
         """
@@ -446,13 +446,13 @@ class DictTraversal():
         if(type(anoyValue)==int):
             if(min is not None):
                 if(anoyValue<min):
-                    raise AnoyTypeError("!Int",self._curFile,self._curPath)
+                    raise AnnotationTypeError(self._curFile,self._curPath,"!Int")
             if(max is not None):
                 if(max<anoyValue):
-                    raise AnoyTypeError("!Int",self._curFile,self._curPath)
+                    raise AnnotationTypeError(self._curFile,self._curPath,"!Int")
             return
         else:
-            raise AnoyTypeError("!Int",self._curFile,self._curPath)
+            raise AnnotationTypeError(self._curFile,self._curPath,"!Int")
 
     def checkFloat(self,anoyValue,min=None,max=None):
         """
@@ -463,19 +463,22 @@ class DictTraversal():
             @Summ: 型確認する値。
           min:
             @Summ: 最小値。
+            @Desc: anoyValue=minの時もtrue.
           max:
             @Summ: 最大値。
+            @Desc: anoyValue=maxの時もtrue.
         """
+        print(anoyValue,min,max)
         if(type(anoyValue)==float):
             if(min is not None):
                 if(anoyValue<min):
-                    raise AnoyTypeError("!Float",self._curFile,self._curPath)
+                    raise AnnotationTypeError(self._curFile,self._curPath,"!Float")
             if(max is not None):
                 if(max<anoyValue):
-                    raise AnoyTypeError("!Float",self._curFile,self._curPath)
+                    raise AnnotationTypeError(self._curFile,self._curPath,"!Float")
             return
         else:
-            raise AnoyTypeError("!Float",self._curFile,self._curPath)
+            raise AnnotationTypeError(self._curFile,self._curPath,"!Float")
 
     def checkFreeMap(self,anoyValue):
         """
@@ -491,9 +494,9 @@ class DictTraversal():
                 self._visitQueue.append((key,value))
                 self._pathQueue.append(newPath)
                 if(key[0]=="@"):
-                    raise AnoyTypeError("!FreeMap",self._curFile,newPath)
+                    raise AnnotationTypeError(self._curFile,newPath,"!FreeMap")
         else:
-            raise AnoyTypeError("!FreeMap",self._curFile,self._curPath)
+            raise AnnotationTypeError(self._curFile,self._curPath,"!FreeMap")
 
     def checkAnnoMap(self,parentKey,anoyValue,annoKeyList:list=[]):
         """
@@ -522,16 +525,16 @@ class DictTraversal():
                 # !Parentの確認。
                 configValue=self._configDict.get(key)
                 if(configValue is None):
-                    raise AnoyError(f"{parentKey} is not found.")
+                    raise AnnotationKeyError(self._curFile,self._curPath,parentKey)
                 confParent=configValue.get("!Parent")
                 if(confParent is not None):
                     if(parentKey not in confParent):
-                        raise AnoyTypeError("!Parent",self._curFile,newPath)
+                        raise AnnotationTypeError(self._curFile,newPath,"!Parent")
                 if(annoKeyList!=[]):
                     if(key not in annoKeyList):
-                        raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
+                        raise AnnotationTypeError(self._curFile,self._curPath,"!AnnoMap")
         else:
-            raise AnoyTypeError("!AnnoMap",self._curFile,self._curPath)
+            raise AnnotationTypeError(self._curFile,self._curPath,"!AnnoMap")
 
     def checkList(self,parentKey,anoyValue,elementType:str=None,length:int=None):
         """
@@ -560,7 +563,7 @@ class DictTraversal():
         if(type(anoyValue)==list):
             if(length is not None):
                 if(length!=len(anoyValue)):
-                    raise AnoyTypeError("!List",self._curFile,self._curPath) 
+                    raise AnnotationTypeError(self._curFile,self._curPath,"!List")
             for i in range(len(anoyValue)):
                 element=anoyValue[i]
                 newPath=self._curPath+[i]
@@ -568,22 +571,22 @@ class DictTraversal():
                     match elementType:
                         case "!Str":
                             if(type(element)!=str):
-                                raise AnoyTypeError("!List",self._curFile,newPath)
+                                raise AnnotationTypeError(self._curFile,newPath,"!List")
                         case "!Bool":
                             if(type(element)!=bool):
-                                raise AnoyTypeError("!List",self._curFile,newPath)
+                                raise AnnotationTypeError(self._curFile,newPath,"!List")
                         case "!Int":
                             if(type(element)!=int):
-                                raise AnoyTypeError("!List",self._curFile,newPath)
+                                raise AnnotationTypeError(self._curFile,newPath,"!List")
                         case "!Float":
                             if(type(element)!=float):
-                                raise AnoyTypeError("!List",self._curFile,newPath)
+                                raise AnnotationTypeError(self._curFile,newPath,"!List")
                         case _:
                             raise ConfigYamlError(f"{parentKey} is invalid definition.")
                 self._visitQueue.append((i,element))
                 self._pathQueue.append(newPath)
         else:
-            raise AnoyTypeError("!List",self._curFile,self._curPath)
+            raise AnnotationTypeError(self._curFile,self._curPath,"!List")
     
     def checkEnum(self,anoyValue,optionList:list):
         """
@@ -627,7 +630,7 @@ class DictTraversal():
                 case _:
                     if(anoyValue==option):
                         return
-        raise AnoyTypeError("!Enum",self._curFile,self._curPath)
+        raise AnnotationTypeError(self._curFile,self._curPath,"!Enum")
 
 
 if(__name__=="__main__"):

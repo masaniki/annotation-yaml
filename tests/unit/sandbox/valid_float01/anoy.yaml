@@ -1,6 +1,8 @@
 "@TestCase":
   case01:
     "@SimpleFloat": 3.6
+  case01:
+    "@SimpleFloat": 3.6
   case02:
     "@FloatRange": 3.6
   case03:
