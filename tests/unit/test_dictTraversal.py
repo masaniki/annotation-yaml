@@ -7,8 +7,8 @@ import yaml
 projectDir=Path(__file__).parent.parent.parent
 sys.path.append(str(projectDir))
 
-from src.anoyModule import DictTraversal
-from src.anoyModule import AnoyTypeError, ConfigYamlError, AnoyError
+from src.modules import DictTraversal
+from src.modules import AnoyTypeError, ConfigYamlError, YamlError
 
 testDir=Path(__file__).parent/"test"
 sandboxDir=Path(__file__).parent/"sandbox"
@@ -56,7 +56,7 @@ def test_valid_anoyFile(x,y):
 @pytest.mark.parametrize(
         "x,y,z",[
         ("case02/config01.yaml", "case02/invalid_int.yaml", AnoyTypeError),
-        ("typo01/config.yaml", "typo01/anoy.yaml", AnoyError),
+        ("typo01/config.yaml", "typo01/anoy.yaml", YamlError),
         ("invalid_parent01/config.yaml", "invalid_parent01/anoy.yaml", AnoyTypeError),
         ("invalid_parent02/config.yaml", "invalid_parent02/anoy.yaml", AnoyTypeError),
         ("invalid_str01/config.yaml", "invalid_str01/anoy.yaml", AnoyTypeError),
@@ -68,7 +68,7 @@ def test_valid_anoyFile(x,y):
         ("invalid_enum01/config.yaml", "invalid_enum01/anoy.yaml", AnoyTypeError),
         ("invalid_enum02/config.yaml", "invalid_enum02/anoy.yaml", AnoyTypeError),
         ("invalid_enum03/config.yaml", "invalid_enum03/anoy.yaml", ConfigYamlError),
-        ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", AnoyError)
+        ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", YamlError)
         ]
 )
 def test_invalid_anoyFile(x,y,z):
