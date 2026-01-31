@@ -8,7 +8,7 @@ projectDir=Path(__file__).parent.parent.parent
 sys.path.append(str(projectDir))
 
 from src.modules import DictTraversal
-from src.modules import AnoyTypeError, ConfigYamlError, YamlError
+from src.modules import AnnotationKeyError, AnnotationTypeError, ConfigYamlError
 
 testDir=Path(__file__).parent/"test"
 sandboxDir=Path(__file__).parent/"sandbox"
@@ -55,20 +55,20 @@ def test_valid_anoyFile(x,y):
 
 @pytest.mark.parametrize(
         "x,y,z",[
-        ("case02/config01.yaml", "case02/invalid_int.yaml", AnoyTypeError),
-        ("typo01/config.yaml", "typo01/anoy.yaml", YamlError),
-        ("invalid_parent01/config.yaml", "invalid_parent01/anoy.yaml", AnoyTypeError),
-        ("invalid_parent02/config.yaml", "invalid_parent02/anoy.yaml", AnoyTypeError),
-        ("invalid_str01/config.yaml", "invalid_str01/anoy.yaml", AnoyTypeError),
-        ("invalid_str02/config.yaml", "invalid_str02/anoy.yaml", AnoyTypeError),
-        ("invalid_str03/config.yaml", "invalid_str03/anoy.yaml", AnoyTypeError),
-        ("invalid_int01/config.yaml", "invalid_int01/anoy.yaml", AnoyTypeError),
-        ("invalid_list01/config.yaml", "invalid_list01/anoy.yaml", AnoyTypeError),
-        ("invalid_list02/config.yaml", "invalid_list02/anoy.yaml", AnoyTypeError),
-        ("invalid_enum01/config.yaml", "invalid_enum01/anoy.yaml", AnoyTypeError),
-        ("invalid_enum02/config.yaml", "invalid_enum02/anoy.yaml", AnoyTypeError),
+        ("case02/config01.yaml", "case02/invalid_int.yaml", AnnotationTypeError),
+        ("typo01/config.yaml", "typo01/anoy.yaml", AnnotationKeyError),
+        ("invalid_parent01/config.yaml", "invalid_parent01/anoy.yaml", AnnotationTypeError),
+        ("invalid_parent02/config.yaml", "invalid_parent02/anoy.yaml", AnnotationTypeError),
+        ("invalid_str01/config.yaml", "invalid_str01/anoy.yaml", AnnotationTypeError),
+        ("invalid_str02/config.yaml", "invalid_str02/anoy.yaml", AnnotationTypeError),
+        ("invalid_str03/config.yaml", "invalid_str03/anoy.yaml", AnnotationTypeError),
+        ("invalid_int01/config.yaml", "invalid_int01/anoy.yaml", AnnotationTypeError),
+        ("invalid_list01/config.yaml", "invalid_list01/anoy.yaml", AnnotationTypeError),
+        ("invalid_list02/config.yaml", "invalid_list02/anoy.yaml", AnnotationTypeError),
+        ("invalid_enum01/config.yaml", "invalid_enum01/anoy.yaml", AnnotationTypeError),
+        ("invalid_enum02/config.yaml", "invalid_enum02/anoy.yaml", AnnotationTypeError),
         ("invalid_enum03/config.yaml", "invalid_enum03/anoy.yaml", ConfigYamlError),
-        ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", YamlError)
+        ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", AnnotationKeyError)
         ]
 )
 def test_invalid_anoyFile(x,y,z):
@@ -128,7 +128,7 @@ def test_valid_anoyDir(x,y):
 
 @pytest.mark.parametrize(
         "x,y,z",[
-        ("case05/config.yaml", "case05/anoy", AnoyTypeError),
+        ("case05/config.yaml", "case05/anoy", AnnotationTypeError),
         ]
 )
 def test_invalid_anoyDir(x,y,z):

@@ -7,7 +7,7 @@ import yaml
 projectDir=Path(__file__).parent.parent.parent
 sys.path.append(str(projectDir))
 
-from src.anoyModule import DictTraversal
+from src.modules import DictTraversal
 
 testDir=Path(__file__).parent/"test"
 sandboxDir=Path(__file__).parent/"sandbox"
