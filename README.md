@@ -55,16 +55,16 @@ library_config.yaml
 ```
 "@Books":
   "@Summary": List the book titles.
-  "!ChildValue": FreeDict
+  "!Child": "!FreeMap"
 "@Author":
   "@Summary": Author of the book.
-  "!ChildValue": Str
+  "!Child": "!Str"
 "@PublishYear":
   "@Summary": The year of the publishment.
-  "!ChildValue": Int
+  "!Child": "!Int"
 "@Country":
   "@Summary": The author's native language.
-  "!ChildValue": Str
+  "!Child": "!Str"
 ```
 
 valid_library.yaml:
@@ -120,7 +120,7 @@ When there is an issue with the annotation YAML, `anoy` outputs as follows.
 >>> anoy library_config.yaml library.yaml
 >>> Traceback (most recent call last):
     ... (omission) ...
-    src.anoyModule.anoyErrors.ConfigurationYamlError: `@Auther` is not defined.
+    src.anoyModule.anoyErrors.ConfigYamlError: `@Auther` is not defined.
 ```
 # For Developers
 
@@ -134,7 +134,7 @@ If you want to test, put in following command.
 
 ## Next To Do
 
-- [ ] READMEの詳細documentの更新。
+- [x] READMEの詳細documentの更新。
 
 ## Ideas
 

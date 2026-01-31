@@ -63,10 +63,8 @@ Map型の入れ子は以下のような構造になる。
 
 ### `!Child`
 - @Summary: annotaiton keyに対応するvalueのdata型を指定する。
-- @Description:
-  - 親要素になれるannotation keyのlist型。
-  - Map型を選択する場合は、keyがと同じである必要がある。
-- @Type: `<type_string>` | {`<type_string>`:`<type_option>`(list|dict)}
+- @Description: data型を指定するには、*string-format* か *map-format* である必要がある。
+それらについては後述する。
 - @Example:
   ```
   @Something:
@@ -88,7 +86,7 @@ data型の指定には2種類の方法が使える。それは *string-format* �
 
 ### *string-format* について
 
-data型を最も簡単に指定する方法は以下の方法である。
+以下の構文を記述することでdata型を簡単に指定できる。
 
 ```
 @Something:
@@ -136,6 +134,8 @@ Example:
 この構文を *map-format* と呼ぶ。
 
 ## *map-format* 一覧
+
+各data型とそのdata型で利用可能な *type option* の一覧を以下に載せておく。
 
 `!Str`:
 - @TypeOption:
