@@ -67,12 +67,16 @@ class DictTraversal():
         newConfigDict={}  # 整形されたconfigDict
         for annoKey in configDict.keys():
             newAnnoValue={}  #annotation keyに対応する値。
-            if(annoKey[0]!="@"):
+            if(type(annoKey)!=str):
+                raise ConfigYamlError([annoKey],"Annotaion key should start with `@`.")
+            elif(annoKey[0]!="@"):
                 raise ConfigYamlError([annoKey],"Annotaion key should start with `@`.")
             valueDict=configDict[annoKey]
             if(type(valueDict)!=dict):
                 raise ConfigYamlError([annoKey])
             for key,value in valueDict.items():
+                if(type(key)!=str):
+                    raise ConfigYamlError([annoKey,key], "Invalid value as !Parent.")
                 if(key[0]=="@"):
                     continue
                 elif(key=="!Parent"):
@@ -82,7 +86,7 @@ class DictTraversal():
                     validConfChild=self.checkChild(annoKey,value)
                     newAnnoValue["!Child"]=validConfChild
                 else:
-                    raise ConfigYamlError([annoKey], "Unknown config key is found.")
+                    raise ConfigYamlError([annoKey,key], "Invalid value as !Parent.")
             # isVisit keyの追加。
             newAnnoValue["isVisit"]=False
             newConfigDict[annoKey]=newAnnoValue
@@ -246,7 +250,9 @@ class DictTraversal():
                         raise ConfigYamlError([annoKey,"!Child","!AnnoMap"])
                     for i in range(len(typeOption)):
                         item=typeOption[i]
-                        if(item[0]!="@"):
+                        if(type(item)!=str):
+                            raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item])
+                        elif(item[0]!="@"):
                             raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item])
                     return {"!AnnoMap":typeOption}
                 case _:
@@ -355,18 +361,24 @@ class DictTraversal():
                     self._pathQueue.append(newPath)
             elif(type(childValue)==dict):
                 # !Child=nullであってもfree keyとannotation keyの混合は許さない。
+                # keyがstr型でない時は!FreeMapとして扱う。
                 isAnnoMap=None
                 for key,value in childValue.items():
-                    if(isAnnoMap is None):
-                        if(key[0]=="@"):
-                            isAnnoMap=True
-                        else:
+                    if(type(key)!=str):
+                        if(isAnnoMap is None):
                             isAnnoMap=False
-                    else:
-                        if(isAnnoMap==True and key[0]!="@"):
+                        elif(isAnnoMap==True):
                             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
-                        elif(isAnnoMap==False and key[0]=="@"):
+                    elif(key[0]=="@"):
+                        if(isAnnoMap is None):
+                            isAnnoMap=True
+                        elif(isAnnoMap==False):
                             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!FreeMap")
+                    else:
+                        if(isAnnoMap is None):
+                            isAnnoMap=False
+                        elif(isAnnoMap==True):
+                            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
                     newPath=self._anoyPath+[key]
                     self._visitQueue.append((key,value))
                     self._pathQueue.append(newPath)
@@ -511,8 +523,9 @@ class DictTraversal():
                 newPath=self._anoyPath+[key]
                 self._visitQueue.append((key,value))
                 self._pathQueue.append(newPath)
-                if(key[0]=="@"):
-                    raise AnnotationTypeError(self._curAnoy,newPath,"!FreeMap")
+                if(type(key)==str):
+                    if(key[0]=="@"):
+                        raise AnnotationTypeError(self._curAnoy,newPath,"!FreeMap")
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!FreeMap")
 
