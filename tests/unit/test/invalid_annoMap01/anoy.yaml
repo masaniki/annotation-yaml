@@ -1,0 +1,10 @@
+"@TestCase":
+  case01:
+    "@Summ": "!FreeMap型の混入。"
+    "@SimpleAnnoMap":
+      "@Item01": simple text.
+      "@Item02": simple text.
+      "@Item03": simple text.
+      "Item04": simple text.
+
+    

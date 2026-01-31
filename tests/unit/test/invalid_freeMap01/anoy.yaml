@@ -1,0 +1,7 @@
+"@TestCase":
+  case01:
+    "@Summ": "annotation keyが混入。"
+    "@SimpleFreeMap":
+      height: 150
+      weight: 50
+      "@name": Smith

@@ -1,0 +1,8 @@
+"@TestCase":
+  case02:
+    "@Summ": "@Item03は許可されていない。"
+    "@ComplexAnnoMap":
+      "@Item01": simple text.
+      "@Item02": simple text.
+      "@Item03": simple text.
+    

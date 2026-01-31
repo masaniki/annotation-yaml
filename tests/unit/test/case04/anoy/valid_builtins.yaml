@@ -34,7 +34,7 @@ Builtins:
         "@Summ": local変数名をkey、その値をvalueとするdict型。
     dir:
       "@Summ": local scopeにある名前のlistを出力する関数。
-      Disc: Noneの時はglobal scopeにある名前のlistを出力する。
+      "@Desc": Noneの時はglobal scopeにある名前のlistを出力する。
       "@Args":
         object:
           "@Type": Object

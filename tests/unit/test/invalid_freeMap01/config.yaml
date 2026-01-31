@@ -1,0 +1,10 @@
+# !FreeMap型のtest
+"@Summ":
+  "@Summ": 要約を自然言語で記述する。
+  "!Child": "!Str"
+"@TestCase":
+  "@Summ": TestCaseを格納する。
+  "!Child": "!FreeMap"
+"@SimpleFreeMap":
+  "@Summ": 最も単純なAnnoMap型。
+  "!Child": "!FreeMap"

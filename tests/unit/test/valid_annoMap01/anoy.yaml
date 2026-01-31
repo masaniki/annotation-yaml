@@ -1,0 +1,11 @@
+"@TestCase":
+  case01:
+    "@SimpleAnnoMap":
+      "@Item01": simple text.
+      "@Item02": simple text.
+      "@Item03": simple text.
+  case02:
+    "@ComplexAnnoMap":
+      "@Item01": simple text.
+      "@Item02": simple text.
+    

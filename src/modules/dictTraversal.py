@@ -42,7 +42,7 @@ class DictTraversal():
         @Summ: constructor.
         """
         self._configDict=self.checkConfig(configDict)
-        print(self._configDict)
+        # print(self._configDict)
         self._visitQueue=[]
         self._pathQueue=[]
         self._curAnoy=""
@@ -241,16 +241,16 @@ class DictTraversal():
                             case _:
                                 raise ConfigYamlError([annoKey,"!Child","!List",listKey])
                     return {"!List":{"type":listType,"length":listLength}}
-                case "!AnnoDict":
+                case "!AnnoMap":
                     if(type(typeOption)!=list):
-                        raise ConfigYamlError([annoKey,"!Child","!AnnoDict"])
-                    for i in len(typeOption):
+                        raise ConfigYamlError([annoKey,"!Child","!AnnoMap"])
+                    for i in range(len(typeOption)):
                         item=typeOption[i]
                         if(item[0]!="@"):
-                            raise ConfigYamlError([annoKey,"!Child","!AnnoDict",item])
-                    return {"!AnnoDict":typeOption}
+                            raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item])
+                    return {"!AnnoMap":typeOption}
                 case _:
-                    raise ConfigYamlError([annoKey,"!Child","!AnnoDict",item], "Unknown data type string.")
+                    raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item], "Unknown data type string.")
         else:
             raise ConfigYamlError([annoKey,"!Child"])
 
@@ -345,7 +345,7 @@ class DictTraversal():
         else:
             confChild=None
         # anoyの型確認
-        if(confChild is None): #Noneの処理方法は不明。
+        if(confChild is None):
             # nestになるlistとdictだけ対処する。
             if(type(childValue)==list):
                 for i in range(len(childValue)):
@@ -354,7 +354,19 @@ class DictTraversal():
                     self._visitQueue.append((i,element))
                     self._pathQueue.append(newPath)
             elif(type(childValue)==dict):
+                # !Child=nullであってもfree keyとannotation keyの混合は許さない。
+                isAnnoMap=None
                 for key,value in childValue.items():
+                    if(isAnnoMap is None):
+                        if(key[0]=="@"):
+                            isAnnoMap=True
+                        else:
+                            isAnnoMap=False
+                    else:
+                        if(isAnnoMap==True and key[0]!="@"):
+                            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
+                        elif(isAnnoMap==False and key[0]=="@"):
+                            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!FreeMap")
                     newPath=self._anoyPath+[key]
                     self._visitQueue.append((key,value))
                     self._pathQueue.append(newPath)
@@ -519,7 +531,10 @@ class DictTraversal():
           anoyValue:
             @Summ: 型確認する値。
           annoKeyList:
-            @Summ: annotation keyのlist。
+            @Summ: 子要素になれるannotation keyのlist。
+            @Desc:
+            - 空lsitの時は任意のannotation keyを受け入れる。
+            - これは全てのannotation keyが入ったlist型と同じ挙動をする。
             @Type: List
             @Default: []
         """
@@ -531,14 +546,14 @@ class DictTraversal():
                 # !Parentの確認。
                 configValue=self._configDict.get(key)
                 if(configValue is None):
-                    raise AnnotationKeyError(self._curAnoy,self._anoyPath,parentKey)
+                    raise AnnotationKeyError(self._curAnoy,newPath,key)
                 confParent=configValue.get("!Parent")
                 if(confParent is not None):
                     if(parentKey not in confParent):
                         raise AnnotationTypeError(self._curAnoy,newPath,"!Parent")
                 if(annoKeyList!=[]):
                     if(key not in annoKeyList):
-                        raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
+                        raise AnnotationTypeError(self._curAnoy,newPath,"!AnnoMap")
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
 

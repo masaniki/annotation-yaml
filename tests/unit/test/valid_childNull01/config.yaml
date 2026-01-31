@@ -1,0 +1,12 @@
+# !Child型=nullのtest
+"@Summ":
+  "@Summ": 要約を自然言語で記述する。
+  "!Child": "!Str"
+"@TestCase":
+  "@Summ": TestCaseを格納する。
+  "!Child": "!FreeMap"
+"@Any":
+  "@Summ": "!Childを指定しない時のtest"
+"@Dummy":
+  "@Summ": テキトーなannotation key.
+  "!Child": "!Str"

@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse
 import yaml
 
-from anoyModule import DictTraversal
+from modules import DictTraversal
 
 VERSION="v0.2.1"
 

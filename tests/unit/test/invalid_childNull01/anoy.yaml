@@ -1,0 +1,19 @@
+"@TestCase":
+  case01:
+    "@Summ": "!Str型の時"
+    "@Any": "ab"
+  case02:
+    "@Summ": "!Int型の時"
+    "@Any": 12
+  case03:
+    "@Summ": "!List型の時"
+    "@Any":
+    - "ab"
+    - 12
+  case04:
+    "@Summ": "!FreeMap型の時"
+    "@Any":
+      x: 0.0
+      y: 1.0
+      z: 2.0
+      "@Dummy": 偽物。

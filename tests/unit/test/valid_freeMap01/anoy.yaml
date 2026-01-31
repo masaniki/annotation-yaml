@@ -1,0 +1,6 @@
+"@TestCase":
+  case01:
+    "@SimpleFreeMap":
+      height: 150
+      weight: 50
+      name: Smith
