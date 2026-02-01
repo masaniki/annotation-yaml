@@ -428,7 +428,7 @@ class DictTraversal():
         if(typeOption is None):
             pass
         elif(type(typeOption)!=dict):
-            raise ConfigYamlError(configPath, "Required `!Map` type.")
+            raise ConfigYamlError(configPath)
         else:
             for key,value in typeOption.items():
                 newConfPath=confPath+[key]
@@ -477,14 +477,14 @@ class DictTraversal():
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Int")
 
     @classmethod
-    def checkConfFloat(cls,annoKey,typeOption):
+    def checkConfFloat(cls,confPath,typeOption):
         """
         @Summ: config yaml上で!Float型のtype optionを確認する関数。
         
         @Args:
-          annoKey:
-            @Summ: `!Child!Float`を格納するannotation key。
-            @Type: Str
+          confPath:
+            @Summ: config yaml上の位置。
+            @Type: List
           typeOption:
             @Summ: !Floatに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
@@ -498,20 +498,29 @@ class DictTraversal():
         if(typeOption is None):
             pass
         elif(type(typeOption)!=dict):
-            raise ConfigYamlError([annoKey,"!Child","!Float"], "Required `!Map` type.")
+            raise ConfigYamlError(confPath)
         else:
-            for floatKey,floatVal in typeOption.items():
-                match floatKey:
+            for key,value in typeOption.items():
+                newConfPath=confPath+[key]
+                match key:
                     case "min":
-                        if(type(floatVal)!=int and type(floatVal)!=float):
-                            raise ConfigYamlError([annoKey,"!Child","!Float"])    
-                        floatMin=floatVal
+                        floatMin=value
+                        if(type(value)==int):
+                            if(floatMax is not None):
+                                if(floatMax<value):
+                                    raise ConfigYamlError(newConfPath)
+                        else:
+                            raise ConfigYamlError(newConfPath)
                     case "max":
-                        if(type(floatVal)!=int and type(floatVal)!=float):
-                            raise ConfigYamlError([annoKey,"!Child","!Float"])    
-                        floatMax=floatVal
+                        floatMax=value
+                        if(type(value)==int):
+                            if(floatMax is not None):
+                                if(value<floatMin):
+                                    raise ConfigYamlError(newConfPath)
+                        else:
+                            raise ConfigYamlError(newConfPath)
                     case _:
-                        raise ConfigYamlError([annoKey,"!Child","!Float"])
+                        raise ConfigYamlError(newConfPath)
         return {"!Float":{"min":floatMin,"max":floatMax}}
 
     def checkAnoyFloat(self,anoyValue,min=None,max=None):
