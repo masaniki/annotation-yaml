@@ -146,113 +146,36 @@ class DictTraversal():
                 case "!AnnoMap":
                     return {"!AnnoMap":[]}
                 case _:
-                    raise ConfigYamlError([annoKey,"!Child"])
+                    raise ConfigYamlError([annoKey,"!Child"], "Invalid data type.")
         elif(type(confChild)==dict):
             confChildKey=list(confChild.keys())
             if(len(confChildKey)!=1):
-                raise ConfigYamlError([annoKey,"!Child"])
+                raise ConfigYamlError([annoKey,"!Child"], "Invalid data type.")
             typeStr=confChildKey[0]
             typeOption=confChild[typeStr]
             match typeStr:
                 case "!Str":
-                    if(type(typeOption)!=dict):
-                        raise ConfigYamlError([annoKey,"!Child","!Str"])
-                    strLength=None
-                    strMin=None
-                    strMax=None
-                    for strKey,strVal in typeOption.items():
-                        match strKey:
-                            case "length":
-                                if(strMin is None and strMax is None):
-                                    strLength=strVal
-                                else:
-                                    raise ConfigYamlError([annoKey,"!Child","!Str","length"])
-                            case "min":
-                                if(strLength is None):
-                                    strMin=strVal
-                                else:
-                                    raise ConfigYamlError([annoKey,"!Child","!Str","min"])
-                            case "max":
-                                if(strLength is None):
-                                    strMax=strVal
-                                else:
-                                    raise ConfigYamlError([annoKey,"!Child","!Str","max"])
-                            case _:
-                                raise ConfigYamlError([annoKey,"!Child","!Str"])
-                    return {"!Str":{"length":strLength,"min":strMin,"max":strMax}}
+                    validType=cls.checkConfStr(annoKey,typeOption)
+                    return validType
                 case "!Int":
-                    if(type(typeOption)!=dict):
-                        raise ConfigYamlError([annoKey,"!Child","!Str"], "Required `!Map` type.")
-                    intMin=None
-                    intMax=None
-                    for intKey,intVal in typeOption.items():
-                        match intKey:
-                            case "min":
-                                intMin=intVal
-                            case "max":
-                                intMax=intVal
-                            case _:
-                                raise ConfigYamlError([annoKey,"!Child","!Int"])
-                    return {"!Int":{"min":intMin,"max":intMax}}
+                    validType=cls.checkConfInt(annoKey,typeOption)
+                    return validType
                 case "!Float":
-                    if(type(typeOption)!=dict):
-                        raise ConfigYamlError([annoKey,"!Child","!Float"], "Required `!Map` type.")
-                    floatMin=None
-                    floatMax=None
-                    for floatKey,floatVal in typeOption.items():
-                        match floatKey:
-                            case "min":
-                                if(type(floatVal)!=int and type(floatVal)!=float):
-                                    raise ConfigYamlError([annoKey,"!Child","!Float"])    
-                                floatMin=floatVal
-                            case "max":
-                                if(type(floatVal)!=int and type(floatVal)!=float):
-                                    raise ConfigYamlError([annoKey,"!Child","!Float"])    
-                                floatMax=floatVal
-                            case _:
-                                raise ConfigYamlError([annoKey,"!Child","!Float"])
-                    return {"!Float":{"min":floatMin,"max":floatMax}}
+                    validType=cls.checkConfFloat(annoKey,typeOption)
+                    return validType
                 case "!Enum":
-                    if(type(typeOption)!=list):
-                        raise ConfigYamlError([annoKey,"!Child","!Enum"])
-                    enumOption=[]
-                    for item in typeOption:
-                        if(type(item)==list):
-                            raise ConfigYamlError([annoKey,"!Child","!Enum",item])
-                        elif(type(item)==dict):
-                            keyList=list(item.keys())
-                            if(len(keyList)!=1):
-                                raise ConfigYamlError([annoKey,"!Child","!Enum",item])
-                            enumOption.append(keyList[0])
-                        else:
-                            enumOption.append(item)
-                    return {"!Enum":enumOption}
+                    validType=cls.checkConfEnum(annoKey,typeOption)
+                    return validType
                 case "!List":
-                    if(type(typeOption)!=dict):
-                        raise ConfigYamlError([annoKey,"!Child","!List"])
-                    listType=None
-                    listLength=None
-                    for listKey,listVal in typeOption.items():
-                        match listKey:
-                            case "type":
-                                listType=listVal
-                            case "length":
-                                listLength=listVal
-                            case _:
-                                raise ConfigYamlError([annoKey,"!Child","!List",listKey])
-                    return {"!List":{"type":listType,"length":listLength}}
+                    validType=cls.checkConfList(annoKey,typeOption)
+                    return validType
                 case "!AnnoMap":
-                    if(type(typeOption)!=list):
-                        raise ConfigYamlError([annoKey,"!Child","!AnnoMap"])
-                    for i in range(len(typeOption)):
-                        item=typeOption[i]
-                        if(item[0]!="@"):
-                            raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item])
-                    return {"!AnnoMap":typeOption}
+                    validType=cls.checkConfAnnoMap(annoKey,typeOption)
+                    return validType
                 case _:
-                    raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item], "Unknown data type string.")
+                    raise ConfigYamlError([annoKey,"!Child"], "Invalid data type.")
         else:
-            raise ConfigYamlError([annoKey,"!Child"])
+            raise ConfigYamlError([annoKey,"!Child"], "Invalid data type.")
 
 
     def dirDFS(self,anoyPath:Path):
@@ -375,27 +298,69 @@ class DictTraversal():
         typeOption=confChild[typeStr]
         match typeStr:
             case "!Str":
-                self.checkStr(childValue,**typeOption)
+                self.checkAnoyStr(childValue,**typeOption)
             case "!Bool":
-                self.checkBool(childValue)
+                self.checkAnoyBool(childValue)
             case "!Int":
-                self.checkInt(childValue,**typeOption)
+                self.checkAnoyInt(childValue,**typeOption)
             case "!Float":
-                self.checkFloat(childValue,**typeOption)
+                self.checkAnoyFloat(childValue,**typeOption)
             case "!FreeMap":
-                self.checkFreeMap(childValue)
+                self.checkAnoyFreeMap(childValue)
             case "!AnnoMap":
-                self.checkAnnoMap(parentKey,childValue,typeOption)
+                self.checkAnoyAnnoMap(parentKey,childValue,typeOption)
             case "!List":
-                self.checkList(parentKey,childValue,elementType=typeOption["type"],length=typeOption["length"])
+                self.checkAnoyList(parentKey,childValue,elementType=typeOption["type"],length=typeOption["length"])
             case "!Enum":
-                self.checkEnum(childValue,typeOption)
+                self.checkAnoyEnum(childValue,typeOption)
             case _:
                 raise ConfigYamlError([parentKey,"!Child"])
 
-    def checkStr(self,anoyValue,length=None,min=None,max=None):
+    @classmethod
+    def checkConfStr(cls,annoKey,typeOption):
         """
-        @Summ: !Str型を型確認する関数。
+        @Summ: config yaml上で!Str型のtype optionを確認する関数。
+        
+        @Args:
+          annoKey:
+            @Summ: `!Child!Str`を格納するannotation key。
+            @Type: Str
+          typeOption:
+            @Summ: !Strに対応するtype option。
+            @Type: Dict
+        @Returns:
+          @Summ: 有効なtype option。
+          @Type: Dict
+        """
+        if(type(typeOption)!=dict):
+            raise ConfigYamlError([annoKey,"!Child","!Str"])
+        strLength=None
+        strMin=None
+        strMax=None
+        for strKey,strVal in typeOption.items():
+            match strKey:
+                case "length":
+                    if(strMin is None and strMax is None):
+                        strLength=strVal
+                    else:
+                        raise ConfigYamlError([annoKey,"!Child","!Str","length"])
+                case "min":
+                    if(strLength is None):
+                        strMin=strVal
+                    else:
+                        raise ConfigYamlError([annoKey,"!Child","!Str","min"])
+                case "max":
+                    if(strLength is None):
+                        strMax=strVal
+                    else:
+                        raise ConfigYamlError([annoKey,"!Child","!Str","max"])
+                case _:
+                    raise ConfigYamlError([annoKey,"!Child","!Str"])
+        return {"!Str":{"length":strLength,"min":strMin,"max":strMax}}        
+
+    def checkAnoyStr(self,anoyValue,length=None,min=None,max=None):
+        """
+        @Summ: ANOY上で!Str型を型確認する関数。
 
         @Desc:
         - <length>と<min>、<length>と<max>の両立は不可能であるが、この関数ではその確認を行わない。
@@ -435,9 +400,9 @@ class DictTraversal():
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
 
-    def checkBool(self,anoyValue):
+    def checkAnoyBool(self,anoyValue):
         """
-        @Summ: !Bool型を型確認する関数。
+        @Summ: ANOY上で!Bool型を型確認する関数。
 
         @Args:
           anoyValue:
@@ -446,9 +411,39 @@ class DictTraversal():
         if(type(anoyValue)!=bool):
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Bool")
 
-    def checkInt(self,anoyValue,min=None,max=None):
+    @classmethod
+    def checkConfInt(cls,annoKey,typeOption):
         """
-        @Summ: !Int型を型確認する関数。
+        @Summ: config yaml上で!Int型のtype optionを確認する関数。
+        
+        @Args:
+          annoKey:
+            @Summ: `!Child!Str`を格納するannotation key。
+            @Type: Str
+          typeOption:
+            @Summ: !Intに対応するtype option。
+            @Type: Dict
+        @Returns:
+          @Summ: 有効なtype option。
+          @Type: Dict
+        """
+        if(type(typeOption)!=dict):
+            raise ConfigYamlError([annoKey,"!Child","!Str"], "Required `!Map` type.")
+        intMin=None
+        intMax=None
+        for intKey,intVal in typeOption.items():
+            match intKey:
+                case "min":
+                    intMin=intVal
+                case "max":
+                    intMax=intVal
+                case _:
+                    raise ConfigYamlError([annoKey,"!Child","!Int"])
+        return {"!Int":{"min":intMin,"max":intMax}}
+
+    def checkAnoyInt(self,anoyValue,min=None,max=None):
+        """
+        @Summ: ANOY上で!Int型を型確認する関数。
 
         @Args:
           anoyValue:
@@ -469,9 +464,43 @@ class DictTraversal():
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Int")
 
-    def checkFloat(self,anoyValue,min=None,max=None):
+    @classmethod
+    def checkConfFloat(cls,annoKey,typeOption):
         """
-        @Summ: !Float型を型確認する関数。
+        @Summ: config yaml上で!Float型のtype optionを確認する関数。
+        
+        @Args:
+          annoKey:
+            @Summ: `!Child!Float`を格納するannotation key。
+            @Type: Str
+          typeOption:
+            @Summ: !Floatに対応するtype option。
+            @Type: Dict
+        @Returns:
+          @Summ: 有効なtype option。
+          @Type: Dict
+        """
+        if(type(typeOption)!=dict):
+            raise ConfigYamlError([annoKey,"!Child","!Float"], "Required `!Map` type.")
+        floatMin=None
+        floatMax=None
+        for floatKey,floatVal in typeOption.items():
+            match floatKey:
+                case "min":
+                    if(type(floatVal)!=int and type(floatVal)!=float):
+                        raise ConfigYamlError([annoKey,"!Child","!Float"])    
+                    floatMin=floatVal
+                case "max":
+                    if(type(floatVal)!=int and type(floatVal)!=float):
+                        raise ConfigYamlError([annoKey,"!Child","!Float"])    
+                    floatMax=floatVal
+                case _:
+                    raise ConfigYamlError([annoKey,"!Child","!Float"])
+        return {"!Float":{"min":floatMin,"max":floatMax}}
+
+    def checkAnoyFloat(self,anoyValue,min=None,max=None):
+        """
+        @Summ: ANOY上で!Float型を型確認する関数。
 
         @Args:
           anoyValue:
@@ -498,9 +527,9 @@ class DictTraversal():
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Float")
 
-    def checkFreeMap(self,anoyValue):
+    def checkAnoyFreeMap(self,anoyValue):
         """
-        @Summ: !FreeMap型を型確認する関数。
+        @Summ: ANOY上で!FreeMap型を型確認する関数。
 
         @Args:
           anoyValue:
@@ -516,9 +545,33 @@ class DictTraversal():
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!FreeMap")
 
-    def checkAnnoMap(self,parentKey,anoyValue,annoKeyList:list=[]):
+    @classmethod
+    def checkConfAnnoMap(cls,annoKey,typeOption):
         """
-        @Summ: !FreeMap型を型確認する関数。
+        @Summ: config yaml上で!AnnoMap型のtype optionを確認する関数。
+        
+        @Args:
+          annoKey:
+            @Summ: `!Child!AnnoMap`を格納するannotation key。
+            @Type: Str
+          typeOption:
+            @Summ: !AnnoMapに対応するtype option。
+            @Type: Dict
+        @Returns:
+          @Summ: 有効なtype option。
+          @Type: Dict
+        """
+        if(type(typeOption)!=list):
+            raise ConfigYamlError([annoKey,"!Child","!AnnoMap"])
+        for i in range(len(typeOption)):
+            item=typeOption[i]
+            if(item[0]!="@"):
+                raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item])
+        return {"!AnnoMap":typeOption}
+
+    def checkAnoyAnnoMap(self,parentKey,anoyValue,annoKeyList:list=[]):
+        """
+        @Summ: ANOY上で!FreeMap型を型確認する関数。
 
         @Desc:
         - <annoKeyList>は最低限必要なannotation keyのlistが入る。
@@ -557,9 +610,40 @@ class DictTraversal():
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
 
-    def checkList(self,parentKey,anoyValue,elementType:str=None,length:int=None):
+    @classmethod
+    def checkConfList(cls,annoKey,typeOption):
         """
-        @Summ: !List型を型確認する関数。
+        @Summ: config yaml上で!List型のtype optionを確認する関数。
+        
+        @Args:
+          annoKey:
+            @Summ: `!Child!List`を格納するannotation key。
+            @Type: Str
+          typeOption:
+            @Summ: !Listに対応するtype option。
+            @Type: Dict
+        @Returns:
+          @Summ: 有効なtype option。
+          @Type: Dict
+        """
+        if(type(typeOption)!=dict):
+            raise ConfigYamlError([annoKey,"!Child","!List"])
+        listType=None
+        listLength=None
+        for listKey,listVal in typeOption.items():
+            match listKey:
+                case "type":
+                    listType=listVal
+                case "length":
+                    listLength=listVal
+                case _:
+                    raise ConfigYamlError([annoKey,"!Child","!List",listKey])
+        return {"!List":{"type":listType,"length":listLength}}
+
+
+    def checkAnoyList(self,parentKey,anoyValue,elementType:str=None,length:int=None):
+        """
+        @Summ: ANOY上で!List型を型確認する関数。
 
         @Desc:
         - <typeOption>は最低限必要なannotation keyのlistが入る。
@@ -608,10 +692,41 @@ class DictTraversal():
                 self._pathQueue.append(newPath)
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!List")
-    
-    def checkEnum(self,anoyValue,optionList:list):
+
+    @classmethod
+    def checkConfEnum(cls,annoKey,typeOption):
         """
-        @Summ: !Enum型を型確認する関数。
+        @Summ: config yaml上で!Enum型のtype optionを確認する関数。
+        
+        @Args:
+          annoKey:
+            @Summ: `!Child!Enum`を格納するannotation key。
+            @Type: Str
+          typeOption:
+            @Summ: !Enumに対応するtype option。
+            @Type: Dict
+        @Returns:
+          @Summ: 有効なtype option。
+          @Type: Dict
+        """
+        if(type(typeOption)!=list):
+            raise ConfigYamlError([annoKey,"!Child","!Enum"])
+        enumOption=[]
+        for item in typeOption:
+            if(type(item)==list):
+                raise ConfigYamlError([annoKey,"!Child","!Enum",item])
+            elif(type(item)==dict):
+                keyList=list(item.keys())
+                if(len(keyList)!=1):
+                    raise ConfigYamlError([annoKey,"!Child","!Enum",item])
+                enumOption.append(keyList[0])
+            else:
+                enumOption.append(item)
+        return {"!Enum":enumOption}
+
+    def checkAnoyEnum(self,anoyValue,optionList:list):
+        """
+        @Summ: ANOY上で!Enum型を型確認する関数。
 
         @Desc:
         - 他の言語のUnion型の役割も兼ねている。
