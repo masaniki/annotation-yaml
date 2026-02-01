@@ -407,14 +407,14 @@ class DictTraversal():
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Bool")
 
     @classmethod
-    def checkConfInt(cls,annoKey,typeOption):
+    def checkConfInt(cls,confPath,typeOption):
         """
         @Summ: config yaml上で!Int型のtype optionを確認する関数。
         
         @Args:
-          annoKey:
-            @Summ: `!Child!Str`を格納するannotation key。
-            @Type: Str
+          confPath:
+            @Summ: config yaml上の位置。
+            @Type: List
           typeOption:
             @Summ: !Intに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
@@ -428,16 +428,29 @@ class DictTraversal():
         if(typeOption is None):
             pass
         elif(type(typeOption)!=dict):
-            raise ConfigYamlError([annoKey,"!Child","!Str"], "Required `!Map` type.")
+            raise ConfigYamlError(configPath, "Required `!Map` type.")
         else:
-            for intKey,intVal in typeOption.items():
-                match intKey:
+            for key,value in typeOption.items():
+                newConfPath=confPath+[key]
+                match key:
                     case "min":
-                        intMin=intVal
+                        intMin=value
+                        if(type(value)==int):
+                            if(intMax is not None):
+                                if(intMax<value):
+                                    raise ConfigYamlError(newConfPath)
+                        else:
+                            raise ConfigYamlError(newConfPath)
                     case "max":
-                        intMax=intVal
+                        intMax=value
+                        if(type(value)==int):
+                            if(intMax is not None):
+                                if(value<intMin):
+                                    raise ConfigYamlError(newConfPath)
+                        else:
+                            raise ConfigYamlError(newConfPath)
                     case _:
-                        raise ConfigYamlError([annoKey,"!Child","!Int"])
+                        raise ConfigYamlError(newConfPath)
         return {"!Int":{"min":intMin,"max":intMax}}
 
     def checkAnoyInt(self,anoyValue,min=None,max=None):
