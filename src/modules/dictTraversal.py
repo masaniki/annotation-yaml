@@ -330,7 +330,7 @@ class DictTraversal():
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: Dict
         @Returns:
-          @Summ: 有効なtype option。
+          @Summ: 有効なdata型構文。
           @Type: Dict
         """
         lenMin=None
@@ -420,7 +420,7 @@ class DictTraversal():
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: Dict
         @Returns:
-          @Summ: 有効なtype option。
+          @Summ: 有効なdata型構文。
           @Type: Dict
         """
         intMin=None
@@ -490,7 +490,7 @@ class DictTraversal():
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: Dict
         @Returns:
-          @Summ: 有効なtype option。
+          @Summ: 有効なdata型構文。
           @Type: Dict
         """
         floatMin=None
@@ -571,31 +571,32 @@ class DictTraversal():
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!FreeMap")
 
     @classmethod
-    def checkConfAnnoMap(cls,annoKey,typeOption):
+    def checkConfAnnoMap(cls,confPath,typeOption):
         """
         @Summ: config yaml上で!AnnoMap型のtype optionを確認する関数。
         
         @Args:
-          annoKey:
-            @Summ: `!Child!AnnoMap`を格納するannotation key。
-            @Type: Str
+          confPath:
+            @Summ: config yaml上の位置。
+            @Type: List
           typeOption:
             @Summ: !AnnoMapに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: List
         @Returns:
-          @Summ: 有効なtype option。
+          @Summ: 有効なdata型構文。
           @Type: Dict
         """
         if(typeOption is None):
             typeOption=[]
         elif(type(typeOption)!=list):
-            raise ConfigYamlError([annoKey,"!Child","!AnnoMap"])
+            raise ConfigYamlError(confPath)
         else:
             for i in range(len(typeOption)):
                 item=typeOption[i]
+                newConfPath=confPath+[item]
                 if(item[0]!="@"):
-                    raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item])
+                    raise ConfigYamlError(newConfPath)
         return {"!AnnoMap":typeOption}
 
     def checkAnoyAnnoMap(self,parentKey,anoyValue,annoKeyList:list=[]):
@@ -640,20 +641,20 @@ class DictTraversal():
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
 
     @classmethod
-    def checkConfList(cls,annoKey,typeOption):
+    def checkConfList(cls,confPath,typeOption):
         """
         @Summ: config yaml上で!List型のtype optionを確認する関数。
         
         @Args:
-          annoKey:
-            @Summ: `!Child!List`を格納するannotation key。
-            @Type: Str
+          confPath:
+            @Summ: config yaml上の位置。
+            @Type: List
           typeOption:
             @Summ: !Listに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: Dict
         @Returns:
-          @Summ: 有効なtype option。
+          @Summ: 有効なdata型構文。
           @Type: Dict
         """
         listType=None
@@ -661,22 +662,21 @@ class DictTraversal():
         if(typeOption is None):
             pass
         elif(type(typeOption)!=dict):
-            raise ConfigYamlError([annoKey,"!Child","!List"])
+            raise ConfigYamlError(confPath)
         else:
-            for listKey,listVal in typeOption.items():
-                match listKey:
+            for key,value in typeOption.items():
+                newConfPath=confPath+[key]
+                match key:
                     case "type":
-                        listType=listVal
+                        listType=value
                     case "length":
-                        if(listVal is None):
-                            continue
-                        elif(type(listVal)!=int):
-                            raise ConfigYamlError([annoKey,"!Child","!List",listKey])
-                        elif(listVal<=0):
-                            raise ConfigYamlError([annoKey,"!Child","!List",listKey])
-                        listLength=listVal
+                        listLength=value
+                        if(type(value)!=int):
+                            raise ConfigYamlError(newConfPath)
+                        elif(value<=0):
+                            raise ConfigYamlError(newConfPath)
                     case _:
-                        raise ConfigYamlError([annoKey,"!Child","!List",listKey])
+                        raise ConfigYamlError(newConfPath)
         return {"!List":{"type":listType,"length":listLength}}
 
 
@@ -733,32 +733,33 @@ class DictTraversal():
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!List")
 
     @classmethod
-    def checkConfEnum(cls,annoKey,typeOption):
+    def checkConfEnum(cls,confPath,typeOption):
         """
         @Summ: config yaml上で!Enum型のtype optionを確認する関数。
         
         @Args:
-          annoKey:
-            @Summ: `!Child!Enum`を格納するannotation key。
-            @Type: Str
+          confPath:
+            @Summ: config yaml上の位置。
+            @Type: List
           typeOption:
             @Summ: !Enumに対応するtype option。
             @Type: List
         @Returns:
-          @Summ: 有効なtype option。
+          @Summ: 有効なdata型構文。
           @Type: Dict
         """
         enumOption=[]
         if(type(typeOption)!=list):
-            raise ConfigYamlError([annoKey,"!Child","!Enum"])
+            raise ConfigYamlError(confPath)
         else:
             for item in typeOption:
+                newConfPath=confPath+[item]
                 if(type(item)==list):
-                    raise ConfigYamlError([annoKey,"!Child","!Enum",item])
+                    raise ConfigYamlError(newConfPath)
                 elif(type(item)==dict):
                     keyList=list(item.keys())
                     if(len(keyList)!=1):
-                        raise ConfigYamlError([annoKey,"!Child","!Enum",item])
+                        raise ConfigYamlError(newConfPath)
                     enumOption.append(keyList[0])
                 else:
                     enumOption.append(item)
