@@ -138,6 +138,7 @@ Example:
 各data型とそのdata型で利用可能な *type option* の一覧を以下に載せておく。
 
 `!Str`:
+- @Nestable: false
 - @TypeOption:
   - length:
     - @Summary: 文字列の長さ(固定長)。
@@ -150,6 +151,7 @@ Example:
     - @Type: !Int
 
 `!Int`:
+- @Nestable: false
 - @TypeOption:
   - min:
     - @Summary: 区間の最小値。
@@ -159,6 +161,7 @@ Example:
     - @Type: !Int
 
 `!Float`:
+- @Nestable: false
 - @TypeOption:
   - min:
     - @Summary: 区間の最小値。
@@ -173,6 +176,7 @@ Example:
   - map型を要素にすると、map型のkeyの中から要素を選択することになる。
   - *type_string* を要素にすると、data型を混ぜて列挙型を形成できる。
   これにより、Union型のような使い方ができる。
+- @Nestable: true
 - @TypeOption:
   - 列挙型の構成要素のlist型。
 - @Example:
@@ -186,14 +190,20 @@ Example:
   ```
 
 `!List`:
+- @Nestable: true
 - @TypeOption:
   - type:
     - @Summary: data型を指定する。
     - @Type: !Str
   - length:
     - @Summary: listの長さを指定する。
+    - @Description:
+      - 正の数以外はError.
+      - Noneの時は任意の長さ。
+    - @Type: !Int
 
 `!AnnoMap`:
+- @Nestable: false
 - @TypeOption:
   - !List:
     - @Summary: 最低限必要なannotation keyを羅列する。
