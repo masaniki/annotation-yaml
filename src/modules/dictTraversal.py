@@ -134,19 +134,24 @@ class DictTraversal():
         if(type(value)==str):
             match value:
                 case "!Str":
-                    validType=cls.checkConfStr(confPath,None)
+                    newConfPath=confPath+["!Str"]
+                    validType=cls.checkConfStr(newConfPath,None)
                 case "!Bool":
                     validType={"!Bool":{}}
                 case "!Int":
-                    validType=cls.checkConfInt(confPath,None)
+                    newConfPath=confPath+["!Int"]
+                    validType=cls.checkConfInt(newConfPath,None)
                 case "!Float":
-                    validType=cls.checkConfFloat(confPath,None)
+                    newConfPath=confPath+["!Float"]
+                    validType=cls.checkConfFloat(newConfPath,None)
                 case "!List":
-                    validType=cls.checkConfList(confPath,None)
+                    newConfPath=confPath+["!List"]
+                    validType=cls.checkConfList(newConfPath,None)
                 case "!FreeMap":
                     validType={"!FreeMap":{}}
                 case "!AnnoMap":
-                    validType=cls.checkConfAnnoMap(confPath,None)
+                    newConfPath=confPath+["!AnnoMap"]
+                    validType=cls.checkConfAnnoMap(newConfPath,None)
                 case _:
                     raise ConfigYamlError(confPath,"Invalid data type.")
         elif(type(value)==dict):
@@ -157,17 +162,23 @@ class DictTraversal():
             typeOption=value[typeStr]
             match typeStr:
                 case "!Str":
-                    validType=cls.checkConfStr(confPath,typeOption)
+                    newConfPath=confPath+["!Str"]
+                    validType=cls.checkConfStr(newConfPath,typeOption)
                 case "!Int":
-                    validType=cls.checkConfInt(confPath,typeOption)
+                    newConfPath=confPath+["!Int"]
+                    validType=cls.checkConfInt(newConfPath,typeOption)
                 case "!Float":
-                    validType=cls.checkConfFloat(confPath,typeOption)
+                    newConfPath=confPath+["!Float"]
+                    validType=cls.checkConfFloat(newConfPath,typeOption)
                 case "!Enum":
-                    validType=cls.checkConfEnum(confPath,typeOption)
+                    newConfPath=confPath+["!Enum"]
+                    validType=cls.checkConfEnum(newConfPath,typeOption)
                 case "!List":
-                    validType=cls.checkConfList(confPath,typeOption)
+                    newConfPath=confPath+["!List"]
+                    validType=cls.checkConfList(newConfPath,typeOption)
                 case "!AnnoMap":
-                    validType=cls.checkConfAnnoMap(confPath,typeOption)
+                    newConfPath=confPath+["!AnnoMap"]
+                    validType=cls.checkConfAnnoMap(newConfPath,typeOption)
                 case _:
                     raise ConfigYamlError(confPath, "Invalid data type.")
         else:
@@ -330,34 +341,35 @@ class DictTraversal():
           @Summ: 有効なtype option。
           @Type: Dict
         """
-        strLength=None
-        strMin=None
-        strMax=None
+        lenMin=None
+        lenMax=None
         if(typeOption is None):
             pass
         elif(type(typeOption)!=dict):
-            raise ConfigYamlError([confPath,"!Child","!Str"])
+            raise ConfigYamlError(confPath)
         else:
-            for strKey,strVal in typeOption.items():
-                match strKey:
-                    case "length":
-                        if(strMin is None and strMax is None):
-                            strLength=strVal
-                        else:
-                            raise ConfigYamlError([confPath,"!Child","!Str","length"])
+            for key,value in typeOption.items():
+                newConfPath=confPath+[key]
+                match key:
                     case "min":
-                        if(strLength is None):
-                            strMin=strVal
+                        lenMin=value
+                        if(type(value)==int):
+                            if(lenMax is not None):
+                                if(lenMax<value):
+                                    raise ConfigYamlError(newConfPath)
                         else:
-                            raise ConfigYamlError([confPath,"!Child","!Str","min"])
+                            raise ConfigYamlError(newConfPath)
                     case "max":
-                        if(strLength is None):
-                            strMax=strVal
+                        lenMax=value
+                        if(type(value)==int):
+                            if(lenMax is not None):
+                                if(value<lenMin):
+                                    raise ConfigYamlError(newConfPath)
                         else:
-                            raise ConfigYamlError([confPath,"!Child","!Str","max"])
+                            raise ConfigYamlError(newConfPath)
                     case _:
-                        raise ConfigYamlError([confPath,"!Child","!Str"])
-        return {"!Str":{"length":strLength,"min":strMin,"max":strMax}}        
+                        raise ConfigYamlError(newConfPath)
+        return {"!Str":{"min":lenMin,"max":lenMax}}
 
     def checkAnoyStr(self,anoyValue,length=None,min=None,max=None):
         """

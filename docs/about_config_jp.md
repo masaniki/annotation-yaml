@@ -140,14 +140,13 @@ Example:
 `!Str`:
 - @Nestable: false
 - @TypeOption:
-  - length:
-    - @Summary: 文字列の長さ(固定長)。
-    - @Type: !Int
   - min:
     - @Summary: 文字列の長さ(最小値)。
+    - @Description: min < maxが必須
     - @Type: !Int
   - max:
     - @Summary: 文字列の長さ(最大値)。
+    - @Description: min < maxが必須
     - @Type: !Int
 
 `!Int`:
