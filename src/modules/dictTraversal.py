@@ -644,6 +644,8 @@ class DictTraversal():
     def checkConfList(cls,confPath,typeOption):
         """
         @Summ: config yaml上で!List型のtype optionを確認する関数。
+
+        @Desc: type keyがある時は入れ子になる。
         
         @Args:
           confPath:
@@ -668,7 +670,8 @@ class DictTraversal():
                 newConfPath=confPath+[key]
                 match key:
                     case "type":
-                        listType=value
+                        validValue=cls.checkDataType(newConfPath,value)
+                        listType=validValue
                     case "length":
                         listLength=value
                         if(type(value)!=int):
