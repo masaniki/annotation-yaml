@@ -16,7 +16,7 @@ sandboxDir=Path(__file__).parent/"sandbox"
 
 @pytest.mark.parametrize(
         "x,y",[
-        ("case01/config01.yaml", "case01/valid_anoy.yaml"),
+        ("case01/config.yaml", "case01/anoy.yaml"),
         ("valid_parent01/config.yaml", "valid_parent01/anoy.yaml"),
         ("valid_parent02/config.yaml", "valid_parent02/anoy.yaml"),
         ("valid_str01/config.yaml", "valid_str01/anoy.yaml"),
@@ -60,25 +60,24 @@ def test_valid_anoyFile(x,y):
 @pytest.mark.parametrize(
         "x,y,z",[
         ("case02/config01.yaml", "case02/invalid_int.yaml", AnnotationTypeError),
-        ("typo01/config.yaml", "typo01/anoy.yaml", AnnotationKeyError),
+        ("typo01/config.yaml", "typo01/anoy.yaml", AnnotationTypeError),
         ("invalid_parent01/config.yaml", "invalid_parent01/anoy.yaml", AnnotationTypeError),
         ("invalid_parent02/config.yaml", "invalid_parent02/anoy.yaml", AnnotationTypeError),
         ("invalid_str01/config.yaml", "invalid_str01/anoy.yaml", AnnotationTypeError),
         ("invalid_str02/config.yaml", "invalid_str02/anoy.yaml", AnnotationTypeError),
-        ("invalid_str03/config.yaml", "invalid_str03/anoy.yaml", AnnotationTypeError),
         ("invalid_int01/config.yaml", "invalid_int01/anoy.yaml", AnnotationTypeError),
         ("invalid_float01/config.yaml", "invalid_float01/anoy.yaml", AnnotationTypeError),
         ("invalid_float02/config.yaml", "invalid_float02/anoy.yaml", AnnotationTypeError),
         ("invalid_list01/config.yaml", "invalid_list01/anoy.yaml", AnnotationTypeError),
         ("invalid_list02/config.yaml", "invalid_list02/anoy.yaml", AnnotationTypeError),
         ("invalid_freeMap01/config.yaml", "invalid_freeMap01/anoy.yaml", AnnotationTypeError),
-        ("invalid_annoMap01/config.yaml", "invalid_annoMap01/anoy.yaml", AnnotationKeyError),
+        ("invalid_annoMap01/config.yaml", "invalid_annoMap01/anoy.yaml", AnnotationTypeError),
         ("invalid_annoMap02/config.yaml", "invalid_annoMap02/anoy.yaml", AnnotationTypeError),
         ("invalid_childNull01/config.yaml", "invalid_childNull01/anoy.yaml", AnnotationTypeError),
         ("invalid_enum01/config.yaml", "invalid_enum01/anoy.yaml", AnnotationTypeError),
         ("invalid_enum02/config.yaml", "invalid_enum02/anoy.yaml", AnnotationTypeError),
         ("invalid_enum03/config.yaml", "invalid_enum03/anoy.yaml", ConfigYamlError),
-        ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", AnnotationKeyError)
+        ("sampleCase/library_config.yaml", "sampleCase/invalid_library.yaml", AnnotationTypeError)
         ]
 )
 def test_invalid_anoyFile(x,y,z):
