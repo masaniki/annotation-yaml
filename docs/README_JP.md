@@ -141,3 +141,9 @@ ANOYの下位規格。
 YAMLの階層構造を説明するためのANOYの規格。
 
 ANOYの下位規格。
+
+# 得られた経験
+
+YAMLの全探索する時は、組(yamlPath,yamlData)を引数にして探索する。
+
+yaml本体をyamlPathで辿った結果の値をyamlDataに格納しておく。
