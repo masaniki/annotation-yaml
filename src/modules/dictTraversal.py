@@ -156,7 +156,7 @@ class DictTraversal():
             if(len(confChildKey)!=1):
                 raise ConfigYamlError(confPath,"Invalid data type.")
             typeStr=confChildKey[0]
-            newConfPath=configPath+typeStr
+            newConfPath=confPath+[typeStr]
             typeOption=value[typeStr]
             match typeStr:
                 case "!Str":
