@@ -68,26 +68,18 @@
   "@Summ": class変数を格納する。
   "@ComeFrom": class variables.
   "!Child": "!FreeMap"
-  "!Parent":
-  - "@Class" 
 "@ClsFuncs":
   "@Summ": class関数を格納する。
   "@ComeFrom": class function.
   "!Child": "!FreeMap"
-  "!Parent":
-  - "@Class"
 "@InsVars":
   "@Summ": instant変数を格納する。
   "@ComeFrom": instance variables.
   "!Child": "!FreeMap"
-  "!Parent":
-  - "@Class"
 "@InsFuncs":
   "@Summ": instance関数を格納する。
   "@ComeFrom": instance functions.
   "!Child": "!FreeMap"
-  "!Parent":
-  - "@Class"
 "@Getter":
   "@Summ": classの外部から変数を参照可能か否かを記録。
   "!Child":

@@ -630,10 +630,6 @@ class DictTraversal():
           @Summ: 正常なdata型ならばTrue.
           @Type: Bool
         """
-        if(anoyPath==[]):
-            annoKey=None
-        else:
-            annoKey=anoyPath[-1]
         if(type(data)==dict):
             for key,value in data.items():
                 newAnoyPath=anoyPath+[key]
@@ -643,7 +639,7 @@ class DictTraversal():
                     return False
                 confParent=configValue.get("!Parent")
                 if(confParent is not None):
-                    if(annoKey not in confParent):
+                    if(key not in confParent):
                         return False
                 if(typeOption!=[]):
                     if(key not in typeOption):
@@ -764,7 +760,13 @@ class DictTraversal():
             for item in typeOption:
                 newConfPath=confPath+[item]
                 if(type(item)==str):
-                    item
+                    if(item[0]=="!"):
+                        # str型で表現されたtype構文。
+                        validDict=cls.checkConfType(confPath,item)
+                        enumOption.append(validDict)
+                    else:
+                        # str型で表現されたscalar。
+                        enumOption.append(item)
                 elif(type(item)==list):
                     raise ConfigYamlError(newConfPath)
                 elif(type(item)==dict):
