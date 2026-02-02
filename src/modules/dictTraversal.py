@@ -73,13 +73,14 @@ class DictTraversal():
             if(type(valueDict)!=dict):
                 raise ConfigYamlError([annoKey])
             for key,value in valueDict.items():
+                newConfigPath=[annoKey,key]
                 if(key[0]=="@"):
                     continue
                 elif(key=="!Parent"):
-                    validConfParent=self.checkParent([annoKey,"!Parent"],value)
+                    validConfParent=self.checkParent(newConfigPath,value)
                     validAnnoValue["!Parent"]=validConfParent
                 elif(key=="!Child"):
-                    validConfChild=self.checkDataType([annoKey,"!Child"],value)
+                    validConfChild=self.checkDataType(newConfigPath,value)
                     validAnnoValue["!Child"]=validConfChild
                 else:
                     raise ConfigYamlError([annoKey], "Unknown config key is found.")
@@ -132,57 +133,48 @@ class DictTraversal():
           @Type: Dict
         """
         if(type(value)==str):
+            newConfPath=confPath+[value]
             match value:
                 case "!Str":
-                    newConfPath=confPath+["!Str"]
                     validType=cls.checkConfStr(newConfPath,None)
                 case "!Bool":
                     validType={"!Bool":{}}
                 case "!Int":
-                    newConfPath=confPath+["!Int"]
                     validType=cls.checkConfInt(newConfPath,None)
                 case "!Float":
-                    newConfPath=confPath+["!Float"]
                     validType=cls.checkConfFloat(newConfPath,None)
                 case "!List":
-                    newConfPath=confPath+["!List"]
                     validType=cls.checkConfList(newConfPath,None)
                 case "!FreeMap":
                     validType={"!FreeMap":{}}
                 case "!AnnoMap":
-                    newConfPath=confPath+["!AnnoMap"]
                     validType=cls.checkConfAnnoMap(newConfPath,None)
                 case _:
-                    raise ConfigYamlError(confPath,"Invalid data type.")
+                    raise ConfigYamlError(newConfPath,"Invalid data type.")
         elif(type(value)==dict):
             confChildKey=list(value.keys())
             if(len(confChildKey)!=1):
                 raise ConfigYamlError(confPath,"Invalid data type.")
             typeStr=confChildKey[0]
+            newConfPath=configPath+typeStr
             typeOption=value[typeStr]
             match typeStr:
                 case "!Str":
-                    newConfPath=confPath+["!Str"]
                     validType=cls.checkConfStr(newConfPath,typeOption)
                 case "!Int":
-                    newConfPath=confPath+["!Int"]
                     validType=cls.checkConfInt(newConfPath,typeOption)
                 case "!Float":
-                    newConfPath=confPath+["!Float"]
                     validType=cls.checkConfFloat(newConfPath,typeOption)
                 case "!Enum":
-                    newConfPath=confPath+["!Enum"]
                     validType=cls.checkConfEnum(newConfPath,typeOption)
                 case "!List":
-                    newConfPath=confPath+["!List"]
                     validType=cls.checkConfList(newConfPath,typeOption)
                 case "!AnnoMap":
-                    newConfPath=confPath+["!AnnoMap"]
                     validType=cls.checkConfAnnoMap(newConfPath,typeOption)
                 case _:
-                    raise ConfigYamlError(confPath, "Invalid data type.")
+                    raise ConfigYamlError(newConfPath,"Invalid data type.")
         else:
-            raise ConfigYamlError(confPath, "Invalid data type.")
+            raise ConfigYamlError(confPath,"Invalid data type.")
         return validType
 
 
