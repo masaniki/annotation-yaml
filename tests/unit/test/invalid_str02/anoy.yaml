@@ -1,4 +1,3 @@
-# lengthと異なる場合。
+# minを下回る場合。
 "@SimpleStr": "abcd"
-"@lengthStr": "abcd"
-"@rangeStr": "abcdefgh"
+"@rangeStr": "abc"

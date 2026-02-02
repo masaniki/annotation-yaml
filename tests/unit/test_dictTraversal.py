@@ -65,7 +65,6 @@ def test_valid_anoyFile(x,y):
         ("invalid_parent02/config.yaml", "invalid_parent02/anoy.yaml", AnnotationTypeError),
         ("invalid_str01/config.yaml", "invalid_str01/anoy.yaml", AnnotationTypeError),
         ("invalid_str02/config.yaml", "invalid_str02/anoy.yaml", AnnotationTypeError),
-        ("invalid_str03/config.yaml", "invalid_str03/anoy.yaml", AnnotationTypeError),
         ("invalid_int01/config.yaml", "invalid_int01/anoy.yaml", AnnotationTypeError),
         ("invalid_float01/config.yaml", "invalid_float01/anoy.yaml", AnnotationTypeError),
         ("invalid_float02/config.yaml", "invalid_float02/anoy.yaml", AnnotationTypeError),
