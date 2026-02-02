@@ -136,19 +136,19 @@ class DictTraversal():
             newConfPath=confPath+[value]
             match value:
                 case "!Str":
-                    validType=cls.checkConfStr(newConfPath,None)
+                    validDict=cls.checkConfStr(newConfPath,None)
                 case "!Bool":
-                    validType={"!Bool":{}}
+                    validDict={"!Bool":{}}
                 case "!Int":
-                    validType=cls.checkConfInt(newConfPath,None)
+                    validDict=cls.checkConfInt(newConfPath,None)
                 case "!Float":
-                    validType=cls.checkConfFloat(newConfPath,None)
+                    validDict=cls.checkConfFloat(newConfPath,None)
                 case "!List":
-                    validType=cls.checkConfList(newConfPath,None)
+                    validDict=cls.checkConfList(newConfPath,None)
                 case "!FreeMap":
-                    validType={"!FreeMap":{}}
+                    validDict={"!FreeMap":{}}
                 case "!AnnoMap":
-                    validType=cls.checkConfAnnoMap(newConfPath,None)
+                    validDict=cls.checkConfAnnoMap(newConfPath,None)
                 case _:
                     raise ConfigYamlError(newConfPath,"Invalid data type.")
         elif(type(value)==dict):
@@ -160,22 +160,22 @@ class DictTraversal():
             typeOption=value[typeStr]
             match typeStr:
                 case "!Str":
-                    validType=cls.checkConfStr(newConfPath,typeOption)
+                    validDict=cls.checkConfStr(newConfPath,typeOption)
                 case "!Int":
-                    validType=cls.checkConfInt(newConfPath,typeOption)
+                    validDict=cls.checkConfInt(newConfPath,typeOption)
                 case "!Float":
-                    validType=cls.checkConfFloat(newConfPath,typeOption)
+                    validDict=cls.checkConfFloat(newConfPath,typeOption)
                 case "!Enum":
-                    validType=cls.checkConfEnum(newConfPath,typeOption)
+                    validDict=cls.checkConfEnum(newConfPath,typeOption)
                 case "!List":
-                    validType=cls.checkConfList(newConfPath,typeOption)
+                    validDict=cls.checkConfList(newConfPath,typeOption)
                 case "!AnnoMap":
-                    validType=cls.checkConfAnnoMap(newConfPath,typeOption)
+                    validDict=cls.checkConfAnnoMap(newConfPath,typeOption)
                 case _:
                     raise ConfigYamlError(newConfPath,"Invalid data type.")
         else:
             raise ConfigYamlError(confPath,"Invalid data type.")
-        return validType
+        return validDict
 
     def checkAnoyType(self,anoyPath,data,confType):
         """
@@ -273,6 +273,7 @@ class DictTraversal():
         - 最初は([],長いdict)で、探索が進むごとに(anoyPath,短いdict)になるイメージ。
         - config yamlが指定されていなくても、free keyとannotation keyの混合は許さない。
         - list型やFreeMap型を検知してもconfig yamlは機能しない。AnnoMap型を検知するまでがこの関数の役割だ。
+        - anoyFreeSearchは例外を出す関数。
 
         @Args:
           anoyPath:
@@ -281,12 +282,17 @@ class DictTraversal():
             @Type: List
           data:
             @Summ: parentに対応する値を代入。
+        @Returns:
+          @Summ: 型が正常ならばTrue
+          @Type: Bool
         """
         if(type(data)==list):
             for i in range(len(data)):
                 item=data[i]
                 newAnoyPath=anoyPath+[item]
-                self.anoyFreeSearch(newAnoyPath,i)
+                isValid=self.anoyFreeSearch(newAnoyPath,i)
+                if(not isValid):
+                    raise AnnotationTypeError(self._curAnoy,anoyPath,"!AnnoMap")
         elif(type(data)==dict):
             keyList=list(data.keys())
             if(1<=len(keyList)):
@@ -298,6 +304,7 @@ class DictTraversal():
                     isValid=self.checkAnoyFreeMap(anoyPath,data)
                     if(not isValid):
                         raise AnnotationTypeError(self._curAnoy,anoyPath,"!FreeMap")
+        return True
 
     @classmethod
     def checkConfStr(cls,confPath,typeOption):
@@ -724,6 +731,11 @@ class DictTraversal():
     def checkConfEnum(cls,confPath,typeOption):
         """
         @Summ: config yaml上で!Enum型のtype optionを確認する関数。
+
+        @Desc:
+        - scalar型がdict型であることも許容している。{scalar:@Summ:xxx}みたいな構文。
+        - checkConfの時点で、data型構文をdict型に、scalarはscalarにしておく。
+        - list型は選択肢にはできない。
         
         @Args:
           confPath:
@@ -748,11 +760,19 @@ class DictTraversal():
                     keyList=list(item.keys())
                     if(len(keyList)!=1):
                         raise ConfigYamlError(newConfPath)
-                    keyType=keyList[0]
-                    if(keyType):
-                        pass
-                    enumOption.append(keyList[0])
+                    uniqueKey=keyList[0]
+                    if(type(uniqueKey)!=str):
+                        # dict型で表現されたstr型以外のscalar型。
+                        enumOption.append(uniqueKey)
+                    elif(uniqueKey[0]!="!"):
+                        # dict型で表現されたstr型。
+                        enumOption.append(uniqueKey)
+                    else:
+                        # type構文。
+                        validDict=cls.checkConfType(newConfPath,item)
+                        enumOption.append(validDict)
                 else:
+                    # scalar型で表現されたscalar型。
                     enumOption.append(item)
         return {"!Enum":enumOption}
 
@@ -764,6 +784,8 @@ class DictTraversal():
 
         @Desc:
         - 他の言語のUnion型の役割も兼ねている。
+        - 選択肢がdict型ならば、data型構文。
+        - 選択肢がscalarならば、scalarの中から選択する。
 
         @Args:
           anoyPath:
@@ -782,37 +804,40 @@ class DictTraversal():
             option=optionList[i]
             if(option is None and data is None):
                 return True
-            if(type(option)==str):
-                if(option[0]=="!"):
-                    self.checkAnoyType(anoyPath,data,option)
-                else:
-                    if(data==option):
-                        return True
-                    else:
-                        return False
-            if(type(option)==dict):
-                optionKey=list(option.keys())[0]
-                match optionKey:
+            elif(type(option)==dict):
+                # dict型はdata型を表す。
+                typeStr=list(option.keys())[0]
+                typeOption=option[typeStr]
+                match typeStr:
                     case "!Str":
-                        self.checkAnoyStr(anoyPath)
+                        isValid=self.checkAnoyStr(data,typeOption)
+                        if(isValid):
+                            return True
                     case "!Bool":
-                        if(type(data)==bool):
+                        isValid==self.checkAnoyBool(data,typeOption)
+                        if(isValid):
                             return True
                     case "!Int":
-                        if(type(data)==int):
+                        isValid=self.checkAnoyInt(data,typeOption)
+                        if(isValid):
                             return True
                     case "!Float":
-                        if(type(data)==float):
+                        isValid=self.checkAnoyFloat(data,typeOption)
+                        if(isValid):
                             return True
                     case "!List":
-                        if(type(data)==list):
+                        isValid=self.checkAnoyList(anoyPath,data,typeOption)
+                        if(isValid):
                             return True
                     case "!FreeMap":
-                        if(type(data)==dict):
+                        isValid=self.checkAnoyFreeMap(anoyPath,data,typeOption)
+                        if(isValid):
                             return True
                     case _:
-                        if(data==optionKey):
-                            return True
+                            return False
+            elif(data==option):  # scalar用の処理。
+                    return True
+        # 全てに合致しない時
         return False
 
 
