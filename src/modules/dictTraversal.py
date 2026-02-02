@@ -371,7 +371,7 @@ class DictTraversal():
                         raise ConfigYamlError(newConfPath)
         return {"!Str":{"min":lenMin,"max":lenMax}}
 
-    def checkAnoyStr(self,anoyValue,length=None,min=None,max=None):
+    def checkAnoyStr(self,anoyValue,min=None,max=None):
         """
         @Summ: ANOY上で!Str型を型確認する関数。
 
@@ -382,9 +382,6 @@ class DictTraversal():
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          length:
-            @Summ: 文字列の長さ。
-            @Desc: min,maxとの両立は不可能。
           min:
             @Summ: 文字列の長さの最小値。
             @Desc:
@@ -397,19 +394,12 @@ class DictTraversal():
             - max+1からerror.
         """
         if(type(anoyValue)==str):
-            if(length is not None):
-                if(len(anoyValue)==length):
-                    return
-                else:
-                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str",)
-            else:
-                if(min is not None):
-                    if(len(anoyValue)<min):
-                        raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
-                if(max is not None):
-                    if(max<len(anoyValue)):
-                        raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
-                return
+            if(min is not None):
+                if(len(anoyValue)<min):
+                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
+            if(max is not None):
+                if(max<len(anoyValue)):
+                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
 
