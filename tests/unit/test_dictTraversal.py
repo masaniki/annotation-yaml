@@ -7,7 +7,7 @@ import yaml
 projectDir=Path(__file__).parent.parent.parent
 sys.path.append(str(projectDir))
 
-from src.modules import DictTraversal
+from src.modules import AnoyParser
 from src.modules import AnnotationKeyError, AnnotationTypeError, ConfigYamlError
 
 testDir=Path(__file__).parent/"test"
@@ -53,7 +53,7 @@ def test_valid_anoyFile(x,y):
     anoyPath=testDir/y
     with open(configPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
-    tree01=DictTraversal(configDict)
+    tree01=AnoyParser(configDict)
     tree01.dirDFS(anoyPath)
     assert True
 
@@ -102,7 +102,7 @@ def test_invalid_anoyFile(x,y,z):
     with open(configPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
     with pytest.raises(z) as e:
-        tree01=DictTraversal(configDict)
+        tree01=AnoyParser(configDict)
         tree01.dirDFS(anoyPath)
     assert e.type==z
 
@@ -131,7 +131,7 @@ def test_valid_anoyDir(x,y):
     anoyPath=testDir/y
     with open(configPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
-    tree01=DictTraversal(configDict)
+    tree01=AnoyParser(configDict)
     tree01.dirDFS(anoyPath)
     assert True
 
@@ -162,7 +162,7 @@ def test_invalid_anoyDir(x,y,z):
     with open(configPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
     with pytest.raises(z) as e:
-        tree01=DictTraversal(configDict)
+        tree01=AnoyParser(configDict)
         tree01.dirDFS(anoyPath)
     assert e.type==z
 
