@@ -73,16 +73,15 @@ class DictTraversal():
             if(type(valueDict)!=dict):
                 raise ConfigYamlError([annoKey])
             for key,value in valueDict.items():
-                newConfigPath=configPath+[key]
                 if(type(key)!=str):
                     raise ConfigYamlError([annoKey,key], "Invalid value as !Parent.")
                 if(key[0]=="@"):
                     continue
                 elif(key=="!Parent"):
-                    validConfParent=self.checkParent(newConfigPath,value)
+                    validConfParent=self.checkParent([annoKey,"!Parent"],value)
                     validAnnoValue["!Parent"]=validConfParent
                 elif(key=="!Child"):
-                    validConfChild=self.checkDataType(newConfigPath,value)
+                    validConfChild=self.checkDataType([annoKey,"!Child"],value)
                     validAnnoValue["!Child"]=validConfChild
                 else:
                     raise ConfigYamlError([annoKey,key], "Invalid value as !Parent.")
