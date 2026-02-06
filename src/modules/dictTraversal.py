@@ -305,13 +305,13 @@ class DictTraversal():
         typeOption=confChild[typeStr]
         match typeStr:
             case "!Str":
-                self.checkAnoyStr(childValue,**typeOption)
+                isValid=self.checkAnoyStr(childValue,typeOption)
             case "!Bool":
-                self.checkAnoyBool(childValue)
+                isValid=self.checkAnoyBool(childValue)
             case "!Int":
-                self.checkAnoyInt(childValue,**typeOption)
+                isValid=self.checkAnoyInt(childValue,typeOption)
             case "!Float":
-                self.checkAnoyFloat(childValue,**typeOption)
+                isValid=self.checkAnoyFloat(childValue,typeOption)
             case "!FreeMap":
                 self.checkAnoyFreeMap(childValue)
             case "!AnnoMap":
@@ -370,48 +370,53 @@ class DictTraversal():
                         raise ConfigYamlError(newConfPath)
         return {"!Str":{"min":lenMin,"max":lenMax}}
 
-    def checkAnoyStr(self,anoyValue,min=None,max=None):
+    @classmethod
+    def checkAnoyStr(cls,anoyValue,strOption):
         """
         @Summ: ANOY上で!Str型を型確認する関数。
 
         @Desc:
-        - <length>と<min>、<length>と<max>の両立は不可能であるが、この関数ではその確認を行わない。
-        - 呼び出し時にその確認を行うべきである。
+        - strOptionのkeyは"min"と"max"だ。
 
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          min:
-            @Summ: 文字列の長さの最小値。
-            @Desc:
-            - lengthとの両立は不可能。
-            - min-1からerror.
-          max:
-            @Summ: 文字列の長さの最大値。
-            @Desc:
-            - lengthとの両立は不可能。
-            - max+1からerror.
+          strOption:
+            @Summ: 文字列型のoption。
+            @Type: Dict
+        @Returns:
+          @Summ: 型が正常である時にTrue.
+          @Type: Bool
         """
+        minLen=strOption.get("min")
+        maxLen=strOption.get("max")
         if(type(anoyValue)==str):
-            if(min is not None):
-                if(len(anoyValue)<min):
-                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
-            if(max is not None):
-                if(max<len(anoyValue)):
-                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
+            if(minLen is not None):
+                if(len(anoyValue)<minLen):
+                    return False
+            if(maxLen is not None):
+                if(maxLen<len(anoyValue)):
+                    return False
+            return True
         else:
-            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
+            return False
 
-    def checkAnoyBool(self,anoyValue):
+    @classmethod
+    def checkAnoyBool(cls,anoyValue):
         """
         @Summ: ANOY上で!Bool型を型確認する関数。
 
         @Args:
           anoyValue:
             @Summ: 型確認する値。
+        @Returns:
+          @Summ: 正常な値ならばTrue.
+          @Type: Bool
         """
-        if(type(anoyValue)!=bool):
-            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Bool")
+        if(type(anoyValue)==bool):
+            return True
+        else:
+            return False
 
     @classmethod
     def checkConfInt(cls,confPath,typeOption):
@@ -460,28 +465,34 @@ class DictTraversal():
                         raise ConfigYamlError(newConfPath)
         return {"!Int":{"min":intMin,"max":intMax}}
 
-    def checkAnoyInt(self,anoyValue,min=None,max=None):
+    @classmethod
+    def checkAnoyInt(cls,anoyValue,intOption):
         """
         @Summ: ANOY上で!Int型を型確認する関数。
+
+        @Desc:
+        - intOptionのkeyは、"min"と"max"。
 
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          min:
-            @Summ: 最小値。
-          max:
-            @Summ: 最大値。
+          intOption:
+            @Type: Int
+        @Returns:
+          @Type: Bool
         """
+        minInt=intOption.get("min")
+        maxInt=intOption.get("max")
         if(type(anoyValue)==int):
-            if(min is not None):
-                if(anoyValue<min):
-                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Int")
-            if(max is not None):
-                if(max<anoyValue):
-                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Int")
-            return
+            if(minInt is not None):
+                if(anoyValue<minInt):
+                    return False
+            if(maxInt is not None):
+                if(maxInt<anoyValue):
+                    return False
+            return True
         else:
-            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Int")
+            return False
 
     @classmethod
     def checkConfFloat(cls,annoKey,typeOption):
@@ -521,34 +532,36 @@ class DictTraversal():
                         raise ConfigYamlError([annoKey,"!Child","!Float"])
         return {"!Float":{"min":floatMin,"max":floatMax}}
 
-    def checkAnoyFloat(self,anoyValue,min=None,max=None):
+    @classmethod
+    def checkAnoyFloat(cls,anoyValue,floatOption):
         """
         @Summ: ANOY上で!Float型を型確認する関数。
+
+        @Desc:
+        - int型も受け入れる。
+        - intOptionのkeyは、"min"と"max"。
 
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          min:
-            @Summ: 最小値。
-            @Desc:
-            - `min<=annoyValue`の時にtrue.
-            @SemType: Int|Float
-          max:
-            @Summ: 最大値。
-            @Desc:
-            - `annoyValue<=max`の時にtrue.
-            @SemType: Int|Float
+          intOption:
+            @Type: Int
+        @Returns:
+          @Type: Bool
         """
+        minFloat=floatOption.get("min")
+        maxFloat=floatOption.get("max")
         if(type(anoyValue)==int or type(anoyValue)==float):
-            if(min is not None):
-                if(anoyValue<min):
-                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Float")
-            if(max is not None):
-                if(max<anoyValue):
-                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Float")
-            return
+            if(minFloat is not None):
+                if(anoyValue<minFloat):
+                    return False
+            if(maxFloat is not None):
+                if(maxFloat<anoyValue):
+                    return False
+            return True
         else:
-            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Float")
+            return False
+    
 
     def checkAnoyFreeMap(self,anoyValue):
         """
@@ -679,7 +692,7 @@ class DictTraversal():
         return {"!List":{"type":listType,"length":listLength}}
 
 
-    def checkAnoyList(self,parentKey,anoyValue,elementType:str=None,length:int=None):
+    def checkAnoyList(self,parentKey,anoyValue,listOption):
         """
         @Summ: ANOY上で!List型を型確認する関数。
 
@@ -703,6 +716,8 @@ class DictTraversal():
             @Summ: listの長さ
             @Type: Int
         """
+        elementType=listOption.get("type")
+        length=listOption.get("length")
         if(type(anoyValue)==list):
             if(length is not None):
                 if(length!=len(anoyValue)):

@@ -124,7 +124,8 @@ annotation YAMLに異常がある時は、以下の様に出力する。
 
 # 詳細
 
-詳細な仕様を記述する。
+・AnoyKeyErrorは、見つからないkeyを明示する。
+・AnoyValueErrorは、矛盾する値を格納するkeyを明示する。
 
 ## Next To Do
 
