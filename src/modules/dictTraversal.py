@@ -116,7 +116,7 @@ class DictTraversal():
         return value.copy()
 
     @classmethod
-    def checkConfType(cls,confPath,value):
+    def checkConfType(cls,confPath,confValue):
         """
         @Summ: data型構文を確認する関数。
 
@@ -126,16 +126,16 @@ class DictTraversal():
           confPath:
             @Summ: config yaml上の位置。
             @Type: List
-          value:
+          confValue:
             @Summ: data型構文。
             @Type: Any
         @Returns:
           @Summ: `!Child`のvalueとして有効な値。
           @Type: Dict
         """
-        if(type(value)==str):
-            newConfPath=confPath+[value]
-            match value:
+        if(type(confValue)==str):
+            newConfPath=confPath+[confValue]
+            match confValue:
                 case "!Str":
                     validType=cls.checkConfStr(newConfPath,None)
                 case "!Bool":
@@ -152,26 +152,26 @@ class DictTraversal():
                     validType=cls.checkConfAnnoMap(newConfPath,None)
                 case _:
                     raise ConfigYamlError(newConfPath,"Invalid data type.")
-        elif(type(value)==dict):
-            confChildKey=list(value.keys())
+        elif(type(confValue)==dict):
+            confChildKey=list(confValue.keys())
             if(len(confChildKey)!=1):
                 raise ConfigYamlError(confPath,"Invalid data type.")
             typeStr=confChildKey[0]
             newConfPath=confPath+[typeStr]
-            typeOption=value[typeStr]
+            newConfValue=confValue[typeStr]
             match typeStr:
                 case "!Str":
-                    validType=cls.checkConfStr(newConfPath,typeOption)
+                    validType=cls.checkConfStr(newConfPath,newConfValue)
                 case "!Int":
-                    validType=cls.checkConfInt(newConfPath,typeOption)
+                    validType=cls.checkConfInt(newConfPath,newConfValue)
                 case "!Float":
-                    validType=cls.checkConfFloat(newConfPath,typeOption)
+                    validType=cls.checkConfFloat(newConfPath,newConfValue)
                 case "!Enum":
-                    validType=cls.checkConfEnum(newConfPath,typeOption)
+                    validType=cls.checkConfEnum(newConfPath,newConfValue)
                 case "!List":
-                    validType=cls.checkConfList(newConfPath,typeOption)
+                    validType=cls.checkConfList(newConfPath,newConfValue)
                 case "!AnnoMap":
-                    validType=cls.checkConfAnnoMap(newConfPath,typeOption)
+                    validType=cls.checkConfAnnoMap(newConfPath,newConfValue)
                 case _:
                     raise ConfigYamlError(newConfPath,"Invalid data type.")
         else:
@@ -773,8 +773,6 @@ class DictTraversal():
         - 最低限なので、<typeOption>以外のannotation keyも許容される。
         - <type>には!Type型が入る。
 
-        @Note: not checked.
-
         @Args:
           anoyPath:
             @Summ: anoy内の現在地。
@@ -817,8 +815,6 @@ class DictTraversal():
     def checkConfEnum(cls,confPath,confValue):
         """
         @Summ: config yaml上で!Enum型のtype optionを確認する関数。
-
-        @Note: checked.
         
         @Args:
           annoKey:
