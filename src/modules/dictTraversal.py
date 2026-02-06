@@ -281,12 +281,16 @@ class DictTraversal():
                 isAnnoMap=None
                 for key,value in childValue.items():
                     if(isAnnoMap is None):
-                        if(key[0]=="@"):
+                        if(type(key)!=str):
+                            isAnnoMap=False
+                        elif(key[0]=="@"):
                             isAnnoMap=True
                         else:
                             isAnnoMap=False
                     else:
-                        if(isAnnoMap==True and key[0]!="@"):
+                        if(type(key)!=str and isAnnoMap==True):
+                            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
+                        elif(isAnnoMap==True and key[0]!="@"):
                             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
                         elif(isAnnoMap==False and key[0]=="@"):
                             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!FreeMap")
