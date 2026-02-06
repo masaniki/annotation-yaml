@@ -227,7 +227,7 @@ class ConfParser():
         if(confValue is None):
             pass
         elif(type(confValue)!=dict):
-            raise ConfigYamlError(configPath, "Required `!Map` type.")
+            raise ConfigYamlError(confPath, "Required `!Map` type.")
         else:
             for key,value in confValue.items():
                 newConfPath=confPath+[key]
@@ -313,8 +313,8 @@ class ConfParser():
             raise ConfigYamlError(confPath)
         else:
             for i in range(len(confValue)):
-                newConfPath=confPath+[item]
                 item=confValue[i]
+                newConfPath=confPath+[item]
                 if(item[0]!="@"):
                     raise ConfigYamlError(newConfPath)
         return {"!AnnoMap":confValue}
@@ -347,7 +347,8 @@ class ConfParser():
                 newConfPath=confPath+[listKey]
                 match listKey:
                     case "type":
-                        listType=listVal
+                        validDict=cls.checkConfType(newConfPath,listVal)
+                        listType=validDict
                     case "length":
                         if(listVal is None):
                             continue
@@ -394,12 +395,5 @@ class ConfParser():
         return {"!Enum":enumOption}
 
 if(__name__=="__main__"):
-    configPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\case01\config01.yaml"
-    anoyPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\case01\int_false.yaml"
-    with open(configPath,mode="r",encoding="utf-8") as f:
-        configDict=yaml.safe_load(f)
-    with open(anoyPath,mode="r",encoding="utf-8") as f:
-        anoyDict=yaml.safe_load(f)
-    tree01=DictTraversal(configDict)
-    tree01.anoyFreeSearch([],anoyDict)
+    pass
 
