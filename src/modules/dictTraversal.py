@@ -302,7 +302,7 @@ class DictTraversal():
         return isValid
 
     @classmethod
-    def checkConfStr(cls,confPath,typeOption):
+    def checkConfStr(cls,confPath,confValue):
         """
         @Summ: config yaml上で!Str型のtype optionを確認する関数。
         
@@ -310,7 +310,7 @@ class DictTraversal():
           confPath:
             @Summ: config yaml上の位置。
             @Type: List
-          typeOption:
+          confValue:
             @Summ: !Strに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: Dict
@@ -320,12 +320,12 @@ class DictTraversal():
         """
         lenMin=None
         lenMax=None
-        if(typeOption is None):
+        if(confValue is None):
             pass
-        elif(type(typeOption)!=dict):
+        elif(type(confValue)!=dict):
             raise ConfigYamlError(confPath)
         else:
-            for key,value in typeOption.items():
+            for key,value in confValue.items():
                 newConfPath=confPath+[key]
                 match key:
                     case "min":
@@ -417,7 +417,7 @@ class DictTraversal():
             return False
 
     @classmethod
-    def checkConfInt(cls,confPath,typeOption):
+    def checkConfInt(cls,confPath,confValue):
         """
         @Summ: config yaml上で!Int型のtype optionを確認する関数。
         
@@ -425,7 +425,7 @@ class DictTraversal():
           confPath:
             @Summ: config yaml上の位置。
             @Type: List
-          typeOption:
+          confValue:
             @Summ: !Intに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: Dict
@@ -435,12 +435,12 @@ class DictTraversal():
         """
         intMin=None
         intMax=None
-        if(typeOption is None):
+        if(confValue is None):
             pass
-        elif(type(typeOption)!=dict):
+        elif(type(confValue)!=dict):
             raise ConfigYamlError(configPath, "Required `!Map` type.")
         else:
-            for key,value in typeOption.items():
+            for key,value in confValue.items():
                 newConfPath=confPath+[key]
                 match key:
                     case "min":
@@ -507,15 +507,15 @@ class DictTraversal():
             return True
 
     @classmethod
-    def checkConfFloat(cls,annoKey,typeOption):
+    def checkConfFloat(cls,confPath,confValue):
         """
         @Summ: config yaml上で!Float型のtype optionを確認する関数。
         
         @Args:
-          annoKey:
-            @Summ: `!Child!Float`を格納するannotation key。
-            @Type: Str
-          typeOption:
+          confPath:
+            @Summ: config yaml上の位置。
+            @Type: List
+          confValue:
             @Summ: !Floatに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: Dict
@@ -525,23 +525,23 @@ class DictTraversal():
         """
         floatMin=None
         floatMax=None
-        if(typeOption is None):
+        if(confValue is None):
             pass
-        elif(type(typeOption)!=dict):
-            raise ConfigYamlError([annoKey,"!Child","!Float"], "Required `!Map` type.")
+        elif(type(confValue)!=dict):
+            raise ConfigYamlError(confPath, "Required `!Map` type.")
         else:
-            for floatKey,floatVal in typeOption.items():
+            for floatKey,floatVal in confValue.items():
                 match floatKey:
                     case "min":
                         if(type(floatVal)!=int and type(floatVal)!=float):
-                            raise ConfigYamlError([annoKey,"!Child","!Float"])    
+                            raise ConfigYamlError(confPath)    
                         floatMin=floatVal
                     case "max":
                         if(type(floatVal)!=int and type(floatVal)!=float):
-                            raise ConfigYamlError([annoKey,"!Child","!Float"])    
+                            raise ConfigYamlError(confPath)
                         floatMax=floatVal
                     case _:
-                        raise ConfigYamlError([annoKey,"!Child","!Float"])
+                        raise ConfigYamlError(confPath)
         return {"!Float":{"min":floatMin,"max":floatMax}}
 
     def checkAnoyFloat(self,anoyPath,anoyValue,confValue,errOut:bool):
@@ -628,15 +628,15 @@ class DictTraversal():
                 return False
 
     @classmethod
-    def checkConfAnnoMap(cls,annoKey,typeOption):
+    def checkConfAnnoMap(cls,confPath,confValue):
         """
         @Summ: config yaml上で!AnnoMap型のtype optionを確認する関数。
         
         @Args:
-          annoKey:
-            @Summ: `!Child!AnnoMap`を格納するannotation key。
-            @Type: Str
-          typeOption:
+          confPath:
+            @Summ: config yaml上の位置。
+            @Type: List
+          confValue:
             @Summ: !AnnoMapに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: List
@@ -644,16 +644,17 @@ class DictTraversal():
           @Summ: 有効なtype option。
           @Type: Dict
         """
-        if(typeOption is None):
-            typeOption=[]
-        elif(type(typeOption)!=list):
-            raise ConfigYamlError([annoKey,"!Child","!AnnoMap"])
+        if(confValue is None):
+            confValue=[]
+        elif(type(confValue)!=list):
+            raise ConfigYamlError(confPath)
         else:
-            for i in range(len(typeOption)):
-                item=typeOption[i]
+            for i in range(len(confValue)):
+                newConfPath=confPath+[item]
+                item=confValue[i]
                 if(item[0]!="@"):
-                    raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item])
-        return {"!AnnoMap":typeOption}
+                    raise ConfigYamlError(newConfPath)
+        return {"!AnnoMap":confValue}
 
     def checkAnoyAnnoMap(self,anoyPath,anoyValue,confValue:list,errOut:bool):
         """
@@ -722,15 +723,15 @@ class DictTraversal():
             return False
 
     @classmethod
-    def checkConfList(cls,annoKey,typeOption):
+    def checkConfList(cls,confPath,confValue):
         """
         @Summ: config yaml上で!List型のtype optionを確認する関数。
         
         @Args:
-          annoKey:
-            @Summ: `!Child!List`を格納するannotation key。
-            @Type: Str
-          typeOption:
+          confPath:
+            @Summ: config yaml上の位置。
+            @Type: List
+          confValue:
             @Summ: !Listに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
             @Type: Dict
@@ -740,12 +741,13 @@ class DictTraversal():
         """
         listType=None
         listLength=None
-        if(typeOption is None):
+        if(confValue is None):
             pass
-        elif(type(typeOption)!=dict):
-            raise ConfigYamlError([annoKey,"!Child","!List"])
+        elif(type(confValue)!=dict):
+            raise ConfigYamlError(confPath)
         else:
-            for listKey,listVal in typeOption.items():
+            for listKey,listVal in confValue.items():
+                newConfPath=confPath+[listKey]
                 match listKey:
                     case "type":
                         listType=listVal
@@ -753,12 +755,12 @@ class DictTraversal():
                         if(listVal is None):
                             continue
                         elif(type(listVal)!=int):
-                            raise ConfigYamlError([annoKey,"!Child","!List",listKey])
+                            raise ConfigYamlError(newConfPath)
                         elif(listVal<=0):
-                            raise ConfigYamlError([annoKey,"!Child","!List",listKey])
+                            raise ConfigYamlError(newConfPath)
                         listLength=listVal
                     case _:
-                        raise ConfigYamlError([annoKey,"!Child","!List",listKey])
+                        raise ConfigYamlError(newConfPath)
         return {"!List":{"type":listType,"length":listLength}}
 
 
@@ -812,7 +814,7 @@ class DictTraversal():
 
 
     @classmethod
-    def checkConfEnum(cls,annoKey,typeOption):
+    def checkConfEnum(cls,confPath,confValue):
         """
         @Summ: config yaml上で!Enum型のtype optionを確認する関数。
 
@@ -822,7 +824,7 @@ class DictTraversal():
           annoKey:
             @Summ: `!Child!Enum`を格納するannotation key。
             @Type: Str
-          typeOption:
+          confValue:
             @Summ: !Enumに対応するtype option。
             @Type: List
         @Returns:
@@ -830,16 +832,17 @@ class DictTraversal():
           @Type: Dict
         """
         enumOption=[]
-        if(type(typeOption)!=list):
-            raise ConfigYamlError([annoKey,"!Child","!Enum"])
+        if(type(confValue)!=list):
+            raise ConfigYamlError(confPath)
         else:
-            for item in typeOption:
+            for item in confValue:
+                newConfPath=confPath+[item]
                 if(type(item)==list):
-                    raise ConfigYamlError([annoKey,"!Child","!Enum",item])
+                    raise ConfigYamlError(newConfPath)
                 elif(type(item)==dict):
                     keyList=list(item.keys())
                     if(len(keyList)!=1):
-                        raise ConfigYamlError([annoKey,"!Child","!Enum",item])
+                        raise ConfigYamlError(newConfPath)
                     enumOption.append(keyList[0])
                 else:
                     enumOption.append(item)
