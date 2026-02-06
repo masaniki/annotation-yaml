@@ -73,15 +73,16 @@ class DictTraversal():
             if(type(valueDict)!=dict):
                 raise ConfigYamlError([annoKey])
             for key,value in valueDict.items():
+                newConfigPath=configPath+[key]
                 if(type(key)!=str):
                     raise ConfigYamlError([annoKey,key], "Invalid value as !Parent.")
                 if(key[0]=="@"):
                     continue
                 elif(key=="!Parent"):
-                    validConfParent=self.checkParent([annoKey,"!Parent"],value)
+                    validConfParent=self.checkParent(newConfigPath,value)
                     validAnnoValue["!Parent"]=validConfParent
                 elif(key=="!Child"):
-                    validConfChild=self.checkDataType([annoKey,"!Child"],value)
+                    validConfChild=self.checkDataType(newConfigPath,value)
                     validAnnoValue["!Child"]=validConfChild
                 else:
                     raise ConfigYamlError([annoKey,key], "Invalid value as !Parent.")
@@ -134,57 +135,48 @@ class DictTraversal():
           @Type: Dict
         """
         if(type(value)==str):
+            newConfPath=confPath+[value]
             match value:
                 case "!Str":
-                    newConfPath=confPath+["!Str"]
                     validType=cls.checkConfStr(newConfPath,None)
                 case "!Bool":
                     validType={"!Bool":{}}
                 case "!Int":
-                    newConfPath=confPath+["!Int"]
                     validType=cls.checkConfInt(newConfPath,None)
                 case "!Float":
-                    newConfPath=confPath+["!Float"]
                     validType=cls.checkConfFloat(newConfPath,None)
                 case "!List":
-                    newConfPath=confPath+["!List"]
                     validType=cls.checkConfList(newConfPath,None)
                 case "!FreeMap":
                     validType={"!FreeMap":{}}
                 case "!AnnoMap":
-                    newConfPath=confPath+["!AnnoMap"]
                     validType=cls.checkConfAnnoMap(newConfPath,None)
                 case _:
-                    raise ConfigYamlError(confPath,"Invalid data type.")
+                    raise ConfigYamlError(newConfPath,"Invalid data type.")
         elif(type(value)==dict):
             confChildKey=list(value.keys())
             if(len(confChildKey)!=1):
                 raise ConfigYamlError(confPath,"Invalid data type.")
             typeStr=confChildKey[0]
+            newConfPath=confPath+[typeStr]
             typeOption=value[typeStr]
             match typeStr:
                 case "!Str":
-                    newConfPath=confPath+["!Str"]
                     validType=cls.checkConfStr(newConfPath,typeOption)
                 case "!Int":
-                    newConfPath=confPath+["!Int"]
                     validType=cls.checkConfInt(newConfPath,typeOption)
                 case "!Float":
-                    newConfPath=confPath+["!Float"]
                     validType=cls.checkConfFloat(newConfPath,typeOption)
                 case "!Enum":
-                    newConfPath=confPath+["!Enum"]
                     validType=cls.checkConfEnum(newConfPath,typeOption)
                 case "!List":
-                    newConfPath=confPath+["!List"]
                     validType=cls.checkConfList(newConfPath,typeOption)
                 case "!AnnoMap":
-                    newConfPath=confPath+["!AnnoMap"]
                     validType=cls.checkConfAnnoMap(newConfPath,typeOption)
                 case _:
-                    raise ConfigYamlError(confPath, "Invalid data type.")
+                    raise ConfigYamlError(newConfPath,"Invalid data type.")
         else:
-            raise ConfigYamlError(confPath, "Invalid data type.")
+            raise ConfigYamlError(confPath,"Invalid data type.")
         return validType
 
 
@@ -379,7 +371,7 @@ class DictTraversal():
                         raise ConfigYamlError(newConfPath)
         return {"!Str":{"min":lenMin,"max":lenMax}}
 
-    def checkAnoyStr(self,anoyValue,length=None,min=None,max=None):
+    def checkAnoyStr(self,anoyValue,min=None,max=None):
         """
         @Summ: ANOY上で!Str型を型確認する関数。
 
@@ -390,9 +382,6 @@ class DictTraversal():
         @Args:
           anoyValue:
             @Summ: 型確認する値。
-          length:
-            @Summ: 文字列の長さ。
-            @Desc: min,maxとの両立は不可能。
           min:
             @Summ: 文字列の長さの最小値。
             @Desc:
@@ -405,19 +394,12 @@ class DictTraversal():
             - max+1からerror.
         """
         if(type(anoyValue)==str):
-            if(length is not None):
-                if(len(anoyValue)==length):
-                    return
-                else:
-                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str",)
-            else:
-                if(min is not None):
-                    if(len(anoyValue)<min):
-                        raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
-                if(max is not None):
-                    if(max<len(anoyValue)):
-                        raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
-                return
+            if(min is not None):
+                if(len(anoyValue)<min):
+                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
+            if(max is not None):
+                if(max<len(anoyValue)):
+                    raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
         else:
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Str")
 
@@ -433,14 +415,14 @@ class DictTraversal():
             raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Bool")
 
     @classmethod
-    def checkConfInt(cls,annoKey,typeOption):
+    def checkConfInt(cls,confPath,typeOption):
         """
         @Summ: config yaml上で!Int型のtype optionを確認する関数。
         
         @Args:
-          annoKey:
-            @Summ: `!Child!Str`を格納するannotation key。
-            @Type: Str
+          confPath:
+            @Summ: config yaml上の位置。
+            @Type: List
           typeOption:
             @Summ: !Intに対応するtype option。
             @Desc: Noneの時はstring_formatとして処理する。
@@ -454,16 +436,29 @@ class DictTraversal():
         if(typeOption is None):
             pass
         elif(type(typeOption)!=dict):
-            raise ConfigYamlError([annoKey,"!Child","!Str"], "Required `!Map` type.")
+            raise ConfigYamlError(configPath, "Required `!Map` type.")
         else:
-            for intKey,intVal in typeOption.items():
-                match intKey:
+            for key,value in typeOption.items():
+                newConfPath=confPath+[key]
+                match key:
                     case "min":
-                        intMin=intVal
+                        intMin=value
+                        if(type(value)==int):
+                            if(intMax is not None):
+                                if(intMax<value):
+                                    raise ConfigYamlError(newConfPath)
+                        else:
+                            raise ConfigYamlError(newConfPath)
                     case "max":
-                        intMax=intVal
+                        intMax=value
+                        if(type(value)==int):
+                            if(intMax is not None):
+                                if(value<intMin):
+                                    raise ConfigYamlError(newConfPath)
+                        else:
+                            raise ConfigYamlError(newConfPath)
                     case _:
-                        raise ConfigYamlError([annoKey,"!Child","!Int"])
+                        raise ConfigYamlError(newConfPath)
         return {"!Int":{"min":intMin,"max":intMax}}
 
     def checkAnoyInt(self,anoyValue,min=None,max=None):
