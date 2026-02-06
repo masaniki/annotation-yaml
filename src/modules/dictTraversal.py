@@ -78,10 +78,10 @@ class DictTraversal():
                 if(key[0]=="@"):
                     continue
                 elif(key=="!Parent"):
-                    validConfParent=self.checkParent([annoKey,"!Parent"],value)
+                    validConfParent=self.checkConfParent([annoKey,"!Parent"],value)
                     validAnnoValue["!Parent"]=validConfParent
                 elif(key=="!Child"):
-                    validConfChild=self.checkDataType([annoKey,"!Child"],value)
+                    validConfChild=self.checkConfType([annoKey,"!Child"],value)
                     validAnnoValue["!Child"]=validConfChild
                 else:
                     raise ConfigYamlError([annoKey,key], "Invalid value as !Parent.")
@@ -91,7 +91,7 @@ class DictTraversal():
         return validConfigDict
     
     @classmethod
-    def checkParent(cls,confPath,value):
+    def checkConfParent(cls,confPath,value):
         """
         @Summ: `!Parent`に対応する値を型確認する関数。
 
@@ -114,9 +114,9 @@ class DictTraversal():
             if(item[0]!="@"):
                 raise ConfigYamlError(confPath)
         return value.copy()
-    
+
     @classmethod
-    def checkDataType(cls,confPath,value):
+    def checkConfType(cls,confPath,value):
         """
         @Summ: data型構文を確認する関数。
 
@@ -178,67 +178,6 @@ class DictTraversal():
             raise ConfigYamlError(confPath,"Invalid data type.")
         return validType
 
-
-    def checkAnoyType(self,anoyPath,data,confType,errOut:bool):
-        """
-        @Summ: ANOY上でdata型構文を確認する関数。
-
-        @Note: confType=Noneの時を記述する必要がある。
-
-        @Args:
-          anoyPath:
-            @Summ: ANOY上の位置。
-            @Type: List
-          data:
-            @Summ: ANOY上の値。型確認する対象。
-          confType:
-            @Summ: config yaml上のdata型構文。
-            @Desc: Noneの時はfreeSearchする。
-            @Type: Any
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
-        @Returns:
-          @Summ: 正しいdata型の時True。
-          @Type: Bool
-        """
-        if(confType is None):
-            self.anoyFreeSearch(anoyPath,data)
-            return
-        typeStr=list(confType.keys())[0]
-        typeOption=confType[typeStr]
-        match typeStr:
-            case "!Str":
-                isValid=self.checkAnoyStr(anoyPath,data,typeOption,errOut)
-            case "!Bool":
-                isValid=self.checkAnoyBool(anoyPath,data,errOut)
-            case "!Int":
-                isValid=self.checkAnoyInt(anoyPath,data,typeOption,errOut)
-            case "!Float":
-                isValid=self.checkAnoyFloat(anoyPath,data,typeOption,errOut)
-            case "!FreeMap":
-                isValid=self.checkAnoyFreeMap(anoyPath,data)
-                if(not isValid):
-                    raise AnnotationTypeError(self._curAnoy,anoyPath,typeStr)
-            case "!AnnoMap":
-                isValid=self.checkAnoyAnnoMap(anoyPath,data,typeOption)
-                if(not isValid):
-                    raise AnnotationTypeError(self._curAnoy,anoyPath,typeStr)
-            case "!List":
-                isValid=self.checkAnoyList(anoyPath,data,typeOption)
-                if(not isValid):
-                    raise AnnotationTypeError(self._curAnoy,anoyPath,typeStr)
-            case "!Enum":
-                isValid=self.checkAnoyEnum(anoyPath,data,typeOption)
-                if(not isValid):
-                    raise AnnotationTypeError(self._curAnoy,anoyPath,typeStr)
-            case _:
-                if(errOut):
-                    raise AnnotationTypeError(self._curAnoy,anoyPath,"!Type")
-                else:
-                    isValid=False
-        return isValid
-
     def dirDFS(self,anoyPath:Path):
         """
         @Summ: directory内を深さ優先探索する関数。
@@ -260,181 +199,107 @@ class DictTraversal():
                 with open(anoyPath, mode="r", encoding="utf-8") as f:
                     anoyDict=yaml.safe_load(f)
                 self._curAnoy=anoyPath
-                self.anoyFreeSearch([],anoyDict)
+                self.anoyFreeSearch([],anoyDict,errOut=True)
         else:
             for childPath in anoyPath.iterdir():
                 self.dirDFS(childPath)
 
 
-    def dictBFS(self,anoyDict:dict):
+    def anoyFreeSearch(self,anoyPath,anoyValue,errOut:bool):
         """
-        @Summ: anoyDictの中を幅優先探索を開始する関数。
+        @Summ: data型が指定されていない時の関数。
 
         @Desc:
-        - list型は単純に探索する。
-        - dict型は型確認しながら探索する。
-        - visitQueueには(key(str),value(any))のtupleを入れる。
-        - list型の時は、(key(int),value(any))になる。
-        @Args:
-            anoyDict:
-                @Summ: annotation yamlのdict型。
-        """
-        self._visitQueue=[(None,anoyDict)]
-        self._pathQueue=[[]]
-        while(True):
-            if(self._visitQueue==[]):
-                break
-            key,value=self._visitQueue.pop(0)
-            self._anoyPath=self._pathQueue.pop(0)
-            print(key,value)
-            print(self._anoyPath)
-            self.checkAnoy(key,value)
-
-    def checkAnoy(self,parentKey:str|None,childValue):
-        """
-        "@Summ": anoyの中身を探索する関数。
-
-        "@Warning": 削除予定。
-
-        "@Desc":
-        - 型確認は"!Parent"と"!Child"の2つだ。
-        - parentKeyの`!Child`がchildValueを制限する。
-        - childValueの`!parent`がparentKeyを制限する。
-        - parentKeyがannotationKeyでない時は、"!Parent"も"!Child"も効力を発揮しないので無視。
-        - !Childが無い時は、childValue=Noneとして考える。
-        - `!Parent`による型確認は、childValueが`!AnnoMap`型の時のみ行われる。
-
-        "@Args":
-            parentKey:
-                "@Summ": 探索するdict型のkey。
-                "@Desc":
-                - nullは親要素が存在しないことを表す(つまりvalueがroot要素である)。
-                "@Type":
-                    Union:
-                    - Str
-                    - null
-            childValue:
-                "@Summ": 探索するdict型のvalue。
-                "@Type": Any
-        "@Error":
-        - AnnotationYamlError
-        - AnnotationYamlTypeError
-        - ConfigurationYamlError
-        """
-        if(parentKey is None):
-            confChild=None    #confChild=Noneの時は型確認をしない。
-        elif(type(parentKey)!=str):
-            confChild=None
-        elif(parentKey[0]=="@"):
-            confDictVal=self._configDict.get(parentKey)
-            if(confDictVal is None):
-                raise AnnotationKeyError(self._curAnoy, self._anoyPath,parentKey)
-            confChild=confDictVal.get("!Child")
-        else:
-            confChild=None
-        # anoyの型確認
-        if(confChild is None):
-            # nestになるlistとdictだけ対処する。
-            if(type(childValue)==list):
-                for i in range(len(childValue)):
-                    element=childValue[i]
-                    newPath=self._anoyPath+[i]
-                    self._visitQueue.append((i,element))
-                    self._pathQueue.append(newPath)
-            elif(type(childValue)==dict):
-                # !Child=nullであってもfree keyとannotation keyの混合は許さない。
-                # keyがstr型でない時は!FreeMapとして扱う。
-                isAnnoMap=None
-                for key,value in childValue.items():
-                    if(type(key)!=str):
-                        if(isAnnoMap is None):
-                            isAnnoMap=False
-                        elif(isAnnoMap==True):
-                            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
-                    elif(key[0]=="@"):
-                        if(isAnnoMap is None):
-                            isAnnoMap=True
-                        elif(isAnnoMap==False):
-                            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!FreeMap")
-                    else:
-                        if(isAnnoMap is None):
-                            isAnnoMap=False
-                        elif(isAnnoMap==True):
-                            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
-                    newPath=self._anoyPath+[key]
-                    self._visitQueue.append((key,value))
-                    self._pathQueue.append(newPath)
-            return
-        typeStr=list(confChild.keys())[0]
-        typeOption=confChild[typeStr]
-        match typeStr:
-            case "!Str":
-                self.checkAnoyStr(childValue,typeOption,errOut=True)
-            case "!Bool":
-                self.checkAnoyBool(childValue,errOut=True)
-            case "!Int":
-                self.checkAnoyInt(childValue,typeOption,errOut=True)
-            case "!Float":
-                self.checkAnoyFloat(childValue,typeOption,errOut=True)
-            case "!FreeMap":
-                self.checkAnoyFreeMap(childValue)
-            case "!AnnoMap":
-                self.checkAnoyAnnoMap(parentKey,childValue,typeOption)
-            case "!List":
-                self.checkAnoyList(parentKey,childValue,elementType=typeOption["type"],length=typeOption["length"])
-            case "!Enum":
-                self.checkAnoyEnum(childValue,typeOption)
-            case _:
-                raise ConfigYamlError([parentKey,"!Child"])
-
-    def anoyFreeSearch(self,anoyPath,data):
-        """
-        @Summ: config yamlが指定されていない時に、anoyDictの中を自由に優先探索する関数。
-
-        @Desc:
-        - 深さ優先探索。
-        - 再帰関数で探索する。
-        - 最初は([],長いdict)で、探索が進むごとに(anoyPath,短いdict)になるイメージ。
+        - scalar型に対してはTrueを返してすぐ終了。
+        - container型に対しては、子要素を探索する。
+        - 組(anoyPath,そのpathでの値,configの値)で探索する。
+        - 最初は([],長いdict)で、探索が進むごとに(anoyPath,短いdict)になる。
         - config yamlが指定されていなくても、free keyとannotation keyの混合は許さない。
         - list型やFreeMap型を検知してもconfig yamlは機能しない。AnnoMap型を検知するまでがこの関数の役割だ。
-        - anoyFreeSearchは例外を出す関数。
 
         @Args:
           anoyPath:
             @Summ: anoy上のpath。
             @Desc: root nodeの時は空listを代入。
             @Type: List
-          data:
+          anoyValue:
             @Summ: parentに対応する値を代入。
+          errOut:
+            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
+            @Type: Bool
         @Returns:
           @Summ: 型が正常ならばTrue
           @Type: Bool
         """
-        if(type(data)==list):
-            for i in range(len(data)):
-                item=data[i]
-                newAnoyPath=anoyPath+[item]
-                isValid=self.anoyFreeSearch(newAnoyPath,i)
-                if(not isValid):
-                    raise AnnotationTypeError(self._curAnoy,anoyPath,"!AnnoMap")
-        elif(type(data)==dict):
-            keyList=list(data.keys())
-            if(0<len(keyList)):
-                firstKey=keyList[0]
-                if(type(firstKey)!=str):
-                    isValid=self.checkAnoyFreeMap(anoyPath,data)
-                    if(not isValid):
-                        raise AnnotationTypeError(self._curAnoy,anoyPath,"!FreeMap")
-                elif(firstKey[0]=="@"):
-                    isValid=self.checkAnoyAnnoMap(anoyPath,data,[])
-                    if(not isValid):
-                        raise AnnotationTypeError(self._curAnoy,anoyPath,"!AnnoMap")
-                else:
-                    isValid=self.checkAnoyFreeMap(anoyPath,data)
-                    if(not isValid):
-                        raise AnnotationTypeError(self._curAnoy,anoyPath,"!FreeMap")
-        return True
+        if(type(anoyValue)==list):
+            isValid=self.checkAnoyList(anoyPath,anoyValue,{},errOut)
+            return isValid
+        elif(type(anoyValue)==dict):
+            keyList=list(anoyValue.keys())
+            if(keyList==[]):
+                return True
+            firstKey=keyList[0]
+            if(type(firstKey)!=str):
+                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue,errOut)
+            elif(firstKey[0]=="@"):
+                isValid=self.checkAnoyAnnoMap(anoyPath,anoyValue,[],errOut)
+            else:
+                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue,errOut)
+            return isValid
+        else:
+            return True
 
+    def checkAnoyType(self,anoyPath,data,confType,errOut:bool):
+        """
+        @Summ: ANOY上でdata型構文を確認する関数。
+
+        @Note: confType=Noneの時を記述する必要がある。
+
+        @Args:
+          anoyPath:
+            @Summ: ANOY上の位置。
+            @Type: List
+          data:
+            @Summ: ANOY上の値。型確認する対象。
+          confType:
+            @Summ: config yaml上のdata型構文。
+            @Desc: Noneの時はfreeSearchする。
+            @Type: Dict
+          errOut:
+            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
+            @Type: Bool
+        @Returns:
+          @Summ: 正しいdata型の時True。
+          @Type: Bool
+        """
+        if(confType is None):
+            isValid=self.anoyFreeSearch(anoyPath,data,errOut)
+            return isValid
+        typeStr=list(confType.keys())[0]
+        typeOption=confType[typeStr]
+        match typeStr:
+            case "!Str":
+                isValid=self.checkAnoyStr(anoyPath,data,typeOption,errOut)
+            case "!Bool":
+                isValid=self.checkAnoyBool(anoyPath,data,errOut)
+            case "!Int":
+                isValid=self.checkAnoyInt(anoyPath,data,typeOption,errOut)
+            case "!Float":
+                isValid=self.checkAnoyFloat(anoyPath,data,typeOption,errOut)
+            case "!FreeMap":
+                isValid=self.checkAnoyFreeMap(anoyPath,data,errOut)
+            case "!AnnoMap":
+                isValid=self.checkAnoyAnnoMap(anoyPath,data,typeOption,errOut)
+            case "!List":
+                isValid=self.checkAnoyList(anoyPath,data,typeOption,errOut)
+            case "!Enum":
+                isValid=self.checkAnoyEnum(anoyPath,data,typeOption,errOut)
+            case _:
+                if(errOut):
+                    raise AnnotationTypeError(self._curAnoy,anoyPath,"!Type")
+                else:
+                    isValid=False
+        return isValid
 
     @classmethod
     def checkConfStr(cls,confPath,typeOption):
@@ -483,7 +348,7 @@ class DictTraversal():
                         raise ConfigYamlError(newConfPath)
         return {"!Str":{"min":lenMin,"max":lenMax}}
 
-    def checkAnoyStr(self,anoyPath,anoyValue,strOption,errOut:bool):
+    def checkAnoyStr(self,anoyPath,anoyValue,confValue,errOut:bool):
         """
         @Summ: ANOY上で!Str型を型確認する関数。
 
@@ -506,8 +371,8 @@ class DictTraversal():
           @Summ: 型が正常である時にTrue.
           @Type: Bool
         """
-        minLen=strOption.get("min")
-        maxLen=strOption.get("max")
+        minLen=confValue.get("min")
+        maxLen=confValue.get("max")
         raiseError=False
         if(type(anoyValue)==str):
             if(minLen is not None):
@@ -598,7 +463,7 @@ class DictTraversal():
                         raise ConfigYamlError(newConfPath)
         return {"!Int":{"min":intMin,"max":intMax}}
 
-    def checkAnoyInt(self,anoyPath,anoyValue,intOption,errOut:bool):
+    def checkAnoyInt(self,anoyPath,anoyValue,confValue,errOut:bool):
         """
         @Summ: ANOY上で!Int型を型確認する関数。
 
@@ -611,16 +476,17 @@ class DictTraversal():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          intOption:
-            @Type: Int
+          confValue:
+            @Summ: int型のoption。
+            @Type: Dict
           errOut:
             @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
             @Type: Bool
         @Returns:
           @Type: Bool
         """
-        minInt=intOption.get("min")
-        maxInt=intOption.get("max")
+        minInt=confValue.get("min")
+        maxInt=confValue.get("max")
         raiseError=False
         if(type(anoyValue)==int):
             if(minInt is not None):
@@ -678,7 +544,7 @@ class DictTraversal():
                         raise ConfigYamlError([annoKey,"!Child","!Float"])
         return {"!Float":{"min":floatMin,"max":floatMax}}
 
-    def checkAnoyFloat(self,anoyPath,anoyValue,floatOption,errOut:bool):
+    def checkAnoyFloat(self,anoyPath,anoyValue,confValue,errOut:bool):
         """
         @Summ: ANOY上で!Float型を型確認する関数。
 
@@ -692,16 +558,17 @@ class DictTraversal():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          intOption:
-            @Type: Int
+          confValue:
+            @Summ: float型のoption。
+            @Type: Dict
           errOut:
             @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
             @Type: Bool
         @Returns:
           @Type: Bool
         """
-        minFloat=floatOption.get("min")
-        maxFloat=floatOption.get("max")
+        minFloat=confValue.get("min")
+        maxFloat=confValue.get("max")
         raiseError=False
         if(type(anoyValue)==int or type(anoyValue)==float):
             if(minFloat is not None):
@@ -721,24 +588,44 @@ class DictTraversal():
         else:
             return True
 
-    def checkAnoyFreeMap(self,anoyValue):
+    def checkAnoyFreeMap(self,anoyPath,anoyValue,errOut:bool):
         """
         @Summ: ANOY上で!FreeMap型を型確認する関数。
 
+        @Warning: まだ入れ子の機能を実装していない。浅い探索のみで終了する。
+
         @Args:
+          anoyPath:
+            @Summ: anoy内の現在地。
+            @Type: List
           anoyValue:
             @Summ: 型確認する値。
+          errOut:
+            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
+            @Type: Bool
+        @Returns:
+          @Summ: 正常な値ならばTrue.
+          @Type: Bool
         """
         if(type(anoyValue)==dict):
             for key,value in anoyValue.items():
-                newPath=self._anoyPath+[key]
-                self._visitQueue.append((key,value))
-                self._pathQueue.append(newPath)
+                newAnoyPath=anoyPath+[key]
+                # "@"の確認。
                 if(type(key)==str):
                     if(key[0]=="@"):
-                        raise AnnotationTypeError(self._curAnoy,newPath,"!FreeMap")
+                        if(errOut):
+                            raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!FreeMap")
+                        else:
+                            return False
+                isValid=self.anoyFreeSearch(newAnoyPath,value,errOut)
+                if(not isValid):
+                    return False
+            return True
         else:
-            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!FreeMap")
+            if(errOut):
+                raise AnnotationTypeError(self._curAnoy,anoyPath,"!FreeMap")
+            else:
+                return False
 
     @classmethod
     def checkConfAnnoMap(cls,annoKey,typeOption):
@@ -768,46 +655,71 @@ class DictTraversal():
                     raise ConfigYamlError([annoKey,"!Child","!AnnoMap",item])
         return {"!AnnoMap":typeOption}
 
-    def checkAnoyAnnoMap(self,parentKey,anoyValue,annoKeyList:list=[]):
+    def checkAnoyAnnoMap(self,anoyPath,anoyValue,confValue:list,errOut:bool):
         """
         @Summ: ANOY上で!FreeMap型を型確認する関数。
 
         @Desc:
+        - この関数が再帰の中心となる。
         - <annoKeyList>は最低限必要なannotation keyのlistが入る。
         - 最低限なので、<annoKeyList>以外のannotation keyも許容される。
 
         @Args:
-          parentKey:
-            @Summ: 親要素のannotation key。
-            @Type: Str
+          anoyPath:
+            @Summ: anoy内の現在地。
+            @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          annoKeyList:
+          confValue:
             @Summ: 子要素になれるannotation keyのlist。
             @Desc:
             - 空lsitの時は任意のannotation keyを受け入れる。
             - これは全てのannotation keyが入ったlist型と同じ挙動をする。
             @Type: List
             @Default: []
+          errOut:
+            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
+            @Type: Bool
+        @Returns:
+          @Summ: 正常な値ならばTrue.
+          @Type: Bool
         """
         if(type(anoyValue)==dict):
             for key,value in anoyValue.items():
-                newPath=self._anoyPath+[key]
-                self._visitQueue.append((key,value))
-                self._pathQueue.append(newPath)
+                newAnoyPath=anoyPath+[key]
                 # !Parentの確認。
                 configValue=self._configDict.get(key)
                 if(configValue is None):
-                    raise AnnotationKeyError(self._curAnoy,newPath,key)
+                    if(errOut):
+                        raise AnnotationKeyError(self._curAnoy,newAnoyPath,key)
+                    else:
+                        return False
                 confParent=configValue.get("!Parent")
+                confChild=configValue.get("!Child")
                 if(confParent is not None):
+                    if(anoyPath==[]):
+                        parentKey=None
+                    else:
+                        parentKey=anoyPath[-1]
                     if(parentKey not in confParent):
-                        raise AnnotationTypeError(self._curAnoy,newPath,"!Parent")
-                if(annoKeyList!=[]):
-                    if(key not in annoKeyList):
-                        raise AnnotationTypeError(self._curAnoy,newPath,"!AnnoMap")
+                        if(errOut):
+                            raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!Parent")
+                        else:
+                            return False
+                # AnnoMap型のtypeOptionの確認。
+                if(confValue!=[]):
+                    if(key not in confValue):
+                        if(errOut):
+                            raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!AnnoMap")
+                        else:
+                            return False
+                # 子要素を探索。
+                isValid=self.checkAnoyType(newAnoyPath,value,confChild,errOut)
+                if(not isValid):
+                    return False
+            return True
         else:
-            raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!AnnoMap")
+            return False
 
     @classmethod
     def checkConfList(cls,annoKey,typeOption):
@@ -850,13 +762,16 @@ class DictTraversal():
         return {"!List":{"type":listType,"length":listLength}}
 
 
-    def checkAnoyList(self,anoyPath,anoyValue,listOption,errOut:bool):
+    def checkAnoyList(self,anoyPath,anoyValue,confValue,errOut:bool):
         """
         @Summ: ANOY上で!List型を型確認する関数。
 
         @Desc:
         - <typeOption>は最低限必要なannotation keyのlistが入る。
         - 最低限なので、<typeOption>以外のannotation keyも許容される。
+        - <type>には!Type型が入る。
+
+        @Note: not checked.
 
         @Args:
           anoyPath:
@@ -864,16 +779,17 @@ class DictTraversal():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          listOption:
+          confValue:
             @Summ: list型のoption。
+            @Desc:
+            - type keyとlength keyがある。
             @Type: Dict
           errOut:
             @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
             @Type: Bool
         """
-        elementType=listOption.get("type")
-        length=listOption.get("length")
-        raiseError=False
+        eleType=confValue.get("type")
+        length=confValue.get("length")
         if(type(anoyValue)==list):
             if(length is not None):
                 if(length!=len(anoyValue)):
@@ -884,38 +800,23 @@ class DictTraversal():
             for i in range(len(anoyValue)):
                 anoyEle=anoyValue[i]
                 newAnoyPath=anoyPath+[i]
-                #以下未確定。
-                if(elementType is not None):
-                    match elementType:
-                        case "!Str":
-                            if(type(anoyEle)!=str):
-                                raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!List")
-                        case "!Bool":
-                            if(type(anoyEle)!=bool):
-                                raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!List")
-                        case "!Int":
-                            if(type(anoyEle)!=int):
-                                raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!List")
-                        case "!Float":
-                            if(type(anoyEle)!=float):
-                                raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!List")
-                        case _:
-                            raise ConfigYamlError([parentKey,"!Child"])
+                isValid=self.checkAnoyType(newAnoyPath,anoyEle,eleType,errOut)
+                if(not isValid):
+                    return False
+            return True
         else:
-            raiseError=True
-        # error出すかの判断。
-        if(raiseError):
             if(errOut):
                 raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!List")
             else:
                 return False
-        else:
-            return True
+
 
     @classmethod
     def checkConfEnum(cls,annoKey,typeOption):
         """
         @Summ: config yaml上で!Enum型のtype optionを確認する関数。
+
+        @Note: checked.
         
         @Args:
           annoKey:
@@ -944,7 +845,7 @@ class DictTraversal():
                     enumOption.append(item)
         return {"!Enum":enumOption}
 
-    def checkAnoyEnum(self,anoyValue,optionList:list):
+    def checkAnoyEnum(self,anoyPath,anoyValue,confValue:list,errOut):
         """
         @Summ: ANOY上で!Enum型を型確認する関数。
 
@@ -954,39 +855,37 @@ class DictTraversal():
         - 入れ子の下層までは確認しない(浅いdata型確認)。
 
         @Args:
+          anoyPath:
+            @Summ: anoy内の現在地。
+            @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          optionList:
+          confValue:
             @Summ: Enum型の選択肢を格納するlist型。
+            @Desc: optionListには!Typeのlistが入る。
             @Type: List
+          errOut:
+            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
+            @Type: Bool
+        @Returns:
+          @Summ: 正常な値ならばTrue.
+          @Type: Bool
         """
-        for i in range(len(optionList)):
-            option=optionList[i]
-            if(option is None and anoyValue is None):
-                    return
-            match option:
-                case "!Str":
-                    if(type(anoyValue)==str):
-                        return
-                case "!Bool":
-                    if(type(anoyValue)==bool):
-                        return
-                case "!Int":
-                    if(type(anoyValue)==int):
-                        return
-                case "!Float":
-                    if(type(anoyValue)==float):
-                        return
-                case "!List":
-                    if(type(anoyValue)==list):
-                        return
-                case "!FreeMap":
-                    if(type(anoyValue)==dict):
-                        return
-                case _:
-                    if(anoyValue==option):
-                        return
-        raise AnnotationTypeError(self._curAnoy,self._anoyPath,"!Enum")
+        for i in range(len(confValue)):
+            option=confValue[i]
+            newAnoyPath=anoyPath+[i]
+            # !Type型の選択肢。
+            if(type(option)==dict):
+                isValid=self.checkAnoyType(newAnoyPath,anoyValue,option,errOut=False)
+                if(isValid):
+                    return True
+            # literalの選択肢。
+            elif(anoyValue==option):
+                return True
+        if(errOut):
+            raise AnnotationTypeError(self._curAnoy,anoyPath,"!Enum")
+        else:
+            return False
 
 
 if(__name__=="__main__"):
