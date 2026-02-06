@@ -129,11 +129,8 @@ annotation YAMLに異常がある時は、以下の様に出力する。
 
 ## Next To Do
 
-- [x] checkAnoyの引数をtypeOptionに統一。
-- [x] checkAnoyに引数errを追加してerrorを出すかboolを出すかを選択できるようにする。
-- [x] anoyの探索方法を関数型深さ優先探索に変更。
-- [ ] configのdata型の入れ子を可能にする。
-- [ ] anoyのdata型の入れ子を可能にする。
+- [ ] `!Parent`の設計の見直し。
+- [ ] testCaseの設計の見直し。
 
 ## Ideas
 
