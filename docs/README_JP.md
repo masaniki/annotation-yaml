@@ -122,11 +122,28 @@ annotation YAMLに異常がある時は、以下の様に出力する。
 >>> 
 ```
 
-# 下位規格の紹介
+# 詳細
+
+詳細な仕様を記述する。
+
+## Next To Do
+
+- [ ] checkAnoyの引数をtypeOptionに統一。
+- [ ] checkAnoyの戻り値をBool型にする。
+- [ ] anoyの探索方法を関数型深さ優先探索に変更。
+- [ ] data型の入れ子を可能にする。
+
+## Ideas
+
+次、実装する可能性があるideaを記述する。
+
+# Others
+
+## 下位規格の紹介
 
 ANOYは *config yaml* の定義次第で下位規格を定義できる。
 
-## Object-Oriented Document YAML(OODY)
+### Object-Oriented Document YAML(OODY)
 
 Object-Oriented Document in YAML、略してOODY。
 
@@ -136,7 +153,7 @@ object指向を表現するためのdocument。
 
 ANOYの下位規格。
 
-## YAML with Summary(YwS)
+### YAML with Summary(YwS)
 
 YAMLの階層構造を説明するためのANOYの規格。
 
