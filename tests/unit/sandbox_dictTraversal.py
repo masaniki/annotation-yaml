@@ -13,8 +13,8 @@ testDir=Path(__file__).parent/"test"
 sandboxDir=Path(__file__).parent/"sandbox"
 
 if(__name__=="__main__"):
-    configPath=testDir/"valid_annoMap01"/"config.yaml"
-    anoyPath=testDir/"valid_annoMap01"/"anoy.yaml"
+    configPath=testDir/"valid_enum01"/"config.yaml"
+    anoyPath=testDir/"valid_enum01"/"anoy.yaml"
     with open(configPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
     tree01=AnoyParser(configDict)

@@ -43,7 +43,7 @@ class AnoyParser():
         @Summ: constructor.
         """
         self._configDict=ConfParser.checkConf(configDict)
-        # print(self._configDict)
+        print(self._configDict)
         self._curAnoy=""
 
     def dirDFS(self,anoyPath:Path):

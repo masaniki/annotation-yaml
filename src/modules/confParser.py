@@ -383,13 +383,24 @@ class ConfParser():
         else:
             for item in confValue:
                 newConfPath=confPath+[item]
-                if(type(item)==list):
+                if(type(item)==str):
+                    if(item[0]=="!"):
+                        validDict=cls.checkConfType(newConfPath,item)
+                        enumOption.append(validDict)
+                    else:
+                        enumOption.append(item)
+                elif(type(item)==list):
                     raise ConfigYamlError(newConfPath)
                 elif(type(item)==dict):
                     keyList=list(item.keys())
                     if(len(keyList)!=1):
                         raise ConfigYamlError(newConfPath)
-                    enumOption.append(keyList[0])
+                    firstKey=keyList[0]
+                    if(firstKey[0]=="!"):
+                        validDict=cls.checkConfType(newConfPath,item)
+                        enumOption.append(validDict)
+                    else:
+                        enumOption.append(firstKey)
                 else:
                     enumOption.append(item)
         return {"!Enum":enumOption}
