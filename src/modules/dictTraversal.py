@@ -306,6 +306,8 @@ class DictTraversal():
         match typeStr:
             case "!Str":
                 isValid=self.checkAnoyStr(childValue,typeOption)
+                if(not isValid):
+                    raise ValueError
             case "!Bool":
                 isValid=self.checkAnoyBool(childValue)
             case "!Int":
