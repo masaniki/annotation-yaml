@@ -5,7 +5,7 @@ import yaml
 
 from .anoyParser import AnoyParser
 
-VERSION="v0.3.3"
+VERSION="v0.3.4"
 
 def main():
     """
