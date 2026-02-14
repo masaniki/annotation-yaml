@@ -7,8 +7,8 @@ import yaml
 projectDir=Path(__file__).parent.parent.parent
 sys.path.append(str(projectDir))
 
-from src.modules import AnoyParser
-from src.modules import AnnotationKeyError, AnnotationTypeError, ConfigYamlError
+from src.anoy import AnoyParser
+from src.anoy import AnnotationKeyError, AnnotationTypeError, ConfigYamlError
 
 testDir=Path(__file__).parent/"test"
 sandboxDir=Path(__file__).parent/"sandbox"

@@ -14,7 +14,7 @@ dependencies = ["PyYAML"]
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
-  "Development Status :: 1 - Planning",
+  "Development Status :: 3 - Alpha",
   "Environment :: Console",
   "Natural Language :: Japanese",
   "Natural Language :: English",
@@ -25,7 +25,7 @@ license-files = ["LICENSE.txt"]
 keywords = ["text", "YAML", "CLI", "type", "check"]
 
 [project.scripts]
-anoy = "cli:main"
+anoy = "anoy:main"
 
 [project.urls]
 Repository = "https://github.com/masaniki/annotation-yaml"
