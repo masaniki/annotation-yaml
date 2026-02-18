@@ -117,7 +117,7 @@ class AnoyParser():
         else:
             return True
 
-    def checkAnoyType(self,anoyPath,data,confType,errOut:bool):
+    def checkAnoyType(self,anoyPath,data,confType,anoyParent,errOut:bool):
         """
         @Summ: ANOY上でdata型構文を確認する関数。
 
@@ -133,6 +133,10 @@ class AnoyParser():
             @Summ: config yaml上のdata型構文。
             @Desc: Noneの時はfreeSearchする。
             @Type: Dict
+          anoyParent:
+            @Summ: 親のannotation keyを指定する。
+            @Desc: Noneで親無し。
+            @Type: Str
           errOut:
             @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
             @Type: Bool
@@ -157,7 +161,7 @@ class AnoyParser():
             case "!FreeMap":
                 isValid=self.checkAnoyFreeMap(anoyPath,data,errOut)
             case "!AnnoMap":
-                isValid=self.checkAnoyAnnoMap(anoyPath,data,typeOption,errOut)
+                isValid=self.checkAnoyAnnoMap(anoyPath,data,typeOption,anoyParent,errOut)
             case "!List":
                 isValid=self.checkAnoyList(anoyPath,data,typeOption,errOut)
             case "!Enum":
@@ -363,7 +367,7 @@ class AnoyParser():
             else:
                 return False
 
-    def checkAnoyAnnoMap(self,anoyPath,anoyValue,confValue:list,errOut:bool):
+    def checkAnoyAnnoMap(self,anoyPath,anoyValue,confValue:list,anoyParent,errOut:bool):
         """
         @Summ: ANOY上で!FreeMap型を型確認する関数。
 
@@ -395,25 +399,13 @@ class AnoyParser():
         if(type(anoyValue)==dict):
             for key,value in anoyValue.items():
                 newAnoyPath=anoyPath+[key]
-                # !Parentの確認。
+                # annotation keyの確認。
                 configValue=self._configDict.get(key)
                 if(configValue is None):
                     if(errOut):
                         raise AnnotationKeyError(self._curAnoy,newAnoyPath,key)
                     else:
                         return False
-                confParent=configValue.get("!Parent")
-                confChild=configValue.get("!Child")
-                if(confParent is not None):
-                    if(anoyPath==[]):
-                        parentKey=None
-                    else:
-                        parentKey=anoyPath[-1]
-                    if(parentKey not in confParent):
-                        if(errOut):
-                            raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!Parent")
-                        else:
-                            return False
                 # AnnoMap型のtypeOptionの確認。
                 if(confValue!=[]):
                     if(key not in confValue):
@@ -421,8 +413,27 @@ class AnoyParser():
                             raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!AnnoMap")
                         else:
                             return False
+                # !Parentの確認。
+                parentList=key.get("!Parent")
+                if(parentList is None):
+                    pass
+                else:
+                    # parent annotation keyの確定。
+                    if(anoyPath==[]):
+                        parentAnnoKey=None
+                    else:
+                        parentAnnoKey=anoyPath[-1]
+                        if(parentAnnoKey[0]=="@"):
+                            pass
+                    # parent annotation keyの検索。
+                    if(parentAnnoKey not in parentList):
+                        if(errOut):
+                            raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!Parent")
+                        else:
+                            return False
                 # 子要素を探索。
-                isValid=self.checkAnoyType(newAnoyPath,value,confChild,errOut)
+                confChild=key.get("!Child")
+                isValid=self.checkAnoyType(newAnoyPath,value,confChild,anoyParent=None,errOut=errOut)
                 if(not isValid):
                     return False
             return True
@@ -465,7 +476,7 @@ class AnoyParser():
             for i in range(len(anoyValue)):
                 anoyEle=anoyValue[i]
                 newAnoyPath=anoyPath+[i]
-                isValid=self.checkAnoyType(newAnoyPath,anoyEle,eleType,errOut)
+                isValid=self.checkAnoyType(newAnoyPath,anoyEle,eleType,anoyParent=None,errOut=errOut)
                 if(not isValid):
                     return False
             return True
@@ -506,7 +517,7 @@ class AnoyParser():
             newAnoyPath=anoyPath+[i]
             # !Type型の選択肢。
             if(type(option)==dict):
-                isValid=self.checkAnoyType(newAnoyPath,anoyValue,option,errOut=False)
+                isValid=self.checkAnoyType(newAnoyPath,anoyValue,option,anoyParent=None,errOut=False)
                 if(isValid):
                     return True
             # literalの選択肢。
@@ -518,13 +529,4 @@ class AnoyParser():
             return False
 
 
-if(__name__=="__main__"):
-    configPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\case01\config01.yaml"
-    anoyPath=r"C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unit\case01\int_false.yaml"
-    with open(configPath,mode="r",encoding="utf-8") as f:
-        configDict=yaml.safe_load(f)
-    with open(anoyPath,mode="r",encoding="utf-8") as f:
-        anoyDict=yaml.safe_load(f)
-    tree01=AnoyParser(configDict)
-    tree01.anoyFreeSearch([],anoyDict)
 
