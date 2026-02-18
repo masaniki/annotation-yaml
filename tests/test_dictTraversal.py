@@ -4,7 +4,7 @@ import sys
 import yaml
 
 #sys.pathを弄る。
-projectDir=Path(__file__).parent.parent.parent
+projectDir=Path(__file__).parent.parent
 sys.path.append(str(projectDir))
 
 from src.anoy import AnoyParser
