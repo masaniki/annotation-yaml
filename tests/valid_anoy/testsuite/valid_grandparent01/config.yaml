@@ -8,7 +8,7 @@
   - null
   "!Child": "!FreeMap"
 "@LayorChild":
-  "@Summ": rootの子要素その1。
+  "@Summ": rootの子要素。
   "!Parent":
   - "@LayorRoot"
   "!Child": "!Int"
