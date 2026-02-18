@@ -1,0 +1,8 @@
+"@LayorRoot":
+  child01:
+    "@LayorChild": 1
+  child02:
+    "@LayorChild": "2"
+  child03:
+    "@LayorChild": 3
+

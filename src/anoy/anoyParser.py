@@ -441,7 +441,10 @@ class AnoyParser():
                     return False
             return True
         else:
-            return False
+            if(errOut):
+                raise AnnotationTypeError(self._curAnoy,anoyPath,"!AnnoMap")
+            else:
+                return False
 
     def checkAnoyList(self,anoyPath,anoyValue,typeOption,errOut:bool):
         """

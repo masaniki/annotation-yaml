@@ -14,6 +14,13 @@ invalid_annoMap02:
   - case02
   - '@ComplexAnnoMap'
   - '@Item03'
+invalid_annoMap03:
+  errorType: AnnotationTypeError
+  msg: '!AnnoMap contradiction.'
+  yamlPath:
+  - '@TestCase'
+  - case03
+  - '@SimpleAnnoMap'
 invalid_childNull01:
   errorType: AnnotationTypeError
   msg: '!FreeMap contradiction.'

@@ -1,0 +1,7 @@
+# 誤ってlist型を格納。
+"@TestCase":
+  case03:
+    "@SimpleAnnoMap":
+    - 1
+    - 2
+    - 3

@@ -1,0 +1,15 @@
+# !Parentの機能test
+"@Summ":
+  "@Summ": 要約を自然言語で記述する。
+  "!Child": "!Str"
+"@LayorRoot":
+  "@Summ": root要素にしかならないannoKey.
+  "!Parent":
+  - null
+  "!Child": "!FreeMap"
+"@LayorChild":
+  "@Summ": rootの子要素その1。
+  "!Parent":
+  - "@LayorRoot"
+  "!Child": "!AnnoMap"
+

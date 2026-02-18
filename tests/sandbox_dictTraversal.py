@@ -4,17 +4,17 @@ import sys
 import yaml
 
 #sys.pathを弄る。
-projectDir=Path(__file__).parent.parent.parent
+projectDir=Path(__file__).parent.parent
 sys.path.append(str(projectDir))
 
 from src.anoy import AnoyParser
 
-testDir=Path(__file__).parent/"test"
-sandboxDir=Path(__file__).parent/"sandbox"
+parnetDir=Path(__file__).parent
 
 if(__name__=="__main__"):
-    configPath=testDir/"valid_enum01"/"config.yaml"
-    anoyPath=testDir/"valid_enum01"/"anoy.yaml"
+    sandboxDir=parnetDir/"valid_anoy"/"sandbox"
+    configPath=sandboxDir/"invalid_grandparent01"/"config.yaml"
+    anoyPath=sandboxDir/"invalid_grandparent01"/"anoy.yaml"
     with open(configPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
     tree01=AnoyParser(configDict)
