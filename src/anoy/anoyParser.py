@@ -117,7 +117,7 @@ class AnoyParser():
         else:
             return True
 
-    def checkAnoyType(self,anoyPath,data,confType,anoyParent,errOut:bool):
+    def checkAnoyType(self,anoyPath,data,confType,errOut:bool):
         """
         @Summ: ANOY上でdata型構文を確認する関数。
 
@@ -133,10 +133,6 @@ class AnoyParser():
             @Summ: config yaml上のdata型構文。
             @Desc: Noneの時はfreeSearchする。
             @Type: Dict
-          anoyParent:
-            @Summ: 親のannotation keyを指定する。
-            @Desc: Noneで親無し。
-            @Type: Str
           errOut:
             @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
             @Type: Bool
@@ -161,7 +157,7 @@ class AnoyParser():
             case "!FreeMap":
                 isValid=self.checkAnoyFreeMap(anoyPath,data,errOut)
             case "!AnnoMap":
-                isValid=self.checkAnoyAnnoMap(anoyPath,data,typeOption,anoyParent,errOut)
+                isValid=self.checkAnoyAnnoMap(anoyPath,data,typeOption,errOut)
             case "!List":
                 isValid=self.checkAnoyList(anoyPath,data,typeOption,errOut)
             case "!Enum":
@@ -433,7 +429,7 @@ class AnoyParser():
                             return False
                 # 子要素を探索。
                 confChild=key.get("!Child")
-                isValid=self.checkAnoyType(newAnoyPath,value,confChild,anoyParent=None,errOut=errOut)
+                isValid=self.checkAnoyType(newAnoyPath,value,confChild,errOut=errOut)
                 if(not isValid):
                     return False
             return True
@@ -476,7 +472,7 @@ class AnoyParser():
             for i in range(len(anoyValue)):
                 anoyEle=anoyValue[i]
                 newAnoyPath=anoyPath+[i]
-                isValid=self.checkAnoyType(newAnoyPath,anoyEle,eleType,anoyParent=None,errOut=errOut)
+                isValid=self.checkAnoyType(newAnoyPath,anoyEle,eleType,errOut=errOut)
                 if(not isValid):
                     return False
             return True
@@ -517,7 +513,7 @@ class AnoyParser():
             newAnoyPath=anoyPath+[i]
             # !Type型の選択肢。
             if(type(option)==dict):
-                isValid=self.checkAnoyType(newAnoyPath,anoyValue,option,anoyParent=None,errOut=False)
+                isValid=self.checkAnoyType(newAnoyPath,anoyValue,option,errOut=False)
                 if(isValid):
                     return True
             # literalの選択肢。
