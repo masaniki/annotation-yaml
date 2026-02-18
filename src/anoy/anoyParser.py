@@ -424,7 +424,9 @@ class AnoyParser():
                             parentAnnoKey=anoyPath[-1]
                         case _:
                             lastAnnoKey=anoyPath[-1]
-                            if(lastAnnoKey[0]=="@"):
+                            if(type(lastAnnoKey)!=str):
+                                parentAnnoKey=anoyPath[-2]
+                            elif(lastAnnoKey[0]=="@"):
                                 parentAnnoKey=lastAnnoKey
                             else:
                                 parentAnnoKey=anoyPath[-2]

@@ -1,12 +1,9 @@
 "@Summ": nestが深すぎる場合。
 "@LayorRoot":
-  child01:
-    grandchild01:
+  - grandchild01:
       "@LayorChild": 1
-  child02:
-    grandchild02:
+  - grandchild02:
       "@LayorChild": 2
-  child03:
-    grandchild03:
+  - grandchild03:
       "@LayorChild": 3
 

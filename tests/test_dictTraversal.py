@@ -93,7 +93,7 @@ def test_invalid_config():
 
 
 if(__name__=="__main__"):
-    test_invalid_anoy(isTest=False)
+    test_valid_anoy()
     # testCaseDir=testDir/"invalid_anoy"/"testsuite"/"in"/"invalid_annoMap01"
     # anoyPath=testCaseDir/"anoy.yaml"
     # configPath=testCaseDir/"config.yaml"

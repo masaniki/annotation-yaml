@@ -1,0 +1,6 @@
+"@Summ": list型の入れ子。
+"@LayorRoot":
+  - "@LayorChild": 1
+  - "@LayorChild": 2
+  - "@LayorChild": 3
+
