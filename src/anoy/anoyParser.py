@@ -363,14 +363,16 @@ class AnoyParser():
             else:
                 return False
 
-    def checkAnoyAnnoMap(self,anoyPath,anoyValue,confValue:list,anoyParent,errOut:bool):
+    def checkAnoyAnnoMap(self,anoyPath,anoyValue,confValue:list,errOut:bool):
         """
         @Summ: ANOY上で!FreeMap型を型確認する関数。
 
         @Desc:
         - この関数が再帰の中心となる。
-        - <annoKeyList>は最低限必要なannotation keyのlistが入る。
-        - 最低限なので、<annoKeyList>以外のannotation keyも許容される。
+        - <confValue>は最低限必要なannotation keyのlistが入る。
+        - 最低限なので、<confValue>以外のannotation keyも許容される。
+        - 親のannotation keyには、1つ上のkeyまたは、2つ上のkeyが代入される。
+        - 1つ上のkeyの接頭辞が`@`でない時に、2つ上のkeyが代入される。
 
         @Args:
           anoyPath:
@@ -415,12 +417,17 @@ class AnoyParser():
                     pass
                 else:
                     # parent annotation keyの確定。
-                    if(anoyPath==[]):
-                        parentAnnoKey=None
-                    else:
-                        parentAnnoKey=anoyPath[-1]
-                        if(parentAnnoKey[0]=="@"):
-                            pass
+                    match len(anoyPath):
+                        case 0:
+                            parentAnnoKey=None
+                        case 1:
+                            parentAnnoKey=anoyPath[-1]
+                        case _:
+                            lastAnnoKey=anoyPath[-1]
+                            if(lastAnnoKey[0]=="@"):
+                                parentAnnoKey=lastAnnoKey
+                            else:
+                                parentAnnoKey=anoyPath[-2]
                     # parent annotation keyの検索。
                     if(parentAnnoKey not in parentList):
                         if(errOut):
