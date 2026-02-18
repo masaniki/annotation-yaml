@@ -169,7 +169,7 @@ class AnoyParser():
                     isValid=False
         return isValid
 
-    def checkAnoyStr(self,anoyPath,anoyValue,confValue,errOut:bool):
+    def checkAnoyStr(self,anoyPath,anoyValue,typeOption,errOut:bool):
         """
         @Summ: ANOY上で!Str型を型確認する関数。
 
@@ -192,8 +192,8 @@ class AnoyParser():
           @Summ: 型が正常である時にTrue.
           @Type: Bool
         """
-        minLen=confValue.get("min")
-        maxLen=confValue.get("max")
+        minLen=typeOption.get("min")
+        maxLen=typeOption.get("max")
         raiseError=False
         if(type(anoyValue)==str):
             if(minLen is not None):
@@ -237,7 +237,7 @@ class AnoyParser():
         else:
             return False
 
-    def checkAnoyInt(self,anoyPath,anoyValue,confValue,errOut:bool):
+    def checkAnoyInt(self,anoyPath,anoyValue,typeOption,errOut:bool):
         """
         @Summ: ANOY上で!Int型を型確認する関数。
 
@@ -250,7 +250,7 @@ class AnoyParser():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          confValue:
+          typeOption:
             @Summ: int型のoption。
             @Type: Dict
           errOut:
@@ -259,8 +259,8 @@ class AnoyParser():
         @Returns:
           @Type: Bool
         """
-        minInt=confValue.get("min")
-        maxInt=confValue.get("max")
+        minInt=typeOption.get("min")
+        maxInt=typeOption.get("max")
         raiseError=False
         if(type(anoyValue)==int):
             if(minInt is not None):
@@ -280,7 +280,7 @@ class AnoyParser():
         else:
             return True
 
-    def checkAnoyFloat(self,anoyPath,anoyValue,confValue,errOut:bool):
+    def checkAnoyFloat(self,anoyPath,anoyValue,typeOption,errOut:bool):
         """
         @Summ: ANOY上で!Float型を型確認する関数。
 
@@ -294,7 +294,7 @@ class AnoyParser():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          confValue:
+          typeOption:
             @Summ: float型のoption。
             @Type: Dict
           errOut:
@@ -303,8 +303,8 @@ class AnoyParser():
         @Returns:
           @Type: Bool
         """
-        minFloat=confValue.get("min")
-        maxFloat=confValue.get("max")
+        minFloat=typeOption.get("min")
+        maxFloat=typeOption.get("max")
         raiseError=False
         if(type(anoyValue)==int or type(anoyValue)==float):
             if(minFloat is not None):
@@ -363,14 +363,14 @@ class AnoyParser():
             else:
                 return False
 
-    def checkAnoyAnnoMap(self,anoyPath,anoyValue,confValue:list,errOut:bool):
+    def checkAnoyAnnoMap(self,anoyPath,anoyValue,typeOption:list,errOut:bool):
         """
         @Summ: ANOY上で!FreeMap型を型確認する関数。
 
         @Desc:
         - この関数が再帰の中心となる。
-        - <confValue>は最低限必要なannotation keyのlistが入る。
-        - 最低限なので、<confValue>以外のannotation keyも許容される。
+        - <typeOption>は最低限必要なannotation keyのlistが入る。
+        - 最低限なので、<typeOption>以外のannotation keyも許容される。
         - 親のannotation keyには、1つ上のkeyまたは、2つ上のkeyが代入される。
         - 1つ上のkeyの接頭辞が`@`でない時に、2つ上のkeyが代入される。
 
@@ -380,7 +380,7 @@ class AnoyParser():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          confValue:
+          typeOption:
             @Summ: 子要素になれるannotation keyのlist。
             @Desc:
             - 空lsitの時は任意のannotation keyを受け入れる。
@@ -405,8 +405,8 @@ class AnoyParser():
                     else:
                         return False
                 # AnnoMap型のtypeOptionの確認。
-                if(confValue!=[]):
-                    if(key not in confValue):
+                if(typeOption!=[]):
+                    if(key not in typeOption):
                         if(errOut):
                             raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!AnnoMap")
                         else:
@@ -443,7 +443,7 @@ class AnoyParser():
         else:
             return False
 
-    def checkAnoyList(self,anoyPath,anoyValue,confValue,errOut:bool):
+    def checkAnoyList(self,anoyPath,anoyValue,typeOption,errOut:bool):
         """
         @Summ: ANOY上で!List型を型確認する関数。
 
@@ -458,7 +458,7 @@ class AnoyParser():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          confValue:
+          typeOption:
             @Summ: list型のoption。
             @Desc:
             - type keyとlength keyがある。
@@ -467,8 +467,8 @@ class AnoyParser():
             @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
             @Type: Bool
         """
-        eleType=confValue.get("type")
-        length=confValue.get("length")
+        eleType=typeOption.get("type")
+        length=typeOption.get("length")
         if(type(anoyValue)==list):
             if(length is not None):
                 if(length!=len(anoyValue)):
@@ -489,7 +489,7 @@ class AnoyParser():
             else:
                 return False
 
-    def checkAnoyEnum(self,anoyPath,anoyValue,confValue:list,errOut):
+    def checkAnoyEnum(self,anoyPath,anoyValue,typeOption:list,errOut):
         """
         @Summ: ANOY上で!Enum型を型確認する関数。
 
@@ -504,7 +504,7 @@ class AnoyParser():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          confValue:
+          typeOption:
             @Summ: Enum型の選択肢を格納するlist型。
             @Desc: optionListには!Typeのlistが入る。
             @Type: List
@@ -515,8 +515,8 @@ class AnoyParser():
           @Summ: 正常な値ならばTrue.
           @Type: Bool
         """
-        for i in range(len(confValue)):
-            option=confValue[i]
+        for i in range(len(typeOption)):
+            option=typeOption[i]
             newAnoyPath=anoyPath+[i]
             # !Type型の選択肢。
             if(type(option)==dict):
