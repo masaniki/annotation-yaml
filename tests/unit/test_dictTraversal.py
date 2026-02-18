@@ -10,9 +10,7 @@ sys.path.append(str(projectDir))
 from src.anoy import AnoyParser
 from src.anoy import AnnotationKeyError, AnnotationTypeError, ConfigYamlError
 
-testDir=Path(__file__).parent/"test"
-sandboxDir=Path(__file__).parent/"sandbox"
-
+testDir=Path(__file__).parent
 
 @pytest.mark.parametrize(
         "x,y",[
@@ -55,6 +53,87 @@ def test_valid_anoyFile(x,y):
         configDict=yaml.safe_load(f)
     tree01=AnoyParser(configDict)
     tree01.dirDFS(anoyPath)
+    assert True
+
+def test_valid_anoy01():
+    """
+    @Summ: configが正常∧anoyが正常な場合をtestする。
+    """
+    suitePath=testDir/"valid_anoy"/"testsuite"
+    for childPath in suitePath.iterdir():
+        anoyPath=childPath/"anoy.yaml"
+        configPath=childPath/"config.yaml"
+        with open(configPath,mode="r",encoding="utf-8") as f:
+            configDict=yaml.safe_load(f)
+        tree01=AnoyParser(configDict)
+        tree01.dirDFS(anoyPath)
+        assert True
+
+def test_invalid_anoy01(outName:str="out.yaml",expName:str="exp.yaml",isTest=True):
+    """
+    @Summ: configが正常∧anoyが異常な場合をtestする。
+
+    @Args:
+      outName:
+        @Summ: 結果を出力するfile名。
+        @Type: Str
+        @Default: out
+      expName:
+        @Summ: 期待値のfile名。
+        @Type: Str
+        @Default: exp
+      isTest:
+        @Summ: testの時にTrue.
+        @Default: true
+        @Type: Bool
+    """
+    suitePath=testDir/"invalid_anoy"/"testsuite"/"in"
+    outDict={}
+    for childPath in suitePath.iterdir():
+        caseName=childPath.name
+        anoyPath=childPath/"anoy.yaml"
+        configPath=childPath/"config.yaml"
+        with open(configPath,mode="r",encoding="utf-8") as f:
+            configDict=yaml.safe_load(f)
+        try:
+            tree01=AnoyParser(configDict)
+            tree01.dirDFS(anoyPath)
+        except BaseException as e:
+            errorDict={}
+            if(type(e)==AnnotationKeyError):
+                errorType="AnnotationKeyError"
+                errorDict["errorType"]=errorType
+                errorDict["filePath"]=str(e.fileName)
+                errorDict["yamlPath"]=e.yamlPath
+                errorDict["msg"]=e.msg
+            elif(type(e)==AnnotationTypeError):
+                errorType="AnnotationTypeError"
+                errorDict["errorType"]=errorType
+                errorDict["filePath"]=str(e.fileName)
+                errorDict["yamlPath"]=e.yamlPath
+                errorDict["msg"]=e.msg
+            elif(type(e)==ConfigYamlError):
+                errorType="ConfigYamlError"
+                errorDict["errorType"]=errorType
+                errorDict["configPath"]=e.configPath
+                errorDict["msg"]=e.msg
+            else:
+                raise TypeError("unknown type is found.")
+            outDict[caseName]=errorDict
+    outputPath=testDir/"invalid_anoy"/"testsuite"/outName
+    with open(outputPath,mode="w",encoding="utf-8") as f:
+        yaml.safe_dump(outDict,f)
+    if(isTest):
+      expectedPath=testDir/"invalid_anoy"/"testsuite"/expName
+      with open(expectedPath,mode="r",encoding="utf-8") as f:
+          expDict=yaml.safe_load(f)
+      assert outDict==expDict
+
+
+def test_invalid_config01():
+    """
+    @Summ: configが異常∧anoyが正常な場合をtestする。
+    """
     assert True
 
 @pytest.mark.parametrize(
@@ -167,7 +246,17 @@ def test_invalid_anoyDir(x,y,z):
     assert e.type==z
 
 if(__name__=="__main__"):
-    args=("invalid_str01/config01.yaml", "invalid_str01/invalid_anoy.yaml")
-    test_valid_anoyFile(*args)
-
-
+    test_invalid_anoy01(isTest=False)
+    # testCaseDir=testDir/"invalid_anoy"/"testsuite"/"in"/"invalid_annoMap01"
+    # anoyPath=testCaseDir/"anoy.yaml"
+    # configPath=testCaseDir/"config.yaml"
+    # with open(configPath,mode="r",encoding="utf-8") as f:
+    #     configDict=yaml.safe_load(f)
+    # try:
+    #   tree01=AnoyParser(configDict)
+    #   tree01.dirDFS(anoyPath)
+    # except BaseException as e:
+    #     print(type(e))
+    #     print(e.fileName)
+    #     print(e.yamlPath)
+    #     print(e.msg)
