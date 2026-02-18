@@ -398,8 +398,8 @@ class AnoyParser():
             for key,value in anoyValue.items():
                 newAnoyPath=anoyPath+[key]
                 # annotation keyの確認。
-                configValue=self._configDict.get(key)
-                if(configValue is None):
+                confAnnoKey=self._configDict.get(key)
+                if(confAnnoKey is None):
                     if(errOut):
                         raise AnnotationKeyError(self._curAnoy,newAnoyPath,key)
                     else:
@@ -412,7 +412,7 @@ class AnoyParser():
                         else:
                             return False
                 # !Parentの確認。
-                parentList=key.get("!Parent")
+                parentList=confAnnoKey.get("!Parent")
                 if(parentList is None):
                     pass
                 else:
@@ -435,7 +435,7 @@ class AnoyParser():
                         else:
                             return False
                 # 子要素を探索。
-                confChild=key.get("!Child")
+                confChild=confAnnoKey.get("!Child")
                 isValid=self.checkAnoyType(newAnoyPath,value,confChild,errOut=errOut)
                 if(not isValid):
                     return False
