@@ -102,13 +102,13 @@ class AnoyParser():
                     anoyDict=yaml.safe_load(f)
                 LOGGER.info(f"open: {anoyPath}")
                 self._curAnoy=anoyPath
-                self.anoyFreeSearch([],anoyDict,errOut=True)
+                self.anoyFreeSearch([],anoyDict)
         else:
             for childPath in anoyPath.iterdir():
                 self.dirDFS(childPath)
 
 
-    def anoyFreeSearch(self,anoyPath,anoyValue,errOut:bool):
+    def anoyFreeSearch(self,anoyPath,anoyValue):
         """
         @Summ: data型が指定されていない時の関数。
 
@@ -127,15 +127,12 @@ class AnoyParser():
             @Type: List
           anoyValue:
             @Summ: parentに対応する値を代入。
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         @Returns:
           @Summ: 型が正常ならばTrue
           @Type: Bool
         """
         if(type(anoyValue)==list):
-            isValid=self.checkAnoyList(anoyPath,anoyValue,{},errOut)
+            isValid=self.checkAnoyList(anoyPath,anoyValue,{})
             return isValid
         elif(type(anoyValue)==dict):
             keyList=list(anoyValue.keys())
@@ -143,16 +140,16 @@ class AnoyParser():
                 return True
             firstKey=keyList[0]
             if(type(firstKey)!=str):
-                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue,errOut)
+                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue)
             elif(firstKey[0]=="@"):
-                isValid=self.checkAnoyAnnoMap(anoyPath,anoyValue,[],errOut)
+                isValid=self.checkAnoyAnnoMap(anoyPath,anoyValue,[])
             else:
-                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue,errOut)
+                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue)
             return isValid
         else:
             return True
 
-    def checkAnoyType(self,anoyPath,data,confType,errOut:bool):
+    def checkAnoyType(self,anoyPath,data,confType):
         """
         @Summ: ANOY上でdata型構文を確認する関数。
 
@@ -168,43 +165,38 @@ class AnoyParser():
             @Summ: config yaml上のdata型構文。
             @Desc: Noneの時はfreeSearchする。
             @Type: Dict
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         @Returns:
           @Summ: 正しいdata型の時True。
           @Type: Bool
         """
         if(confType is None):
-            isValid=self.anoyFreeSearch(anoyPath,data,errOut)
+            isValid=self.anoyFreeSearch(anoyPath,data)
             return isValid
         typeStr=list(confType.keys())[0]
         typeOption=confType[typeStr]
         match typeStr:
             case "!Str":
-                isValid=self.checkAnoyStr(anoyPath,data,typeOption,errOut)
+                isValid=self.checkAnoyStr(anoyPath,data,typeOption)
             case "!Bool":
-                isValid=self.checkAnoyBool(anoyPath,data,errOut)
+                isValid=self.checkAnoyBool(anoyPath,data)
             case "!Int":
-                isValid=self.checkAnoyInt(anoyPath,data,typeOption,errOut)
+                isValid=self.checkAnoyInt(anoyPath,data,typeOption)
             case "!Float":
-                isValid=self.checkAnoyFloat(anoyPath,data,typeOption,errOut)
+                isValid=self.checkAnoyFloat(anoyPath,data,typeOption)
             case "!FreeMap":
-                isValid=self.checkAnoyFreeMap(anoyPath,data,errOut)
+                isValid=self.checkAnoyFreeMap(anoyPath,data)
             case "!AnnoMap":
-                isValid=self.checkAnoyAnnoMap(anoyPath,data,typeOption,errOut)
+                isValid=self.checkAnoyAnnoMap(anoyPath,data,typeOption)
             case "!List":
-                isValid=self.checkAnoyList(anoyPath,data,typeOption,errOut)
+                isValid=self.checkAnoyList(anoyPath,data,typeOption)
             case "!Enum":
-                isValid=self.checkAnoyEnum(anoyPath,data,typeOption,errOut)
+                isValid=self.checkAnoyEnum(anoyPath,data,typeOption)
             case _:
-                if(errOut):
-                    raise AnnotationTypeError(self._curAnoy,anoyPath,"!Type")
-                else:
-                    isValid=False
+                msg=self.anoyTypeErrorMessage(anoyPath,"!Type")
+                LOGGER.error(msg)
         return isValid
 
-    def checkAnoyStr(self,anoyPath,anoyValue,typeOption,errOut:bool):
+    def checkAnoyStr(self,anoyPath,anoyValue,typeOption):
         """
         @Summ: ANOY上で!Str型を型確認する関数。
 
@@ -220,9 +212,6 @@ class AnoyParser():
           strOption:
             @Summ: 文字列型のoption。
             @Type: Dict
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         @Returns:
           @Summ: 型が正常である時にTrue.
           @Type: Bool
@@ -241,14 +230,13 @@ class AnoyParser():
             raiseError=True
         # error出すかの判断。
         if(raiseError):
-            if(errOut):
-                raise AnnotationTypeError(self._curAnoy,anoyPath,"!Str")
-            else:
-                return False
+            msg=self.anoyTypeErrorMessage(anoyPath,"!Str")
+            LOGGER.error(msg)
+            return False
         else:
             return True
 
-    def checkAnoyBool(self,anoyPath,anoyValue,errOut:bool):
+    def checkAnoyBool(self,anoyPath,anoyValue):
         """
         @Summ: ANOY上で!Bool型を型確認する関数。
 
@@ -258,21 +246,18 @@ class AnoyParser():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         @Returns:
           @Summ: 正常な値ならばTrue.
           @Type: Bool
         """
         if(type(anoyValue)==bool):
             return True
-        elif(errOut):
-            raise AnnotationTypeError(self._curAnoy,anoyPath,"!Bool")
         else:
+            msg=self.anoyTypeErrorMessage(anoyPath,"!Bool")
+            LOGGER.error(msg)
             return False
 
-    def checkAnoyInt(self,anoyPath,anoyValue,typeOption,errOut:bool):
+    def checkAnoyInt(self,anoyPath,anoyValue,typeOption):
         """
         @Summ: ANOY上で!Int型を型確認する関数。
 
@@ -288,9 +273,6 @@ class AnoyParser():
           typeOption:
             @Summ: int型のoption。
             @Type: Dict
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         @Returns:
           @Type: Bool
         """
@@ -308,14 +290,13 @@ class AnoyParser():
             raiseError=True
         # error出すかの判断。
         if(raiseError):
-            if(errOut):
-                raise AnnotationTypeError(self._curAnoy,anoyPath,"!Int")
-            else:
-                return False
+            msg=self.anoyTypeErrorMessage(anoyPath,"!Int")
+            LOGGER.error(msg)
+            return False
         else:
             return True
 
-    def checkAnoyFloat(self,anoyPath,anoyValue,typeOption,errOut:bool):
+    def checkAnoyFloat(self,anoyPath,anoyValue,typeOption):
         """
         @Summ: ANOY上で!Float型を型確認する関数。
 
@@ -332,9 +313,6 @@ class AnoyParser():
           typeOption:
             @Summ: float型のoption。
             @Type: Dict
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         @Returns:
           @Type: Bool
         """
@@ -352,14 +330,13 @@ class AnoyParser():
             raiseError=True
         # error出すかの判断。
         if(raiseError):
-            if(errOut):
-                raise AnnotationTypeError(self._curAnoy,anoyPath,"!Float")
-            else:
-                return False
+            msg=self.anoyTypeErrorMessage(anoyPath,"!Float")
+            LOGGER.error(msg)
+            return False
         else:
             return True
 
-    def checkAnoyFreeMap(self,anoyPath,anoyValue,errOut:bool):
+    def checkAnoyFreeMap(self,anoyPath,anoyValue):
         """
         @Summ: ANOY上で!FreeMap型を型確認する関数。
 
@@ -371,9 +348,6 @@ class AnoyParser():
             @Type: List
           anoyValue:
             @Summ: 型確認する値。
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         @Returns:
           @Summ: 正常な値ならばTrue.
           @Type: Bool
@@ -384,21 +358,19 @@ class AnoyParser():
                 # "@"の確認。
                 if(type(key)==str):
                     if(key[0]=="@"):
-                        if(errOut):
-                            raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!FreeMap")
-                        else:
-                            return False
-                isValid=self.anoyFreeSearch(newAnoyPath,value,errOut)
+                        msg=self.anoyTypeErrorMessage(anoyPath,"!FreeMap")
+                        LOGGER.error(msg)
+                        return False
+                isValid=self.anoyFreeSearch(newAnoyPath,value)
                 if(not isValid):
                     return False
             return True
         else:
-            if(errOut):
-                raise AnnotationTypeError(self._curAnoy,anoyPath,"!FreeMap")
-            else:
-                return False
+            msg=self.anoyTypeErrorMessage(anoyPath,"!FreeMap")
+            LOGGER.error(msg)
+            return False
 
-    def checkAnoyAnnoMap(self,anoyPath,anoyValue,typeOption:list,errOut:bool):
+    def checkAnoyAnnoMap(self,anoyPath,anoyValue,typeOption:list):
         """
         @Summ: ANOY上で!FreeMap型を型確認する関数。
 
@@ -422,9 +394,6 @@ class AnoyParser():
             - これは全てのannotation keyが入ったlist型と同じ挙動をする。
             @Type: List
             @Default: []
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         @Returns:
           @Summ: 正常な値ならばTrue.
           @Type: Bool
@@ -435,17 +404,15 @@ class AnoyParser():
                 # annotation keyの確認。
                 confAnnoKey=self._configDict.get(key)
                 if(confAnnoKey is None):
-                    if(errOut):
-                        raise AnnotationKeyError(self._curAnoy,newAnoyPath,key)
-                    else:
-                        return False
+                    msg=self.anoyKeyErrorMessage(newAnoyPath)
+                    LOGGER.error(msg)
+                    return False
                 # AnnoMap型のtypeOptionの確認。
                 if(typeOption!=[]):
                     if(key not in typeOption):
-                        if(errOut):
-                            raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!AnnoMap")
-                        else:
-                            return False
+                        msg=self.anoyTypeErrorMessage(anoyPath,"!AnnoMap")
+                        LOGGER.error(msg)
+                        return False
                 # !Parentの確認。
                 parentList=confAnnoKey.get("!Parent")
                 if(parentList is None):
@@ -467,23 +434,21 @@ class AnoyParser():
                                 parentAnnoKey=anoyPath[-2]
                     # parent annotation keyの検索。
                     if(parentAnnoKey not in parentList):
-                        if(errOut):
-                            raise AnnotationTypeError(self._curAnoy,newAnoyPath,"!Parent")
-                        else:
-                            return False
+                        msg=self.anoyTypeErrorMessage(newAnoyPath,"!Parent")
+                        LOGGER.error(msg)
+                        return False
                 # 子要素を探索。
                 confChild=confAnnoKey.get("!Child")
-                isValid=self.checkAnoyType(newAnoyPath,value,confChild,errOut=errOut)
+                isValid=self.checkAnoyType(newAnoyPath,value,confChild)
                 if(not isValid):
                     return False
             return True
         else:
-            if(errOut):
-                raise AnnotationTypeError(self._curAnoy,anoyPath,"!AnnoMap")
-            else:
-                return False
+            msg=self.anoyTypeErrorMessage(anoyPath,"!AnnoMap")
+            LOGGER.error(msg)
+            return False
 
-    def checkAnoyList(self,anoyPath,anoyValue,typeOption,errOut:bool):
+    def checkAnoyList(self,anoyPath,anoyValue,typeOption):
         """
         @Summ: ANOY上で!List型を型確認する関数。
 
@@ -503,33 +468,28 @@ class AnoyParser():
             @Desc:
             - type keyとlength keyがある。
             @Type: Dict
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         """
         eleType=typeOption.get("type")
         length=typeOption.get("length")
         if(type(anoyValue)==list):
             if(length is not None):
                 if(length!=len(anoyValue)):
-                    if(errOut):
-                        raise AnnotationTypeError(self._curAnoy,anoyPath,"!List")
-                    else:
-                        return False
+                    msg=self.anoyTypeErrorMessage(anoyPath,"!List")
+                    LOGGER.error(msg)
+                    return False
             for i in range(len(anoyValue)):
                 anoyEle=anoyValue[i]
                 newAnoyPath=anoyPath+[i]
-                isValid=self.checkAnoyType(newAnoyPath,anoyEle,eleType,errOut=errOut)
+                isValid=self.checkAnoyType(newAnoyPath,anoyEle,eleType)
                 if(not isValid):
                     return False
             return True
         else:
-            if(errOut):
-                raise AnnotationTypeError(self._curAnoy,anoyPath,"!List")
-            else:
-                return False
+            msg=self.anoyTypeErrorMessage(anoyPath,"!List")
+            LOGGER.error(msg)
+            return False
 
-    def checkAnoyEnum(self,anoyPath,anoyValue,typeOption:list,errOut):
+    def checkAnoyEnum(self,anoyPath,anoyValue,typeOption:list):
         """
         @Summ: ANOY上で!Enum型を型確認する関数。
 
@@ -548,9 +508,6 @@ class AnoyParser():
             @Summ: Enum型の選択肢を格納するlist型。
             @Desc: optionListには!Typeのlistが入る。
             @Type: List
-          errOut:
-            @Summ: 例外を出すならばTrue、Bool型で出力するならばFalse。
-            @Type: Bool
         @Returns:
           @Summ: 正常な値ならばTrue.
           @Type: Bool
@@ -560,16 +517,15 @@ class AnoyParser():
             newAnoyPath=anoyPath+[i]
             # !Type型の選択肢。
             if(type(option)==dict):
-                isValid=self.checkAnoyType(newAnoyPath,anoyValue,option,errOut=False)
+                isValid=self.checkAnoyType(newAnoyPath,anoyValue,option)
                 if(isValid):
                     return True
             # literalの選択肢。
             elif(anoyValue==option):
                 return True
-        if(errOut):
-            raise AnnotationTypeError(self._curAnoy,anoyPath,"!Enum")
-        else:
-            return False
+        msg=self.anoyTypeErrorMessage(anoyPath,"!Enum")
+        LOGGER.error(msg)
+        return False
 
 
 
