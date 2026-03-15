@@ -41,6 +41,36 @@ class AnoyParser():
             @Summ: _curAnoy内での現在地。
             @Type: List
     """
+    @classmethod
+    def anoyKeyErrorMessage(cls,yamlPath:list):
+        """
+        @Summ: keyErrorの時のmessageを表示する関数。
+
+        @Args:
+            yamlPath:
+                @Type: Str
+        @Returns:
+            @Type: Str
+        """
+        msg=f"  keyError at:\n    {yamlPath}"
+        return msg
+
+    @classmethod
+    def anoyTypeErrorMessage(cls,yamlPath:list,annoType:str):
+        """
+        @Summ: anoyTypeErrorの時のmessageを表示する関数。
+
+        @Args:
+            yamlPath:
+                @Type: Str
+            annoType:
+                @Summ: 例外の原因となったdata型名。
+                @Type: Str
+        @Returns:
+            @Type: Str
+        """
+        msg=f"  {annoType} contradiction at:\n    {yamlPath}"
+        return msg
 
     def __init__(self,configDict:dict):
         """
