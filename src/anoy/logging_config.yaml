@@ -7,12 +7,12 @@ formatters:
   product:
     format: "%(message)s"
 handlers:
-  prodConsole:
+  prodConsole:    #製品版の標準出力。
     class: logging.StreamHandler
     level: DEBUG
     formatter: product
     stream: ext://sys.stdout
-  devConsole:
+  devConsole:    #開発環境の標準出力。
     class: logging.StreamHandler
     level: DEBUG
     formatter: simple
