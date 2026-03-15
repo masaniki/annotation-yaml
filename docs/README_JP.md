@@ -129,12 +129,12 @@ annotation YAMLに異常がある時は、以下の様に出力する。
 
 ## Next To Do
 
-- [ ] README.mdの更新。
 - [ ] logging機能の追加。
 
 ## Ideas
 
-次、実装する可能性があるideaを記述する。
+- configYamlの例外は保持する。
+- AnoyError系の例外を消すかも。
 
 # Others
 

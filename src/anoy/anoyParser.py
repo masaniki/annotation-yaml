@@ -1,6 +1,10 @@
 import yaml
 from pathlib import Path
 
+import logging
+
+LOGGER=logging.getLogger(__name__)
+
 from .confParser import ConfParser
 from .errors import AnnotationKeyError,AnnotationTypeError,ConfigYamlError
 
@@ -66,6 +70,7 @@ class AnoyParser():
             if(suffix==".yaml" or suffix==".yml" or suffix==".anoy"):
                 with open(anoyPath, mode="r", encoding="utf-8") as f:
                     anoyDict=yaml.safe_load(f)
+                LOGGER.info(f"open: {anoyPath}")
                 self._curAnoy=anoyPath
                 self.anoyFreeSearch([],anoyDict,errOut=True)
         else:

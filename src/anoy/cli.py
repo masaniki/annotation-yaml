@@ -3,6 +3,16 @@ from pathlib import Path
 import argparse
 import yaml
 
+import logging
+import logging.config
+
+# loggingの生成。
+PACKAGE_DIR=Path(__file__).parent
+CONFIG_FILE=PACKAGE_DIR/"logging_config.yaml"
+with open(CONFIG_FILE,mode="r",encoding="utf-8") as f:
+  configDict=yaml.safe_load(f)
+logging.config.dictConfig(configDict)
+
 from .anoyParser import AnoyParser
 
 VERSION="v0.4.0"
