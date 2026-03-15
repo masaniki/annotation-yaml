@@ -129,8 +129,8 @@ annotation YAMLに異常がある時は、以下の様に出力する。
 
 ## Next To Do
 
-- [ ] `!Parent`の設計の見直し。
-- [ ] testCaseの設計の見直し。
+- [ ] README.mdの更新。
+- [ ] logging機能の追加。
 
 ## Ideas
 
