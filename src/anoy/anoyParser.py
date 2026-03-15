@@ -364,7 +364,7 @@ class AnoyParser():
                     if(key[0]=="@"):
                         self.logAnoyTypeError(anoyPath,"!FreeMap",force)
                         return False
-                isValid=self.anoyFreeSearch(newAnoyPath,value,force)
+                isValid=self.anoyFreeSearch(newAnoyPath,value)
                 if(not isValid):
                     return False
             return True
