@@ -1,7 +1,7 @@
 import yaml
 from pathlib import Path
 
-from .errors import AnnotationKeyError,AnnotationTypeError,ConfigYamlError
+from .errors import ConfigYamlError
 
 class ConfParser():
     """

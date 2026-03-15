@@ -6,7 +6,6 @@ import logging
 LOGGER=logging.getLogger(__name__)
 
 from .confParser import ConfParser
-from .errors import AnnotationKeyError,AnnotationTypeError,ConfigYamlError
 
 class AnoyParser():
     """
