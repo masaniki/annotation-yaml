@@ -4,18 +4,25 @@ formatters:
     format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
   simple:
     format: "%(name)s - %(levelname)s - %(message)s"
+  product:
+    format: "%(message)s"
 handlers:
-  console:
+  prodConsole:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: product
+    stream: ext://sys.stdout
+  devConsole:
     class: logging.StreamHandler
     level: DEBUG
     formatter: simple
     stream: ext://sys.stdout
-  # file:
-  #   class: logging.FileHandler
-  #   level: DEBUG
-  #   formatter: simple
-  #   filename: "myLog.txt"
-  #   mode: "w"
+  file:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: simple
+    filename: "myLogging.txt"
+    mode: "w"
 root:
   level: INFO
-  handlers: [console]
+  handlers: [prodConsole]

@@ -4,7 +4,6 @@ from pathlib import Path
 import logging
 
 LOGGER=logging.getLogger(__name__)
-LOGGER.info("import anoyParser")
 
 from .confParser import ConfParser
 

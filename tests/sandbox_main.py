@@ -1,7 +1,6 @@
 import pytest
 from pathlib import Path
 import sys
-import yaml
 
 #sys.pathを弄る。
 projectDir=Path(__file__).parent.parent
