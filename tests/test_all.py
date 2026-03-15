@@ -8,7 +8,7 @@ projectDir=Path(__file__).parent.parent
 sys.path.append(str(projectDir))
 
 from src.anoy import AnoyParser
-from src.anoy import AnnotationKeyError, AnnotationTypeError, ConfigYamlError
+from src.anoy import ConfigYamlError
 
 parentDir=Path(__file__).parent
 
