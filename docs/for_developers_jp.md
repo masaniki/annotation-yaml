@@ -20,7 +20,7 @@ PyPIへのupload
 
 ## Testing
 
-testの仕方を記述する。
+現在、故障中。
 
 ## Branchs
 
