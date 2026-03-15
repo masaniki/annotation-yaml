@@ -46,9 +46,11 @@ Map型の入れ子は以下のような構造になる。
 `!Child`は、`<me>`と`<child>`の関係を指定するkeywordである。
 
 ### `!Parent`
-- @Summary: 親要素を指定するための *config key*。
+- @Summary: 直近のannotation keyを指定するための *config key*。
 - @Description:
   - 親要素になれる *annotation key* のlist型。
+  - 親要素か祖親要素までは *annotation key* を探すが、それ以上は *annotation key* を探索しない。
+  - 親要素と祖親要素の両方に *annotation key* がある時は、親要素を採用する。
   - listの中にnullを入れることができ、それは親要素が存在しないことを表す。
   - `!Parent`で指定したlistの中に無いannotation keyは親になることができない。
 - @Type: *annotation key* のlist.
