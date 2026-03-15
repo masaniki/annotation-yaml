@@ -3,9 +3,21 @@ from pathlib import Path
 import sys
 import yaml
 
+import logging
+import logging.config
+
+# loggingの生成。
+TEST_DIR=Path(__file__).parent
+LOGGING_CONFIG=TEST_DIR/"autotest_logging.yaml"
+with open(LOGGING_CONFIG,mode="r",encoding="utf-8") as f:
+  configDict=yaml.safe_load(f)
+logging.config.dictConfig(configDict)
+LOGGER=logging.getLogger(__name__)  #loggerはfile内global変数として定義する。
+
+
 #sys.pathを弄る。
-projectDir=Path(__file__).parent.parent
-sys.path.append(str(projectDir))
+PROJECT_DIR=Path(__file__).parent.parent
+sys.path.append(str(PROJECT_DIR))
 
 from src.anoy import AnoyParser
 from src.anoy import ConfigYamlError

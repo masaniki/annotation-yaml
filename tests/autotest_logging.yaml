@@ -1,0 +1,28 @@
+version: 1
+formatters:
+  default:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  simple:
+    format: "%(name)s - %(levelname)s - %(message)s"
+  product:
+    format: "%(message)s"
+handlers:
+  prodConsole:    #製品版の標準出力。
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: product
+    stream: ext://sys.stdout
+  devConsole:    #開発環境の標準出力。
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+  testFile:    #自動testの結果をfileで出力。
+    class: logging.FileHandler
+    level: INFO
+    formatter: simple
+    filename: "tests/test_log.txt"
+    mode: "w"
+root:
+  level: INFO
+  handlers: [testFile]
