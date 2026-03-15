@@ -1,13 +1,13 @@
 
 from .anoyParser import AnoyParser
 from .confParser import ConfParser
-from .errors import AnoyError, AnnotationKeyError, AnnotationTypeError, ConfigYamlError
+from .errors import ConfigYamlError
 from .cli import main
 
 __all__=[
   AnoyParser,
   ConfParser,
-  AnoyError,
+  ConfigYamlError,
   main
 ]
 

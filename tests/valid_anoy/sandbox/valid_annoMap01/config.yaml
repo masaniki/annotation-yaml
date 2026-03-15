@@ -1,0 +1,25 @@
+# !AnnoMap型のtest
+"@Summ":
+  "@Summ": 要約を自然言語で記述する。
+  "!Child": "!Str"
+"@Item01":
+  "@Summ": テキトーなannotaiton key。
+  "!Child": "!Str"
+"@Item02":
+  "@Summ": テキトーなannotaiton key。
+  "!Child": "!Str"
+"@Item03":
+  "@Summ": テキトーなannotaiton key。
+  "!Child": "!Str"
+"@TestCase":
+  "@Summ": TestCaseを格納する。
+  "!Child": "!FreeMap"
+"@SimpleAnnoMap":
+  "@Summ": 最も単純なAnnoMap型。
+  "!Child": "!AnnoMap"
+"@ComplexAnnoMap":
+  "@Summ": 子要素を制限したAnnoMap型。
+  "!Child":
+    "!AnnoMap":
+    - "@Item01"
+    - "@Item02"
