@@ -20,16 +20,19 @@ def test_valid_anoy():
     """
     @Summ: config yamlが正常∧anoyが正常な場合をtestする。
 
+    @Desc:
+    - testに必要なfileは全てtestsuite directoryに格納する。
+
     """
     # logginの環境設定。
-    validAnoyDir=TESTS_DIR/"valid_anoy"
     suitePath=TESTS_DIR/"valid_anoy"/"testsuite"
-    loggingConfigPath=validAnoyDir/"logging_config.yaml"
+    loggingConfigPath=suitePath/"logging_config.yaml"
     with open(loggingConfigPath,mode="r",encoding="utf-8") as f:
         configDict=yaml.safe_load(f)
     logging.config.dictConfig(configDict)
     # 関数の実行。
-    for childPath in suitePath.iterdir():
+    inputPath=suitePath/"in"
+    for childPath in inputPath.iterdir():
         anoyPath=childPath/"anoy.yaml"
         configPath=childPath/"config.yaml"
         with open(configPath,mode="r",encoding="utf-8") as f:
@@ -37,44 +40,48 @@ def test_valid_anoy():
         tree01=AnoyParser(configDict)
         tree01.dirDFS(anoyPath)
     # log.txtの比較。
-    outputLogPath=validAnoyDir/"output_log.txt"
-    expectedLogPath=validAnoyDir/"expected_log.txt"
+    outputLogPath=suitePath/"output_log.txt"
+    expectedLogPath=suitePath/"expected_log.txt"
     with open(outputLogPath,mode="r",encoding="utf-8") as f1:
-        output_textLiens=f1.readlines()
+        outputTextLiens=f1.readlines()
     with open(expectedLogPath,mode="r",encoding="utf-8") as f1:
-        expected_textLines=f1.readlines()
-    diffIter=difflib.unified_diff(output_textLiens,expected_textLines)
+        expectedTextLines=f1.readlines()
+    diffIter=difflib.unified_diff(outputTextLiens,expectedTextLines)
     diffList=list(diffIter)
     assert diffList==[]
 
-def test_invalid_anoy02(outName:str="output.yaml",expName:str="expected.yaml",isTest=True):
+def test_invalid_anoy02():
     """
     @Summ: configが正常∧anoyが異常な場合をtestする。
 
-    @Args:
-      outName:
-        @Summ: 結果を出力するfile名。
-        @Type: Str
-        @Default: output.yaml
-      expName:
-        @Summ: 期待値のfile名。
-        @Type: Str
-        @Default: expected.yaml
-      isTest:
-        @Summ: testの時にTrue.
-        @Default: true
-        @Type: Bool
+    @Desc:
+    - testに必要なfileは全てtestsuite directoryに格納する。
+
     """
-    inputPath=TESTS_DIR/"invalid_anoy"/"testsuite"/"in"
+    # logginの環境設定。
+    suitePath=TESTS_DIR/"invalid_anoy"/"testsuite"
+    loggingConfigPath=suitePath/"logging_config.yaml"
+    with open(loggingConfigPath,mode="r",encoding="utf-8") as f:
+        configDict=yaml.safe_load(f)
+    logging.config.dictConfig(configDict)
+    inputPath=suitePath/"in"
     for childPath in inputPath.iterdir():
-        caseName=childPath.name
         anoyPath=childPath/"anoy.yaml"
         configPath=childPath/"config.yaml"
         with open(configPath,mode="r",encoding="utf-8") as f:
             configDict=yaml.safe_load(f)
         tree01=AnoyParser(configDict)
         tree01.dirDFS(anoyPath)
-        assert True
+    # log.txtの比較。
+    outputLogPath=suitePath/"output_log.txt"
+    expectedLogPath=suitePath/"expected_log.txt"
+    with open(outputLogPath,mode="r",encoding="utf-8") as f1:
+        outputTextLiens=f1.readlines()
+    with open(expectedLogPath,mode="r",encoding="utf-8") as f1:
+        expectedTextLines=f1.readlines()
+    diffIter=difflib.unified_diff(outputTextLiens,expectedTextLines)
+    diffList=list(diffIter)
+    assert diffList==[]
 
 def test_invalid_anoy(outName:str="output.yaml",expName:str="expected.yaml",isTest=True):
     """
@@ -143,7 +150,7 @@ def test_invalid_config():
 
 
 if(__name__=="__main__"):
-    test_valid_anoy()
+    test_invalid_anoy02()
     # testCaseDir=testDir/"invalid_anoy"/"testsuite"/"in"/"invalid_annoMap01"
     # anoyPath=testCaseDir/"anoy.yaml"
     # configPath=testCaseDir/"config.yaml"

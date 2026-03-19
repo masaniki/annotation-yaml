@@ -9,7 +9,7 @@ handlers:
     class: logging.FileHandler
     level: INFO
     formatter: simple
-    filename: "tests/valid_anoy/output_log.txt"
+    filename: "tests/invalid_anoy/testsuite/output_log.txt"
     mode: "w"
 root:
   level: INFO

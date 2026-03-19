@@ -1,3 +1,4 @@
+# ['@TestCase', 'case04', '@Any']の中に、freeKeyとAnnoKeyが混合されている。
 "@TestCase":
   case01:
     "@Summ": "!Str型の時"

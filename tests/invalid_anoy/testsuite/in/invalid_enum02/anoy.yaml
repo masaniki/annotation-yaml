@@ -1,4 +1,4 @@
-# 13は列挙外。
+# ['@NullStrEnum']の13は列挙外。
 "@LiteralEnum": true
 "@NullStrEnum": 13
 "@StrListEnum": "ab"

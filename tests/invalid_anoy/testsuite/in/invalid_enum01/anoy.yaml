@@ -1,4 +1,4 @@
-# "ab"は列挙外。
+# ['@LiteralEnum']の"ab"は列挙外。
 "@LiteralEnum": "ab"
 "@NullStrEnum": null
 "@StrListEnum": "ab"

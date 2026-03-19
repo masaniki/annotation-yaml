@@ -6,13 +6,13 @@
   "@Summ": 血液型。
   "!Child":
     "!Enum":
-      "A":
+    - "A":
         "@Summ": A型。
-      "B":
+    - "B":
         "@Summ": B型。
-      "O":
+    - "O":
         "@Summ": O型。
-      "AB":
+    - "AB":
         "@Summ": AB型。
 
 
