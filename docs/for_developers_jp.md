@@ -4,13 +4,13 @@
 
 ## 環境構築。
 
-Ubuntu用の環境構築。
+dockerを用いた環境構築。
 
 current directory = project directoryの状態にして、以下のcommandをっ実行する。
 
 ```
 docker build .
-docker run -it <containerID>
+docker run -it <image_ID>
 ```
 
 ## Deploy
