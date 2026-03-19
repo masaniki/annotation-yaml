@@ -9,5 +9,5 @@ dist/
 *.egg-info
 
 # test用。
-tests\valid_anoy\testsuite\output_log.txt
-tests\invalid_anoy\testsuite\output_log.txt
+tests/valid_anoy/testsuite/output_log.txt
+tests/invalid_anoy/testsuite/output_log.txt
