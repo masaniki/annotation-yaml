@@ -32,7 +32,7 @@ LOGGER=logging.getLogger(__name__)
 from .anoyParser import AnoyParser
 
 LOGGER=logging.getLogger(__name__)
-VERSION="v0.5.0"
+VERSION="v0.5.1"
 
 def main():
     """
