@@ -1,6 +1,6 @@
 FROM python:3.11
-CMD ["/bin/bash"]
 RUN mkdir myapp
 COPY . /myapp
-RUN cd myapp
+WORKDIR myapp
 RUN pip install -r requirements.txt
+CMD ["/bin/bash"]
