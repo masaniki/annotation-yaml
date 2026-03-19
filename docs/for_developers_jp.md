@@ -2,6 +2,17 @@
 
 開発者向けのmessageを記述する。
 
+## 環境構築。
+
+Ubuntu用の環境構築。
+
+current directory = project directoryの状態にして、以下のcommandをっ実行する。
+
+```
+docker build .
+docker run -it <containerID>
+```
+
 ## Deploy
 
 ### build
@@ -20,7 +31,13 @@ PyPIへのupload
 
 ## Testing
 
-現在、故障中。
+Ubuntu環境で、以下のcommandを実行する。
+
+```
+python test_valid_anoy.py
+python test_invalid_anoy.py
+pytest test_compare.py
+```
 
 ## Branchs
 
