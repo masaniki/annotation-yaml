@@ -42,12 +42,6 @@ YAMLのMap型はしばしば入れ子構造になり、複雑化する。
 
 `pip install anoy`
 
-## パッケージ依存性
-
-以下のpackageをインストールしないと正しく機能しない場合があります。
-
-- [PyYAML](https://pypi.org/project/PyYAML/): 最も人気なPyhton用のYAMLパーサーです。
-
 # 使い方
 
 library_config.yaml
