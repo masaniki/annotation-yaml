@@ -6,10 +6,26 @@ import logging
 import logging.config
 
 # loggingの生成。
-PACKAGE_DIR=Path(__file__).parent
-CONFIG_FILE=PACKAGE_DIR/"logging_config.yaml"
-with open(CONFIG_FILE,mode="r",encoding="utf-8") as f:
-  configDict=yaml.safe_load(f)
+configDict={
+    "version": 1,
+    "formatters":{
+        "product":{
+            "format": "%(message)s"
+        }
+    },
+    "handlers":{
+        "prodConsole":{
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "product",
+            "stream": "ext://sys.stdout"
+        }
+    },
+    "root":{
+        "level": "INFO",
+        "handlers": ["prodConsole"]
+    }
+}
 logging.config.dictConfig(configDict)
 LOGGER=logging.getLogger(__name__)
 
