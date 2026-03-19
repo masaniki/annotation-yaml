@@ -1,60 +1,60 @@
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_annoMap01\anoy.yaml
-src.anoy.anoyParser - INFO -   keyError at:
-    ['@TestCase', 'case01', '@SimpleAnnoMap', 'Item04']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_annoMap02\anoy.yaml
-src.anoy.anoyParser - INFO -   !AnnoMap contradiction at:
-    ['@TestCase', 'case02', '@ComplexAnnoMap']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_annoMap03\anoy.yaml
-src.anoy.anoyParser - INFO -   !AnnoMap contradiction at:
-    ['@TestCase', 'case03', '@SimpleAnnoMap']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_childNull01\anoy.yaml
-src.anoy.anoyParser - INFO -   !FreeMap contradiction at:
-    ['@TestCase', 'case04', '@Any']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_enum01\anoy.yaml
-src.anoy.anoyParser - INFO -   !Enum contradiction at:
-    ['@LiteralEnum']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_enum02\anoy.yaml
-src.anoy.anoyParser - INFO -   !Enum contradiction at:
-    ['@NullStrEnum']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_enum03\anoy.yaml
-src.anoy.anoyParser - INFO -   !Enum contradiction at:
-    ['@BloodType']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_float01\anoy.yaml
-src.anoy.anoyParser - INFO -   !Float contradiction at:
-    ['@TestCase', 'case01', '@SimpleFloat']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_float02\anoy.yaml
-src.anoy.anoyParser - INFO -   !Float contradiction at:
-    ['@TestCase', 'case05', '@FloatRange']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_freeMap01\anoy.yaml
-src.anoy.anoyParser - INFO -   !FreeMap contradiction at:
-    ['@TestCase', 'case01', '@SimpleFreeMap']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_grandparent01\anoy.yaml
-src.anoy.anoyParser - INFO -   !Parent contradiction at:
-    ['@LayorRoot', 'child01', 'grandchild01', '@LayorChild']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_grandparent02\anoy.yaml
-src.anoy.anoyParser - INFO -   !Parent contradiction at:
-    ['@LayorRoot', 0, 'grandchild01', '@LayorChild']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_int01\anoy.yaml
-src.anoy.anoyParser - INFO -   !Int contradiction at:
-    ['@rangeInt']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_list01\anoy.yaml
-src.anoy.anoyParser - INFO -   !List contradiction at:
-    ['@IntList']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_list02\anoy.yaml
-src.anoy.anoyParser - INFO -   !Int contradiction at:
-    ['@IntList', 2]
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_parent01\anoy.yaml
-src.anoy.anoyParser - INFO -   !Parent contradiction at:
-    ['@LayorRoot', '@LayorRoot']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_parent02\anoy.yaml
-src.anoy.anoyParser - INFO -   !Parent contradiction at:
-    ['@LayorRoot', '@Layor01_02', '@Layor02_01']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_str01\anoy.yaml
-src.anoy.anoyParser - INFO -   !Str contradiction at:
-    ['@rangeStr']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\invalid_str02\anoy.yaml
-src.anoy.anoyParser - INFO -   !Str contradiction at:
-    ['@rangeStr']
-src.anoy.anoyParser - INFO - open: tests\invalid_anoy\testsuite\in\typo01\anoy.yaml
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/typo01/anoy.yaml
 src.anoy.anoyParser - INFO -   keyError at:
     ['@Books', "Alice's Adventures in Wonderland", '@Auther']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_parent01/anoy.yaml
+src.anoy.anoyParser - INFO -   !Parent contradiction at:
+    ['@LayorRoot', '@LayorRoot']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_annoMap03/anoy.yaml
+src.anoy.anoyParser - INFO -   !AnnoMap contradiction at:
+    ['@TestCase', 'case03', '@SimpleAnnoMap']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_grandparent02/anoy.yaml
+src.anoy.anoyParser - INFO -   !Parent contradiction at:
+    ['@LayorRoot', 0, 'grandchild01', '@LayorChild']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_annoMap01/anoy.yaml
+src.anoy.anoyParser - INFO -   keyError at:
+    ['@TestCase', 'case01', '@SimpleAnnoMap', 'Item04']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_str02/anoy.yaml
+src.anoy.anoyParser - INFO -   !Str contradiction at:
+    ['@rangeStr']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_enum02/anoy.yaml
+src.anoy.anoyParser - INFO -   !Enum contradiction at:
+    ['@NullStrEnum']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_freeMap01/anoy.yaml
+src.anoy.anoyParser - INFO -   !FreeMap contradiction at:
+    ['@TestCase', 'case01', '@SimpleFreeMap']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_enum01/anoy.yaml
+src.anoy.anoyParser - INFO -   !Enum contradiction at:
+    ['@LiteralEnum']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_childNull01/anoy.yaml
+src.anoy.anoyParser - INFO -   !FreeMap contradiction at:
+    ['@TestCase', 'case04', '@Any']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_annoMap02/anoy.yaml
+src.anoy.anoyParser - INFO -   !AnnoMap contradiction at:
+    ['@TestCase', 'case02', '@ComplexAnnoMap']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_str01/anoy.yaml
+src.anoy.anoyParser - INFO -   !Str contradiction at:
+    ['@rangeStr']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_grandparent01/anoy.yaml
+src.anoy.anoyParser - INFO -   !Parent contradiction at:
+    ['@LayorRoot', 'child01', 'grandchild01', '@LayorChild']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_enum03/anoy.yaml
+src.anoy.anoyParser - INFO -   !Enum contradiction at:
+    ['@BloodType']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_list01/anoy.yaml
+src.anoy.anoyParser - INFO -   !List contradiction at:
+    ['@IntList']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_int01/anoy.yaml
+src.anoy.anoyParser - INFO -   !Int contradiction at:
+    ['@rangeInt']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_parent02/anoy.yaml
+src.anoy.anoyParser - INFO -   !Parent contradiction at:
+    ['@LayorRoot', '@Layor01_02', '@Layor02_01']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_list02/anoy.yaml
+src.anoy.anoyParser - INFO -   !Int contradiction at:
+    ['@IntList', 2]
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_float01/anoy.yaml
+src.anoy.anoyParser - INFO -   !Float contradiction at:
+    ['@TestCase', 'case01', '@SimpleFloat']
+src.anoy.anoyParser - INFO - open: /myapp/tests/invalid_anoy/testsuite/in/invalid_float02/anoy.yaml
+src.anoy.anoyParser - INFO -   !Float contradiction at:
+    ['@TestCase', 'case05', '@FloatRange']

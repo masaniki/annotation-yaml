@@ -4,8 +4,6 @@ import logging
 
 from .confParser import ConfParser
 
-PROJECT_DIR=Path(__file__).parent.parent.parent
-
 class AnoyParser():
     """
     @Summ: 辞書型の中身を探索するclass.
@@ -59,8 +57,7 @@ class AnoyParser():
             if(suffix==".yaml" or suffix==".yml" or suffix==".anoy"):
                 with open(anoyPath, mode="r", encoding="utf-8") as f:
                     anoyDict=yaml.safe_load(f)
-                relativeAnoyPath=anoyPath.relative_to(PROJECT_DIR)
-                self._logger.info(f"open: {relativeAnoyPath}")
+                self._logger.info(f"open: {anoyPath}")
                 self._curAnoy=anoyPath
                 self.anoyFreeSearch([],anoyDict)
         else:
