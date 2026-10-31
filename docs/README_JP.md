@@ -116,19 +116,13 @@ annotation YAMLに異常がある時は、以下の様に出力する。
 >>> 
 ```
 
-# 詳細
-
-・AnoyKeyErrorは、見つからないkeyを明示する。
-・AnoyValueErrorは、矛盾する値を格納するkeyを明示する。
-
 ## Next To Do
 
 - [ ] logging機能の追加。
+- [ ] ANOY CLIにmessage modeとexception modeの追加。
 
 ## Ideas
 
-- configYamlの例外は保持する。
-- AnoyError系の例外を消すかも。
 
 # Others
 
