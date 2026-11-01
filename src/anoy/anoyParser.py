@@ -83,7 +83,7 @@ class AnoyParser():
             self._logger.error(msg)
 
 
-    def logAnoyTypeError(self,yamlPath:list,annoType:str,force:bool=True):
+    def logAnoyTypeError(self,yamlPath:list,annoType:str):
         """
         @Summ: anoyTypeErrorの時のmessageをloggingする関数。
 
@@ -93,10 +93,6 @@ class AnoyParser():
             annoType:
                 @Summ: 例外の原因となったdata型名。
                 @Type: Str
-            force:
-                @Summ: 強制的にmessageを出す時にTrue.
-                @Type: Bool
-                @Default: true
         """
         msg=f"  {annoType} contradiction at:\n    {yamlPath}"
         if(self._exceptionMode):
@@ -140,11 +136,11 @@ class AnoyParser():
                 return True
             firstKey=keyList[0]
             if(type(firstKey)!=str):
-                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue,force=True)
+                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue)
             elif(firstKey[0]=="@"):
                 isValid=self.checkAnoyAnnoMap(anoyPath,anoyValue,[],force=True)
             else:
-                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue,force=True)
+                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue)
             return isValid
         else:
             return True
@@ -490,7 +486,7 @@ class AnoyParser():
             self.logAnoyTypeError(anoyPath,"!List",force)
             return False
 
-    def checkAnoyEnum(self,anoyPath,anoyValue,typeOption:list,):
+    def checkAnoyEnum(self,anoyPath,anoyValue,typeOption:list):
         """
         @Summ: ANOY上で!Enum型を型確認する関数。
 

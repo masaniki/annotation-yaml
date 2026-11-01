@@ -34,9 +34,9 @@ PyPIへのupload
 Ubuntu環境で、以下のcommandを実行する。
 
 ```
-python test_valid_anoy.py
-python test_invalid_anoy.py
-pytest test_compare.py
+python tests/test_valid_anoy.py
+python tests/test_invalid_anoy.py
+pytest tests/test_compare.py
 ```
 
 ## Branchs
