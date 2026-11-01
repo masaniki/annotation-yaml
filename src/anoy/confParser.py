@@ -1,7 +1,7 @@
 import yaml
 from pathlib import Path
 
-from .errors import ConfigYamlError
+from .errors import AnoyConfigError
 
 class ConfParser():
     """
@@ -48,13 +48,13 @@ class ConfParser():
         for annoKey in confDict.keys():
             validAnnoValue={}  #annotation value.
             if(annoKey[0]!="@"):
-                raise ConfigYamlError([annoKey],"Annotaion key should start with `@`.")
+                raise AnoyConfigError([annoKey],"Annotaion key should start with `@`.")
             valueDict=confDict[annoKey]
             if(type(valueDict)!=dict):
-                raise ConfigYamlError([annoKey])
+                raise AnoyConfigError([annoKey])
             for key,value in valueDict.items():
                 if(type(key)!=str):
-                    raise ConfigYamlError([annoKey,key], "Invalid value as !Parent.")
+                    raise AnoyConfigError([annoKey,key], "Invalid value as !Parent.")
                 if(key[0]=="@"):
                     continue
                 elif(key=="!Parent"):
@@ -64,7 +64,7 @@ class ConfParser():
                     validConfChild=cls.checkConfType([annoKey,"!Child"],value)
                     validAnnoValue["!Child"]=validConfChild
                 else:
-                    raise ConfigYamlError([annoKey,key], "Invalid value as !Parent.")
+                    raise AnoyConfigError([annoKey,key], "Invalid value as !Parent.")
             # isVisit keyの追加。
             validAnnoValue["isVisit"]=False
             validConfigDict[annoKey]=validAnnoValue
@@ -87,12 +87,12 @@ class ConfParser():
           @Type: List
         """
         if(type(value)!=list):
-            raise ConfigYamlError(confPath)
+            raise AnoyConfigError(confPath)
         for item in value:
             if(item is None):
                 continue
             if(item[0]!="@"):
-                raise ConfigYamlError(confPath)
+                raise AnoyConfigError(confPath)
         return value.copy()
 
     @classmethod
@@ -131,11 +131,11 @@ class ConfParser():
                 case "!AnnoMap":
                     validType=cls.checkConfAnnoMap(newConfPath,None)
                 case _:
-                    raise ConfigYamlError(newConfPath,"Invalid data type.")
+                    raise AnoyConfigError(newConfPath,"Invalid data type.")
         elif(type(confValue)==dict):
             confChildKey=list(confValue.keys())
             if(len(confChildKey)!=1):
-                raise ConfigYamlError(confPath,"Invalid data type.")
+                raise AnoyConfigError(confPath,"Invalid data type.")
             typeStr=confChildKey[0]
             newConfPath=confPath+[typeStr]
             newConfValue=confValue[typeStr]
@@ -153,9 +153,9 @@ class ConfParser():
                 case "!AnnoMap":
                     validType=cls.checkConfAnnoMap(newConfPath,newConfValue)
                 case _:
-                    raise ConfigYamlError(newConfPath,"Invalid data type.")
+                    raise AnoyConfigError(newConfPath,"Invalid data type.")
         else:
-            raise ConfigYamlError(confPath,"Invalid data type.")
+            raise AnoyConfigError(confPath,"Invalid data type.")
         return validType
 
     @classmethod
@@ -180,7 +180,7 @@ class ConfParser():
         if(confValue is None):
             pass
         elif(type(confValue)!=dict):
-            raise ConfigYamlError(confPath)
+            raise AnoyConfigError(confPath)
         else:
             for key,value in confValue.items():
                 newConfPath=confPath+[key]
@@ -190,19 +190,19 @@ class ConfParser():
                         if(type(value)==int):
                             if(lenMax is not None):
                                 if(lenMax<value):
-                                    raise ConfigYamlError(newConfPath)
+                                    raise AnoyConfigError(newConfPath)
                         else:
-                            raise ConfigYamlError(newConfPath)
+                            raise AnoyConfigError(newConfPath)
                     case "max":
                         lenMax=value
                         if(type(value)==int):
                             if(lenMax is not None):
                                 if(value<lenMin):
-                                    raise ConfigYamlError(newConfPath)
+                                    raise AnoyConfigError(newConfPath)
                         else:
-                            raise ConfigYamlError(newConfPath)
+                            raise AnoyConfigError(newConfPath)
                     case _:
-                        raise ConfigYamlError(newConfPath)
+                        raise AnoyConfigError(newConfPath)
         return {"!Str":{"min":lenMin,"max":lenMax}}
 
 
@@ -228,7 +228,7 @@ class ConfParser():
         if(confValue is None):
             pass
         elif(type(confValue)!=dict):
-            raise ConfigYamlError(confPath, "Required `!Map` type.")
+            raise AnoyConfigError(confPath, "Required `!Map` type.")
         else:
             for key,value in confValue.items():
                 newConfPath=confPath+[key]
@@ -238,19 +238,19 @@ class ConfParser():
                         if(type(value)==int):
                             if(intMax is not None):
                                 if(intMax<value):
-                                    raise ConfigYamlError(newConfPath)
+                                    raise AnoyConfigError(newConfPath)
                         else:
-                            raise ConfigYamlError(newConfPath)
+                            raise AnoyConfigError(newConfPath)
                     case "max":
                         intMax=value
                         if(type(value)==int):
                             if(intMax is not None):
                                 if(value<intMin):
-                                    raise ConfigYamlError(newConfPath)
+                                    raise AnoyConfigError(newConfPath)
                         else:
-                            raise ConfigYamlError(newConfPath)
+                            raise AnoyConfigError(newConfPath)
                     case _:
-                        raise ConfigYamlError(newConfPath)
+                        raise AnoyConfigError(newConfPath)
         return {"!Int":{"min":intMin,"max":intMax}}
 
     @classmethod
@@ -275,20 +275,20 @@ class ConfParser():
         if(confValue is None):
             pass
         elif(type(confValue)!=dict):
-            raise ConfigYamlError(confPath, "Required `!Map` type.")
+            raise AnoyConfigError(confPath, "Required `!Map` type.")
         else:
             for floatKey,floatVal in confValue.items():
                 match floatKey:
                     case "min":
                         if(type(floatVal)!=int and type(floatVal)!=float):
-                            raise ConfigYamlError(confPath)    
+                            raise AnoyConfigError(confPath)    
                         floatMin=floatVal
                     case "max":
                         if(type(floatVal)!=int and type(floatVal)!=float):
-                            raise ConfigYamlError(confPath)
+                            raise AnoyConfigError(confPath)
                         floatMax=floatVal
                     case _:
-                        raise ConfigYamlError(confPath)
+                        raise AnoyConfigError(confPath)
         return {"!Float":{"min":floatMin,"max":floatMax}}
 
     @classmethod
@@ -311,13 +311,13 @@ class ConfParser():
         if(confValue is None):
             confValue=[]
         elif(type(confValue)!=list):
-            raise ConfigYamlError(confPath)
+            raise AnoyConfigError(confPath)
         else:
             for i in range(len(confValue)):
                 item=confValue[i]
                 newConfPath=confPath+[item]
                 if(item[0]!="@"):
-                    raise ConfigYamlError(newConfPath)
+                    raise AnoyConfigError(newConfPath)
         return {"!AnnoMap":confValue}
 
     @classmethod
@@ -342,7 +342,7 @@ class ConfParser():
         if(confValue is None):
             pass
         elif(type(confValue)!=dict):
-            raise ConfigYamlError(confPath)
+            raise AnoyConfigError(confPath)
         else:
             for listKey,listVal in confValue.items():
                 newConfPath=confPath+[listKey]
@@ -354,12 +354,12 @@ class ConfParser():
                         if(listVal is None):
                             continue
                         elif(type(listVal)!=int):
-                            raise ConfigYamlError(newConfPath)
+                            raise AnoyConfigError(newConfPath)
                         elif(listVal<=0):
-                            raise ConfigYamlError(newConfPath)
+                            raise AnoyConfigError(newConfPath)
                         listLength=listVal
                     case _:
-                        raise ConfigYamlError(newConfPath)
+                        raise AnoyConfigError(newConfPath)
         return {"!List":{"type":listType,"length":listLength}}
 
     @classmethod
@@ -380,7 +380,7 @@ class ConfParser():
         """
         enumOption=[]
         if(type(confValue)!=list):
-            raise ConfigYamlError(confPath)
+            raise AnoyConfigError(confPath)
         else:
             for item in confValue:
                 newConfPath=confPath+[item]
@@ -391,11 +391,11 @@ class ConfParser():
                     else:
                         enumOption.append(item)
                 elif(type(item)==list):
-                    raise ConfigYamlError(newConfPath)
+                    raise AnoyConfigError(newConfPath)
                 elif(type(item)==dict):
                     keyList=list(item.keys())
                     if(len(keyList)!=1):
-                        raise ConfigYamlError(newConfPath)
+                        raise AnoyConfigError(newConfPath)
                     firstKey=keyList[0]
                     if(firstKey[0]=="!"):
                         validDict=cls.checkConfType(newConfPath,item)

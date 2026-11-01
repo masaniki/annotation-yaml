@@ -12,7 +12,7 @@ PROJECT_DIR=Path(__file__).parent.parent
 sys.path.append(str(PROJECT_DIR))
 
 from src.anoy import AnoyParser
-from src.anoy import ConfigYamlError
+from src.anoy import AnoyConfigError
 
 TESTS_DIR=Path(__file__).parent
 
@@ -37,7 +37,7 @@ def test_valid_anoy():
         configPath=childPath/"config.yaml"
         with open(configPath,mode="r",encoding="utf-8") as f:
             configDict=yaml.safe_load(f)
-        tree01=AnoyParser(configDict)
+        tree01=AnoyParser(configDict,False)
         tree01.dirDFS(anoyPath)
 
 

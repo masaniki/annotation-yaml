@@ -12,7 +12,7 @@ PROJECT_DIR=Path(__file__).parent.parent
 sys.path.append(str(PROJECT_DIR))
 
 from src.anoy import AnoyParser
-from src.anoy import ConfigYamlError
+from src.anoy import AnoyConfigError
 
 TESTS_DIR=Path(__file__).parent
 
