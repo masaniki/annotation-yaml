@@ -1,6 +1,6 @@
 # 変数の詳細は<>の中に記述する。
 [build-system]
-requires = ["setuptools >= 77.0.3"]
+requires = ["setuptools >= 65.5.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
