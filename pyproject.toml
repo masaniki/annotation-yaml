@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "anoy"
-version = "0.5.1"
+version = "0.5.2"
 authors = [
   { name="masaniki", email="masaniki.software@gmail.com" }
 ]
 description = "This is a library that provides simple type checking for YAML."
 dependencies = ["PyYAML"]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
