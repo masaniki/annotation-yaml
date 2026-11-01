@@ -9,8 +9,8 @@ dockerを用いた環境構築。
 current directory = project directoryの状態にして、以下のcommandをっ実行する。
 
 ```
-docker build .
-docker run -it <image_ID>
+docker build . -t anoyenv
+docker run -it anoyenv
 ```
 
 ## Deploy
