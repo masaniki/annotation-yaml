@@ -61,8 +61,8 @@ class AnoyParser():
             if(suffix==".yaml" or suffix==".yml" or suffix==".anoy"):
                 with open(anoyPath, mode="r", encoding="utf-8") as f:
                     anoyDict=yaml.safe_load(f)
-                self._logger.info(f"open: {anoyPath}")
                 self._anoyPath=anoyPath
+                self._logger.info(f"open: {self._anoyPath}")
                 self.anoyFreeSearch([],anoyDict)
         else:
             for childPath in anoyPath.iterdir():
@@ -76,6 +76,8 @@ class AnoyParser():
             yamlPath:
                 @Type: Str
         """
+
+        self._logger.error(f"open: {self._anoyPath}")
         msg=f"  keyError at:\n    {yamlPath}"
         if(self._exceptionMode):
             raise AnoyError(self._anoyPath,msg)
@@ -94,6 +96,7 @@ class AnoyParser():
                 @Summ: 例外の原因となったdata型名。
                 @Type: Str
         """
+        self._logger.error(f"open: {self._anoyPath}")
         msg=f"  {annoType} contradiction at:\n    {yamlPath}"
         if(self._exceptionMode):
             raise AnoyError(self._anoyPath,msg)
