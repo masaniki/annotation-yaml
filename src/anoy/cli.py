@@ -20,7 +20,7 @@ def main():
     parser.add_argument("config", type=str, default=None, help="Put in configuration yaml.")
     parser.add_argument("anoy", type=str, default=None, help="Put in annotation yaml.")
     parser.add_argument("-d","--debug", action="store_true", help="Debug mode. Output progress to the terminal.")
-    parser.add_argument("-e","--exception", action="store_true", dhelp="Exception mode. Once it raises exectpion, stop the program.")
+    parser.add_argument("-e","--exception", action="store_true", help="Exception mode. Once it raises exectpion, stop the program.")
 
     # 引数の処理。
     args=parser.parse_args()
