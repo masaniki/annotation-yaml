@@ -1,18 +1,18 @@
 # 変数の詳細は<>の中に記述する。
 [build-system]
-requires = ["setuptools >= 77.0.3"]
+requires = ["setuptools >= 65.5.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "anoy"
-version = "0.5.1"
+version = "0.6.0"
 authors = [
   { name="masaniki", email="masaniki.software@gmail.com" }
 ]
 description = "This is a library that provides simple type checking for YAML."
 dependencies = ["PyYAML"]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
