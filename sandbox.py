@@ -1,7 +1,6 @@
 #Pythonの挙動を確認するようのmain file。
+import logging
 
-print("Hello World.")
-list01=[1]
-list02=[1,2,3,None]
+logger01=logging.Logger(__name__)
 
-print(list01[-2])
+

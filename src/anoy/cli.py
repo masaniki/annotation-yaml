@@ -31,7 +31,6 @@ LOGGER=logging.getLogger(__name__)
 
 from .anoyParser import AnoyParser
 
-LOGGER=logging.getLogger(__name__)
 VERSION="v0.5.1"
 
 def main():
@@ -43,6 +42,8 @@ def main():
     parser.add_argument("-v","--version", action="version", version="%(prog)s "+f"{VERSION}")
     parser.add_argument("config", type=str, default=None, help="Put in configuration yaml.")
     parser.add_argument("anoy", type=str, default=None, help="Put in annotation yaml.")
+    parser.add_argument("-m","--message", action="store_true", help="Message mode. Output progress to the terminal.")
+    parser.add_argument("-e","--exception", action="store_true", dhelp="Exception mode. Output progress to the terminal.")
     args=parser.parse_args()
     configPath=Path(args.config)
     anoyPath=Path(args.anoy)

@@ -7,8 +7,9 @@ class ConfParser():
     """
     @Summ: config yaml用のparser。
 
-    @Desc: 全てclass関数で実装する。
-
+    @Desc:
+    - 全てclass関数で実装する。
+    - config yaml内のerrorは、ConfigYamlErrorを出して停止する。
     """
 
     @classmethod

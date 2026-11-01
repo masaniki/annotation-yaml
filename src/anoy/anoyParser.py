@@ -73,7 +73,7 @@ class AnoyParser():
                 @Type: Str
         """
         msg=f"  keyError at:\n    {yamlPath}"
-        self._logger.info(msg)
+        self._logger.error(msg)
 
 
     def logAnoyTypeError(self,yamlPath:list,annoType:str,force:bool=True):
@@ -93,7 +93,7 @@ class AnoyParser():
         """
         if(force):
             msg=f"  {annoType} contradiction at:\n    {yamlPath}"
-            self._logger.info(msg)
+            self._logger.error(msg)
 
 
     def anoyFreeSearch(self,anoyPath,anoyValue):
