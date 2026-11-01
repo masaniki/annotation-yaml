@@ -120,9 +120,6 @@ class AnoyParser():
                 @Type: List
             anoyValue:
                 @Summ: parentに対応する値を代入。
-            force:
-                @Summ: 強制的にmessageを出す時にTrue.
-                @Type: Bool
         @Returns:
             @Summ: 型が正常ならばTrue
             @Type: Bool
@@ -483,7 +480,7 @@ class AnoyParser():
                     return False
             return True
         else:
-            self.logAnoyTypeError(anoyPath,"!List",force)
+            self.logAnoyTypeError(anoyPath,"!List")
             return False
 
     def checkAnoyEnum(self,anoyPath,anoyValue,typeOption:list):
