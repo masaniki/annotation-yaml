@@ -116,14 +116,6 @@ annotation YAMLに異常がある時は、以下の様に出力する。
 >>> 
 ```
 
-## Next To Do
-
-- [ ] logging機能の追加。
-- [ ] ANOY CLIにmessage modeとexception modeの追加。
-
-## Ideas
-
-
 # Others
 
 ## 下位規格の紹介
