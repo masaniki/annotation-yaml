@@ -81,11 +81,12 @@ valid_library.yaml:
 
 `anoy`コマンドでデータ型の確認を実行する。
 
-データ型に異常が無かったら何も出力しない。
+以下はdebug modeで実行している。
 
 ```
->>> anoy library_config.yaml library.yaml
->>> 
+>>> anoy library_config.yaml valid_library.yaml -d
+open: C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unused\sampleCase\valid_library.yaml
+result: 0/1 invalid.
 ```
 
 あなたが`@Auther`を`@Auther`とtypoしたとする。
@@ -111,9 +112,12 @@ invalid_library.yaml:
 annotation YAMLに異常がある時は、以下の様に出力する。
 
 ```
->>> anoy library_config.yaml library.yaml
->>> 
->>> 
+>>> anoy library_config.yaml library.yaml -d
+open: C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\docs\sampleCase\invalid_library.yaml
+open: C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\docs\sampleCase\invalid_library.yaml
+  keyError at:
+    ['@Books', "Alice's Adventures in Wonderland", '@Auther']
+result: 1/1 invalid.
 ```
 
 # Others
@@ -132,8 +136,3 @@ object指向を表現するためのdocument。
 
 ANOYの下位規格。
 
-### YAML with Summary(YwS)
-
-YAMLの階層構造を説明するためのANOYの規格。
-
-ANOYの下位規格。
