@@ -84,7 +84,7 @@ valid_library.yaml:
 以下はdebug modeで実行している。
 
 ```
->>> anoy library_config.yaml valid_library.yaml -d
+$ anoy library_config.yaml valid_library.yaml -d
 open: C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unused\sampleCase\valid_library.yaml
 result: 0/1 invalid.
 ```
@@ -112,7 +112,7 @@ invalid_library.yaml:
 annotation YAMLに異常がある時は、以下の様に出力する。
 
 ```
->>> anoy library_config.yaml library.yaml -d
+$ anoy library_config.yaml library.yaml -d
 open: C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\docs\sampleCase\invalid_library.yaml
 open: C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\docs\sampleCase\invalid_library.yaml
   keyError at:
