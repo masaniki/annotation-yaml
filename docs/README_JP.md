@@ -133,6 +133,3 @@ Object-Oriented Document in YAML、略してOODY。
 object指向を表現するためのdocument。
 
 特定のprogramming言語に依存しないように設計する。
-
-ANOYの下位規格。
-

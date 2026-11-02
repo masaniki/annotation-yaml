@@ -42,12 +42,6 @@ This library satisfies these requests.
 
 `pip install anoy`
 
-## Package Dependencies
-
-The following packages may not work properly if they are not installed:
-
-- [PyYAML](https://pypi.org/project/PyYAML/): Most popular YAML parser for Python.
-
 # Usage
 
 library_config.yaml
@@ -87,11 +81,12 @@ valid_library.yaml:
 
 Use the `anoy` command to verify data types.
 
-If data type issues are not found, it outputs nothing.
+The following is an example of execution in debug mode.
 
 ```
->>> anoy library_config.yaml library.yaml
->>> 
+$ anoy library_config.yaml valid_library.yaml -d
+open: C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\tests\unused\sampleCase\valid_library.yaml
+result: 0/1 invalid.
 ```
 
 If you mistyped `@Auther` as `@Auther`.
@@ -117,36 +112,25 @@ invalid_library.yaml:
 When there is an issue with the annotation YAML, `anoy` outputs as follows.
 
 ```
->>> anoy library_config.yaml library.yaml
->>> Traceback (most recent call last):
-    ... (omission) ...
-    src.anoyModule.anoyErrors.ConfigYamlError: `@Auther` is not defined.
+$ anoy library_config.yaml library.yaml -d
+open: C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\docs\sampleCase\invalid_library.yaml
+open: C:\Users\tomot\Backup\sourcecode\python\projects\annotation_yaml\docs\sampleCase\invalid_library.yaml
+  keyError at:
+    ['@Books', "Alice's Adventures in Wonderland", '@Auther']
+result: 1/1 invalid.
 ```
-# For Developers
 
-## Testing
+# Others
 
-This project uses `pytest`.
+## Introduction to sub-specifications
 
-If you want to test, put in following command.
+ANOY can define sub-specifications based on the definitions in *config yaml*.
 
-`pytest tests\unit\test_dictTraversal.py`
+### Object-Oriented Document YAML(OODY)
 
-## Next To Do
+Object-Oriented Document in YAML, or OODY for short.
 
-- [x] READMEの詳細documentの更新。
+This is a document for object-oriented system.
 
-## Ideas
+Designed to be independent of any specific programming language.
 
-```
-- key01
-- key02
-- key03
-```
-と
-```
-- {key01:value01}
-- {key02:value02}
-- {key03:value03}
-```
-を等価に扱うsystemが欲しい。
