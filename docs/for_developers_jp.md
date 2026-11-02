@@ -58,6 +58,12 @@ pytest tests/test_compare.py
 - tset_valid_anoy.pyが使用するtest_suite.
 - 各directoryの中にanoy_fileとconfig_fileが入っている。
 
+### tests/valid_anoy/testsuite/output_log.txt
+- tset_valid_anoy.pyの実行結果のログを格納する。
+
+### tests/valid_anoy/testsuite/expected_log.txt
+- tset_valid_anoy.pyの期待値のログを格納する。
+
 ### tests/invalid_anoy
 - tset_invalid_anoy.pyが使用するfileを格納するdirectory.
 
@@ -67,6 +73,12 @@ pytest tests/test_compare.py
 ### tests/invalid_anoy/testsuite/in
 - tset_invalid_anoy.pyが使用するtest_suite.
 - 各directoryの中にanoy_fileとconfig_fileが入っている。
+
+### tests/invalid_anoy/testsuite/output_log.txt
+- tset_valid_anoy.pyの実行結果のログを格納する。
+
+### tests/invalid_anoy/testsuite/expected_log.txt
+- tset_valid_anoy.pyの期待値のログを格納する。
 
 ### tests/test_valid_anoy.py
 - 正しい構文で記述されたanoy_fileとconfig_fileに対して、anoy cliを実行するprogram.
