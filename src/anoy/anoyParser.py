@@ -135,7 +135,7 @@ class AnoyParser():
             @Type: Bool
         """
         if(type(anoyValue)==list):
-            isValid=self.checkAnoyList(anoyPath,anoyValue,{},force=True)
+            isValid=self.checkAnoyList(anoyPath,anoyValue,{},transparent=False)
             return isValid
         elif(type(anoyValue)==dict):
             keyList=list(anoyValue.keys())
@@ -143,11 +143,11 @@ class AnoyParser():
                 return True
             firstKey=keyList[0]
             if(type(firstKey)!=str):
-                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue)
+                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue,transparent=False)
             elif(firstKey[0]=="@"):
-                isValid=self.checkAnoyAnnoMap(anoyPath,anoyValue,[],force=True)
+                isValid=self.checkAnoyAnnoMap(anoyPath,anoyValue,[],transparent=False)
             else:
-                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue)
+                isValid=self.checkAnoyFreeMap(anoyPath,anoyValue,transparent=False)
             return isValid
         else:
             return True
@@ -200,7 +200,7 @@ class AnoyParser():
             case "!Enum":
                 isValid=self.checkAnoyEnum(anoyPath,data,configData)
             case _:
-                self.logAnoyTypeError(anoyPath,"!Type",False)
+                self.logAnoyTypeError(anoyPath,"!Type",transparent=False)
         return isValid
 
     def checkAnoyStr(self,anoyPath,anoyValue,configData,transparent:bool):
@@ -463,7 +463,7 @@ class AnoyParser():
                     return False
             return True
         else:
-            self.logAnoyTypeError(anoyPath,"!AnnoMap",False)
+            self.logAnoyTypeError(anoyPath,"!AnnoMap",transparent=False)
             return False
 
     def checkAnoyList(self,anoyPath,anoyValue,configData,transparent):
@@ -535,13 +535,13 @@ class AnoyParser():
             newAnoyPath=anoyPath+[i]
             # !Type型の選択肢。
             if(type(option)==dict):
-                isValid=self.checkAnoyType(newAnoyPath,anoyValue,option,True)
+                isValid=self.checkAnoyType(newAnoyPath,anoyValue,option,transparent=True)
                 if(isValid):
                     return True
             # literalの選択肢。
             elif(anoyValue==option):
                 return True
-        self.logAnoyTypeError(anoyPath,"!Enum",False)
+        self.logAnoyTypeError(anoyPath,"!Enum",transparent=False)
         return False
 
 
