@@ -7,8 +7,10 @@
 
 - [x] logging機能の追加。
 - [x] ANOY CLIにmessage modeとexception modeの追加。
-- [ ] 列挙型が正しく判定されないbugを直す。
+- [x] 列挙型が正しく判定されないbugを直す。
 - [x] infomation modeで実行した時に、anoyのfile名が分からない問題の解消。
+- [x] info modeとdebug modeで実行した時に最後に「n/m OK.」という文字列を出す。
+- [ ] github Actionsによるtestの自動化。-> directory名が揃わないから面倒かも。
 - [ ] test_invalid_config.pyの追加。
 
 ## Ideas

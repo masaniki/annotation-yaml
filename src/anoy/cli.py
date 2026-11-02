@@ -58,6 +58,7 @@ def main():
         configDict=yaml.safe_load(f)
     tree01=AnoyParser(configDict,exceptionMode)
     tree01.dirDFS(anoyPath)
+    tree01.logResult()
 
 if(__name__=="__main__"):
     main()

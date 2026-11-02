@@ -29,6 +29,12 @@ class AnoyParser():
         _exceptionMode:
             @Summ: 例外を出す時にtrue.
             @Type: Bool
+        _fileCounter:
+            @Summ: 型確認したanoy fileの数を記録する。
+            @Type: Int
+        _invalidFileCounter:
+            @Summ: data型が無効だった、anoy fileの数を記録する。
+            @Type: Int
     """
 
     def __init__(self,configDict:dict,exceptionMode:bool):
@@ -40,6 +46,8 @@ class AnoyParser():
         self._anoyPath=""
         self._logger=logging.getLogger(__name__)
         self._exceptionMode=exceptionMode
+        self._fileCounter=0
+        self._invalidFileCounter=0
 
     def dirDFS(self,anoyPath:Path):
         """
@@ -56,17 +64,27 @@ class AnoyParser():
             @Summ: 探索するfileやdirectoryのpath名。
             @Type: Path
         """
-        if(anoyPath.is_file()):
+        if(anoyPath.is_file()):    #fileを探索する。
             suffix=anoyPath.suffix
             if(suffix==".yaml" or suffix==".yml" or suffix==".anoy"):
                 with open(anoyPath, mode="r", encoding="utf-8") as f:
                     anoyDict=yaml.safe_load(f)
                 self._anoyPath=anoyPath
                 self._logger.info(f"open: {self._anoyPath}")
+                self._fileCounter+=1
                 self.anoyFreeSearch([],anoyDict)
-        else:
+        else:    #directoryを探索する。
             for childPath in anoyPath.iterdir():
                 self.dirDFS(childPath)
+
+    def logResult(self):
+        """
+        @Summ: 全てのfile探索が終了した時に出すmessage。
+
+        @Desc: logger.infoに出力する。
+        """
+        message=f"{self._invalidFileCounter}/{self._fileCounter} is invalid."
+        self._logger.info(message)
 
     def logAnoyKeyError(self,yamlPath:list):
         """
@@ -76,13 +94,13 @@ class AnoyParser():
             yamlPath:
                 @Type: Str
         """
-
         self._logger.error(f"open: {self._anoyPath}")
         msg=f"  keyError at:\n    {yamlPath}"
         if(self._exceptionMode):
             raise AnoyError(self._anoyPath,msg)
         else:
             self._logger.error(msg)
+            self._invalidFileCounter+=1
 
 
     def logAnoyTypeError(self,yamlPath:list,annoType:str,transparent:bool):
@@ -109,6 +127,7 @@ class AnoyParser():
                 raise AnoyError(self._anoyPath,msg)
             else:
                 self._logger.error(msg)
+                self._invalidFileCounter+=1
 
 
     def anoyFreeSearch(self,anoyPath,anoyValue):
