@@ -8,7 +8,7 @@ import logging.config
 
 from .anoyParser import AnoyParser
 
-VERSION="v0.6.1"
+VERSION="v0.6.2"
 
 def main():
     """
