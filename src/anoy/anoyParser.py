@@ -83,7 +83,7 @@ class AnoyParser():
 
         @Desc: logger.infoに出力する。
         """
-        message=f"{self._invalidFileCounter}/{self._fileCounter} is invalid."
+        message=f"result: {self._invalidFileCounter}/{self._fileCounter} invalid."
         self._logger.info(message)
 
     def logAnoyKeyError(self,yamlPath:list):
