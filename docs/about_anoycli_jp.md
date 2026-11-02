@@ -24,6 +24,8 @@ ANOYの型確認を行うためのCLI(Command Line Interface) applicationを **A
 
 ANOY CLIは、command名`anoy`で起動する。
 
+ANOY CLIには3つのmodeがある。infomation mode, deug mode, exception modeの3つである。
+
 `anoy [-v|--version]`
 
 - anoyのversion情報を表示する。
@@ -34,7 +36,22 @@ ANOY CLIは、command名`anoy`で起動する。
 
 `anoy <config_yaml> <anoy>`
 
+- information modeのcommand。
 - `<config_yaml>`で`<anoy>`を型確認する。
 - `<anoy>`にはfileやdirectory名が入る。
 - 拡張子[".yaml", ".yml, ".anoy"]のfileをANOY fileとして認識する。
 - directory名の時は、directory内を再帰的に探索してANOY fileを探す。
+- 無効なdata型を検出した時のみ、consoleに出力する。
+
+`anoy <config_yaml> <anoy> [-d|--debug]`
+
+- debug modeのcommand。
+- anoy fileを開く度に、consoleに出力する。
+- 進捗を確認したい時に便利。
+
+`anoy <config_yaml> <anoy> [-e|--exception]`
+
+- exception modeのcommand。
+- 例外を検知すると例外を出力して、ANOY CLIを終了する。
+
+
